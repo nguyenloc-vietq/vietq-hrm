@@ -1,0 +1,25 @@
+flutter_native_splash:
+  android: true
+  ios: true
+  web: false
+
+  color_android: "#ffffff"
+  color_dark_android: "#121212"
+  color_ios: "#ffffff"
+  color_dark_ios: "#121212"
+  color_web: "#ffffff"
+  color_dark_web: "#121212"
+  image: "assets/images/android12_icon.png"
+  ios_content_mode: center
+  branding_mode: center
+
+  android_12:
+    color_android: "#ffffff"
+    color_dark_android: "#121212"
+    color_ios: "#ffffff"
+    color_dark_ios: "#121212"
+    color_web: "#ffffff"
+    color_dark_web: "#121212"
+    image: "assets/images/android12_icon.png"
+
+#dart run flutter_native_splash:create --path=flutter_native_splash.yaml

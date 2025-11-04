@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1007065515607",
+    "project_id": "vietq-hrm",
+    "storage_bucket": "vietq-hrm.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1007065515607:android:878566589c28dea6698512",
+        "android_client_info": {
+          "package_name": "com.vietq.hrm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrWtwHm-vSySXTLcSWpznZ8qCnhawtXWY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

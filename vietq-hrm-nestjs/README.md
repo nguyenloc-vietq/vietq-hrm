@@ -97,15 +97,20 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
-## Migration TypeOrm 
+## Migration TypeOrm
+
 npx ts-node ./node_nodules/typeoorm/cli migtation:generate ./src/migration/filename -d ./src/data-source.ts
-## run migration 
+
+## run migration
+
 npm ts-node ./node_modules/typeorm/cli migration:run -d ./src/data-source.ts
 
 ## prisma
+
 npx prisma init --datasource-provider mysql
--- migration 
+-- migration
 --> npx prima migate dev --name xxxx
 
-## crate routes api 
+## crate routes api
+
 nest g source nameapi --no-spec

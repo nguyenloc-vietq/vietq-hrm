@@ -1,0 +1,35 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ArgumentsHost, Catch, ExceptionFilter } from "@nestjs/common";
+import { error } from "console";
+import { MyLogger } from "src/logger/my.logger";
+@Catch()
+export class AllExceptionsFilter implements ExceptionFilter {
+  private logger = new MyLogger();
+  catch(exception: any, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse();
+    const request = ctx.getRequest();
+    const status = exception.getStatus();
+    this.logger.error(exception.message, [exception.stack]);
+    // this.logger.log(exception.message, [exception.stack]);
+
+    if (process.env.NODE_ENV === "dev") {
+      response.status(status).json({
+        error: true,
+        statusCode: status,
+        timestamp: new Date().toISOString(),
+        path: request.url,
+        message: exception.message || "Internal server error",
+        stack: exception.stack,
+      });
+    } else {
+      response.status(status).json({
+        error: true,
+        statusCode: status,
+        timestamp: new Date().toISOString(),
+        path: request.url,
+        message: exception.message || "Internal server error",
+      });
+    }
+  }
+}

@@ -1,12 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -14,23 +7,71 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model tbl_user {
-  id             Int       @id @default(autoincrement())
-  role           Role      @default(STAFF)
-  companyCode    String?
-  userCode       String    @unique
-  email          String    @unique @db.VarChar(200)
-  phone          String
-  fullName       String
-  avatar         String?
-  passwordHash   String    @db.VarChar(100)
-  isActive       String    @db.VarChar(1) @default("Y")
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+model User {
+  id           Int          @id @default(autoincrement())
+  companyCode  String?
+  userCode     String       @unique
+  email        String       @unique @db.VarChar(200)
+  phone        String
+  fullName     String
+  avatar       String?
+  passwordHash String       @db.VarChar(100)
+  isActive     String       @default("Y") @db.VarChar(1)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  userRoles    UserRole[]
+  roles        RoleEntity[] @relation("UserRoles")
 
-  // Nếu muốn liên kết sang bảng Role riêng:
-  roleId         Int?
-  roleEntity     tbl_role_entity? @relation(fields: [roleId], references: [id])
+  @@map("tbl_user")
+}
+
+model RoleEntity {
+  id              Int              @id @default(autoincrement())
+  name            Role             @unique
+  desc            String?
+  createdAt       DateTime         @default(now())
+  isActive        String           @default("Y") @db.VarChar(1)
+  updatedAt       DateTime         @updatedAt
+  rolePermissions RolePermission[]
+  userRoles       UserRole[]
+  permissions     Permission[]     @relation("RolePermissions")
+  users           User[]           @relation("UserRoles")
+
+  @@map("tbl_role_entity")
+}
+
+model Permission {
+  id              Int              @id @default(autoincrement())
+  name            String
+  desc            String?
+  isActive        String           @default("Y") @db.VarChar(1)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  nameCode        Int
+  rolePermissions RolePermission[]
+  roles           RoleEntity[]     @relation("RolePermissions")
+
+  @@map("tbl_permission")
+}
+
+model UserRole {
+  userId Int
+  roleId Int
+  role   RoleEntity @relation(fields: [roleId], references: [id])
+  user   User       @relation(fields: [userId], references: [id])
+
+  @@id([userId, roleId])
+  @@map("tbl_user_role")
+}
+
+model RolePermission {
+  permissionId Int
+  roleId       Int
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  role         RoleEntity @relation(fields: [roleId], references: [id])
+
+  @@id([permissionId, roleId])
+  @@map("tbl_role_permission")
 }
 
 enum Role {
@@ -43,11 +84,4 @@ enum UserStatus {
   ACTIVE
   INACTIVE
   DELETED
-}
-
-model tbl_role_entity {
-  id       Int       @id @default(autoincrement())
-  name     Role      @unique
-  desc     String?
-  users    tbl_user[]
 }

@@ -42,23 +42,23 @@ export class MyLogger implements LoggerService {
   }
   error(message: string, context: string[]) {
     const time = dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss");
-    this.logger.log("erorr", message, { context, time });
+    this.logger.error(message, { context, time });
   }
   warn(message: string, context: string[]) {
     const time = dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss");
-    this.logger.log("warn", message, { context, time });
+    this.logger.warn(message, { context, time });
   }
   debug?(message: string, context: string[]) {
     const time = dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss");
-    this.logger.log("debug", message, { context, time });
+    this.logger.debug(message, { context, time });
   }
   verbose?(message: string, context: string[]) {
     const time = dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss");
-    this.logger.log("verbose", message, { context, time });
+    this.logger.verbose(message, { context, time });
   }
   fatal?(message: string, context: string[]) {
     const time = dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss");
-    this.logger.log("final", message, { context, time });
+    this.logger.error(message, { context, time });
   }
   setLogLevels?(levels: LogLevel[]) {
     // console.log('*=====LOG=====*[${context}] |', message)

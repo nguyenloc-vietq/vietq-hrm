@@ -26,13 +26,32 @@ export default tseslint.config(
   },
   {
     rules: {
-      "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-unused-vars": "warn",
-      "@typescript-eslint/no-floating-promises": "warn",
-      "@typescript-eslint/no-unsafe-call": "warn",
-      "@typescript-eslint/no-unsafe-member-access": "warn",
-      "@typescript-eslint/no-unsafe-argument": "warn",
-      "prettier/prettier": ["error", { endOfLine: "auto", singleQuote: false }],
+      "@typescript-eslint/require-await": "off",
+
+      // Không cảnh báo biến chưa dùng
+      "@typescript-eslint/no-unused-vars": "off",
+
+      // Cho phép promise không await
+      "@typescript-eslint/no-floating-promises": "off",
+
+      // Cho phép truy cập member của biến any
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+
+      // Giữ lại Prettier để format code
+      "prettier/prettier": [
+        "error",
+        {
+          endOfLine: "auto",
+          singleQuote: false,
+          semi: true,
+          trailingComma: "all",
+          tabWidth: 2,
+        },
+      ],
     },
   },
 );

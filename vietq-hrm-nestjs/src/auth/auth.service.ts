@@ -22,7 +22,6 @@ export class AuthService {
         email: user.email,
       },
     });
-    console.log(`[===============> | ${exitsUser}`);
     if (exitsUser) throw new HttpException("User is already exits", 200);
     // hash password
     const passwordHash = await hashPassword(user.password);
@@ -30,6 +29,7 @@ export class AuthService {
     try {
       const newDataUser = await this.prisma.user.create({
         data: {
+          companyCode: user.companyCode,
           email: user.email,
           passwordHash: passwordHash,
           userCode: user.userCode,
@@ -65,7 +65,7 @@ export class AuthService {
   }
 
   async getProfile(@Req() req) {
-    console.log(`[===============> this req| ${req}`);
+    console.log(`[===============> this req | ${req}`);
     return "OK pass guard";
   }
   async getUserPermission(userId: number) {

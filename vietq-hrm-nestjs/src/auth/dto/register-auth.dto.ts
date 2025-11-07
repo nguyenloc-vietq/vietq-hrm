@@ -8,6 +8,9 @@ import {
 
 export class RegisterAuthDto {
   @IsString()
+  @IsNotEmpty()
+  companyCode: string;
+  @IsString()
   @IsEmail()
   @IsNotEmpty()
   email: string;

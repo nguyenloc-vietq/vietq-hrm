@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "tbl_shift" ALTER COLUMN "startTime" SET DATA TYPE TIME(6),
+ALTER COLUMN "endTime" SET DATA TYPE TIME(6);

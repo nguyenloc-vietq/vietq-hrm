@@ -40,6 +40,7 @@ export class AuthController {
 
   @ApiOperation({ summary: "Register user" })
   @Post("register")
+  @PermitAll()
   @PermissionRequired("ADD_USER")
   async create(
     @Body(ValidationPipe) user: RegisterAuthDto,
@@ -60,7 +61,7 @@ export class AuthController {
 
   @ApiOperation({ summary: "Get profile user" })
   @Get("profile")
-  @PermissionRequired("ADD")
+  @PermissionRequired("QUERY")
   async getProfile(@Req() req): Promise<ResponseDataSuccess<Array<any>>> {
     return new ResponseDataSuccess(req.permission, 200, "");
   }

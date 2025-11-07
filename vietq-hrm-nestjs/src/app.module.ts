@@ -10,6 +10,8 @@ import * as process from "node:process";
 import { APP_GUARD } from "@nestjs/core";
 import { AuthGuard } from "./auth/auth.guard";
 import { PermissionRbacGuard } from "./permission-rbac/permission-rbac.guard";
+import { ShiftModule } from './shift/shift.module';
+import { ScheduleModule } from './schedule/schedule.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { PermissionRbacGuard } from "./permission-rbac/permission-rbac.guard";
       signOptions: { expiresIn: "1d" },
     }),
     DatabaseModule,
+    ShiftModule,
+    ScheduleModule,
   ],
   controllers: [AppController],
   providers: [

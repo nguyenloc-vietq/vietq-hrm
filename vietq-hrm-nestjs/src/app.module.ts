@@ -12,6 +12,7 @@ import { AuthGuard } from "./auth/auth.guard";
 import { PermissionRbacGuard } from "./permission-rbac/permission-rbac.guard";
 import { ShiftModule } from './shift/shift.module';
 import { ScheduleModule } from './schedule/schedule.module';
+import { AttendanceModule } from './attendance/attendance.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ScheduleModule } from './schedule/schedule.module';
     DatabaseModule,
     ShiftModule,
     ScheduleModule,
+    AttendanceModule,
   ],
   controllers: [AppController],
   providers: [

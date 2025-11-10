@@ -57,7 +57,7 @@ export class AuthService {
     );
     if (!compPassword) throw new HttpException("Password not correct", 401);
     const { passwordHash, ...payload } = exitsUser;
-    const accessToken = this.jwtService.sign({ iat: Date.now(), ...payload });
+    const accessToken = this.jwtService.sign({ ...payload });
     return {
       ...payload,
       accessToken,

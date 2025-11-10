@@ -9,12 +9,13 @@ import {
   Delete,
   Req,
   ValidationPipe,
+  Put,
 } from "@nestjs/common";
 import { ScheduleService } from "./schedule.service";
 import { CreateScheduleDto } from "./dto/create-schedule.dto";
-import { UpdateScheduleDto } from "./dto/update-schedule.dto";
 import { ResponseDataSuccess } from "../global/globalClass";
 import { PermissionRequired } from "src/common/custom-decorator";
+import { UpdateScheduleDto } from "./dto/update-schedule.dto";
 
 @Controller("schedule")
 export class ScheduleController {
@@ -57,6 +58,34 @@ export class ScheduleController {
       await this.scheduleService.getSchedulesInDay(req),
       200,
       "get schedules success",
+    );
+  }
+
+  @Put("update")
+  @PermissionRequired("UPDATE_SCHEDULE")
+  async update(
+    @Body(
+      new ValidationPipe({
+        transform: true,
+      }),
+    )
+    dataSchedule: UpdateScheduleDto,
+  ): Promise<ResponseDataSuccess<object>> {
+    return new ResponseDataSuccess(
+      await this.scheduleService.update(dataSchedule),
+      200,
+      "update schedule success",
+    );
+  }
+  @Delete("delete")
+  @PermissionRequired("DELETE_SCHEDULE")
+  async delete(
+    @Body() body: { scheduleCode: string },
+  ): Promise<ResponseDataSuccess<object>> {
+    return new ResponseDataSuccess(
+      await this.scheduleService.delete(body.scheduleCode),
+      200,
+      "delete schedule success",
     );
   }
 }

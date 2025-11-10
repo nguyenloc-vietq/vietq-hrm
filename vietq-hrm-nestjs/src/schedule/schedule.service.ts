@@ -1,41 +1,56 @@
-import {
-  BadRequestException,
-  HttpException,
-  Injectable,
-  Req,
-} from "@nestjs/common";
-import { CreateScheduleDto } from "./dto/create-schedule.dto";
+import { HttpException, Injectable, Req } from "@nestjs/common";
 import { UpdateScheduleDto } from "./dto/update-schedule.dto";
 import { DatabaseService } from "../database/database.service";
-import { ResponseDataSuccess } from "../global/globalClass";
 import dayjs from "dayjs";
+import { CodeGeneratorService } from "src/code-generator/code-generator.service";
+import { CreateScheduleDto } from "./dto/create-schedule.dto";
 
 @Injectable()
 export class ScheduleService {
-  constructor(private readonly prisma: DatabaseService) {}
+  constructor(
+    private readonly prisma: DatabaseService,
+    private codeGen: CodeGeneratorService,
+  ) {}
 
   async create(dataSchedule: CreateScheduleDto, @Req() req) {
     try {
       const { userCode } = req.user;
+
+      const lastRecord = await this.prisma.employeeSchedule.findFirst({
+        orderBy: { scheduleCode: "desc" },
+        select: { scheduleCode: true },
+      });
+
+      const lastNumber = lastRecord?.scheduleCode
+        ? parseInt(lastRecord.scheduleCode.replace("SDC", ""), 10)
+        : 0;
+
+      //Tạo mảng code mới theo số lượng workOn
+      const scheduleCodes = dataSchedule.workOn.map(
+        (_, idx) => `SDC${String(lastNumber + idx + 1).padStart(6, "0")}`,
+      );
+
       const payrollCode = await this.prisma.payroll.findFirst({
         where: {
-          startDate: { lte: dataSchedule.workOn },
-          endDate: { gte: dataSchedule.workOn },
+          startDate: { lte: dataSchedule.workOn[0] },
+          endDate: { gte: dataSchedule.workOn[dataSchedule.workOn.length - 1] },
           isActive: true,
-          // companyId: req.user.companyId,
         },
-        select: {
-          payrollCode: true,
-        },
+        select: { payrollCode: true },
       });
-      const newSchedule = await this.prisma.employeeSchedule.create({
-        data: {
-          ...dataSchedule,
-          userCode,
-          payrollCode: payrollCode?.payrollCode,
-        },
+      //huẩn bị dữ liệu insert
+      const newSchedule = dataSchedule.workOn.map((workOnDate, idx) => ({
+        ...dataSchedule,
+        scheduleCode: scheduleCodes[idx],
+        userCode,
+        payrollCode: payrollCode?.payrollCode,
+        workOn: new Date(workOnDate),
+      }));
+
+      const result = await this.prisma.employeeSchedule.createMany({
+        data: newSchedule,
       });
-      return { ...newSchedule };
+      return { dataSchedule: [...newSchedule] };
     } catch (e) {
       throw new HttpException("Create schedule failed", 500);
     }
@@ -79,6 +94,8 @@ export class ScheduleService {
         include: {
           shift: {
             select: {
+              shiftCode: true,
+              name: true,
               startTime: true,
               endTime: true,
             },
@@ -88,6 +105,52 @@ export class ScheduleService {
       return [...schedules];
     } catch (e) {
       throw new HttpException("Get schedules failed", 500);
+    }
+  }
+
+  async update(dataSchedule: UpdateScheduleDto) {
+    try {
+      const payrollCode = await this.prisma.payroll.findFirst({
+        where: {
+          startDate: { lte: dataSchedule.workOn[0] },
+          endDate: { gte: dataSchedule.workOn[dataSchedule.workOn.length - 1] },
+          isActive: true,
+        },
+        select: { payrollCode: true },
+      });
+
+      const result = await Promise.all(
+        dataSchedule.workOn.map(async (workOnDate, idx) => {
+          console.log(
+            `[===============> daat | ${dataSchedule.scheduleCode[idx]}`,
+          );
+          return await this.prisma.employeeSchedule.update({
+            where: {
+              scheduleCode: dataSchedule.scheduleCode[idx],
+            },
+            data: {
+              workOn: new Date(workOnDate),
+              payrollCode: payrollCode?.payrollCode,
+              shiftCode: dataSchedule.shiftCode,
+            },
+          });
+        }),
+      );
+      return { scheduleUpdate: [...result] };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+  async delete(scheduleCode: string) {
+    try {
+      await this.prisma.employeeSchedule.delete({
+        where: {
+          scheduleCode,
+        },
+      });
+      return [];
+    } catch (error) {
+      throw new HttpException(error.message, 500);
     }
   }
 }

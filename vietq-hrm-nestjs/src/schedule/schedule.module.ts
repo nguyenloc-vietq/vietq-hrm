@@ -1,10 +1,10 @@
 import { Module } from "@nestjs/common";
 import { ScheduleService } from "./schedule.service";
 import { ScheduleController } from "./schedule.controller";
-import { DatabaseModule } from "../database/database.module";
+import { CodeGeneratorModule } from "src/code-generator/code-generator.module";
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [CodeGeneratorModule],
   controllers: [ScheduleController],
   providers: [ScheduleService],
 })

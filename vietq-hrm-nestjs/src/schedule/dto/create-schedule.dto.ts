@@ -1,13 +1,9 @@
-import { IsDateString, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsArray, IsNotEmpty, IsString } from "class-validator";
 
 export class CreateScheduleDto {
   @IsNotEmpty()
   @IsString()
   shiftCode: string;
-  @IsNotEmpty()
-  @IsString()
-  scheduleCode: string;
-  @IsNotEmpty()
-  @IsDateString()
-  workOn: Date;
+  @IsArray()
+  workOn: Array<Date>;
 }

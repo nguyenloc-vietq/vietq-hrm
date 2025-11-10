@@ -18,14 +18,19 @@ export class AllExceptionsFilter implements ExceptionFilter {
       exception instanceof HttpException ? exception.getStatus() : 500;
     this.logger.error(exception.message, [exception.stack]);
     // this.logger.log(exception.message, [exception.stack]);
-
+    const errorResponse =
+      exception instanceof HttpException ? exception.getResponse() : null;
+    const message =
+      (errorResponse as any)?.message ||
+      exception.message ||
+      "Internal server error";
     if (process.env.NODE_ENV === "dev") {
       response.status(status).json({
         error: true,
         statusCode: status,
         timestamp: new Date().toISOString(),
         path: request.url,
-        message: exception.message || "Internal server error",
+        message,
         stack: exception.stack,
       });
     } else {
@@ -34,7 +39,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         statusCode: status,
         timestamp: new Date().toISOString(),
         path: request.url,
-        message: exception.message || "Internal server error",
+        message,
       });
     }
   }

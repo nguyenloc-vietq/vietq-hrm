@@ -13,7 +13,8 @@ import { ResponseDataSuccess } from "src/global/globalClass";
 import { CreatePermissionDto } from "./dto/create-roleEntity.dto";
 import { DeletePermissionDto } from "./dto/delete-permission.dto";
 import { AddRolePermissionDto } from "./dto/add-permission.dto";
-
+import { ApiBearerAuth } from "@nestjs/swagger";
+@ApiBearerAuth("access-token")
 @Controller("permission")
 export class PermissionController {
   constructor(private readonly permissionService: PermissionService) {}

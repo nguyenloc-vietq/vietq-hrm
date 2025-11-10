@@ -18,10 +18,23 @@ async function bootstrap() {
     .setTitle("Vietq HRM")
     .setDescription("The Vietq HRM API description")
     .setVersion("1.0")
+    .addBearerAuth(
+      {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+        description: "Enter JWT token",
+      },
+      "access-token",
+    )
     .addTag("vietq-hrm")
     .build();
   const docummentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api/docs", app, docummentFactory);
+  SwaggerModule.setup("api/docs", app, docummentFactory, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
   SwaggerModule.setup("swagger", app, docummentFactory, {
     jsonDocumentUrl: "swagger/docs",
   });

@@ -17,6 +17,7 @@ import { CodeGeneratorModule } from "./code-generator/code-generator.module";
 import { UserModule } from "./user/user.module";
 import { FileModule } from "./file/file.module";
 import { PermissionModule } from "./permission/permission.module";
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { PermissionModule } from "./permission/permission.module";
     UserModule,
     FileModule,
     PermissionModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [

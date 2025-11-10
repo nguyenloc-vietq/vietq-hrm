@@ -124,7 +124,7 @@ export class ScheduleService {
           console.log(
             `[===============> daat | ${dataSchedule.scheduleCode[idx]}`,
           );
-          return await this.prisma.employeeSchedule.update({
+          await this.prisma.employeeSchedule.update({
             where: {
               scheduleCode: dataSchedule.scheduleCode[idx],
             },

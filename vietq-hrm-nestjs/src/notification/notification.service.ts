@@ -1,0 +1,252 @@
+import { HttpException, Injectable } from "@nestjs/common";
+import { DatabaseService } from "../database/database.service";
+import { DevicesRegisterNotificationDto } from "./dto/devicesRegister-notification.dto";
+import dayjs from "dayjs";
+import { CreateNotificationDto } from "./dto/create-notification.dto";
+import { CodeGeneratorService } from "../code-generator/code-generator.service";
+import { UpdateNotificationDto } from "./dto/update-notification.dto";
+
+@Injectable()
+export class NotificationService {
+  constructor(
+    private readonly prisma: DatabaseService,
+    private codeGen: CodeGeneratorService,
+  ) {}
+  async devicesRegister(dataRegister: DevicesRegisterNotificationDto) {
+    try {
+      //chekFcmToken is exits
+
+      const exitsDevices = await this.prisma.userDevice.findFirst({
+        where: {
+          userCode: dataRegister.userCode,
+        },
+      });
+
+      const exitsFcmToken = await this.prisma.userDevice.findFirst({
+        where: {
+          AND: {
+            fcmToken: dataRegister.fcmToken,
+            userCode: {
+              not: dataRegister.userCode,
+            },
+          },
+        },
+      });
+      if (exitsFcmToken) {
+        await this.prisma.userDevice.update({
+          where: {
+            id: exitsFcmToken.id,
+            fcmToken: dataRegister.fcmToken,
+          },
+          data: {
+            isActive: false,
+          },
+        });
+      }
+      if (exitsDevices) {
+        const updateDevices = await this.prisma.userDevice.update({
+          where: {
+            userCode: dataRegister.userCode,
+          },
+          data: {
+            ...dataRegister,
+            isActive: true,
+          },
+        });
+        return updateDevices;
+      } else {
+        const newDevices = await this.prisma.userDevice.create({
+          data: {
+            ...dataRegister,
+          },
+        });
+        return newDevices;
+      }
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
+  async devicesStatus(userCode: string) {
+    try {
+      const devices = await this.prisma.userDevice.update({
+        where: {
+          userCode: userCode,
+        },
+        data: {
+          isActive: false,
+        },
+      });
+      return devices;
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
+  async listNotification(userCode: string) {
+    try {
+      const listNotification = await this.prisma.userNotification.findMany({
+        where: {
+          userCode: userCode,
+        },
+        include: {
+          notification: true,
+        },
+      });
+      return listNotification;
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
+  async detailNotification(userCode: string, notificationCode: string) {
+    try {
+      const detailNotification = await this.prisma.userNotification.findFirst({
+        where: {
+          AND: {
+            userCode: userCode,
+            notificationCode: notificationCode,
+          },
+        },
+        include: {
+          notification: true,
+        },
+      });
+      return { ...detailNotification };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
+  async userReadNotification(userCode: string, notificationCode: string) {
+    try {
+      //check notification is exits
+
+      const notification = await this.prisma.userNotification.findFirst({
+        where: {
+          userCode: userCode,
+          notificationCode: notificationCode,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (!notification) {
+        throw new HttpException("Notification not found", 404);
+      }
+      const userNotification = await this.prisma.userNotification.update({
+        where: {
+          userCode_notificationCode: {
+            userCode: userCode,
+            notificationCode: notificationCode,
+          },
+        },
+        data: {
+          isRead: true,
+          readAt: dayjs().toDate(),
+        },
+      });
+      return userNotification;
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
+  async userRemoveNotification(userCode: string, notificationCode: string) {
+    try {
+      const userNotification = await this.prisma.userNotification.update({
+        where: {
+          userCode_notificationCode: {
+            userCode: userCode,
+            notificationCode: notificationCode,
+          },
+        },
+        data: {
+          isActive: false,
+        },
+      });
+      return userNotification;
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
+  async adminCreateNotification(createNotification: CreateNotificationDto) {
+    try {
+      const notificationCode = await this.codeGen.generateCode(
+        this.prisma.notification,
+        "NOT",
+        {
+          field: "notificationCode",
+        },
+      );
+      const notification = await this.prisma.notification.create({
+        data: {
+          notificationCode: notificationCode,
+          ...createNotification,
+        },
+      });
+      return notification;
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
+  async adminGetListNotification() {
+    try {
+      const listNotification = await this.prisma.notification.findMany();
+      return listNotification;
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
+  async adminDetailNotification(notificationCode: string) {
+    try {
+      const detailNotification = await this.prisma.notification.findFirst({
+        where: {
+          notificationCode: notificationCode,
+        },
+      });
+      return { ...detailNotification };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
+  async adminUpdateNotification(
+    notificationCode: string,
+    updateNotification: UpdateNotificationDto,
+  ) {
+    try {
+      const notification = await this.prisma.notification.update({
+        where: {
+          notificationCode: notificationCode,
+        },
+        data: {
+          ...updateNotification,
+        },
+      });
+      return notification;
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
+  async adminRemoveNotification(notificationCode: string) {
+    try {
+      const notification = await this.prisma.notification.update({
+        where: {
+          notificationCode: notificationCode,
+        },
+        data: {
+          isActive: false,
+        },
+      });
+      return notification;
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+}

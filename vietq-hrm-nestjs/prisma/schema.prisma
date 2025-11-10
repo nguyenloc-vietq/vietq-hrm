@@ -348,7 +348,7 @@ model Notification {
   isSent           Boolean                 @default(false)
   createdAt        DateTime                @default(now())
   updatedAt        DateTime                @updatedAt
-
+  isActive         Boolean                 @default(true)
   userNotifs UserNotification[]
 
   @@map("tbl_notification")
@@ -443,7 +443,6 @@ model PayrollConfig {
   cycleType        String   @default("MONTHLY") // "MONTHLY", "WEEKLY", "CUSTOM"
   startDay         Int // Ngày bắt đầu kỳ lương (VD: 26)
   endDay           Int // Ngày kết thúc kỳ lương (VD: 25)
-  totalDay         Int
   paymentDelayDays Int      @default(5) // Số ngày sau khi kết thúc kỳ lương để trả lương
   isActive         Boolean  @default(true)
   createdAt        DateTime @default(now())

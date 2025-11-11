@@ -13,6 +13,12 @@ async function bootstrap() {
     // logger: new MyLogger
     // bufferLogs: true
   });
+  app.enableCors({
+    origin: "*", // cho phép tất cả domain
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+    allowedHeaders: "*", // cho phép mọi header
+    credentials: true, // nếu bạn cần cookie hoặc Authorization header
+  });
   app.setGlobalPrefix("api");
   const config = new DocumentBuilder()
     .setTitle("Vietq HRM")

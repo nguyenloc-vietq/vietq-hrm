@@ -55,11 +55,11 @@ class _CalendarViewState extends State<CalendarView> {
       body: TableCalendar(
         rowHeight: 80,
         daysOfWeekHeight: 50,
-        firstDay: DateTime(2025, 1, 1),
-        lastDay: DateTime(2025, 12, 31),
+        firstDay: DateTime(DateTime.now().year, 1, 1),
+        lastDay: DateTime(DateTime.now().year, 12, 31),
         focusedDay: _focusedDay,
         calendarFormat: _calendarFormat,
-        locale: 'vi_VN',
+        // locale: '',
         daysOfWeekStyle: DaysOfWeekStyle(
           weekdayStyle: TextStyle(fontWeight: FontWeight.w600),
           weekendStyle: TextStyle(fontWeight: FontWeight.w600, color: Colors.red),

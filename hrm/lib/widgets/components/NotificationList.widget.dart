@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 
 class NotificationWidget extends StatefulWidget {
@@ -49,7 +50,7 @@ class NotificationItems extends StatelessWidget {
           spacing: 20,
           children: [
             Container(
-              padding: EdgeInsets.all(15),
+              padding: EdgeInsets.all(7),
               width: 70,
               height: 70,
               decoration: BoxDecoration(
@@ -57,9 +58,9 @@ class NotificationItems extends StatelessWidget {
                 color: Color(0xFFF8D448).withAlpha(600),
               ),
               child: CircleAvatar(
-                radius: 25,
+                radius: 50,
                 backgroundImage: NetworkImage(
-                  "https://iweather.edu.vn/upload/2025/04/avatar-memes.webp",
+                  "${dotenv.env['IMAGE_ENDPOINT']}avatar/avatar-1762761355725-290262777.png",
                 ),
               ),
             ),

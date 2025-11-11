@@ -31,7 +31,7 @@ export class ShiftController {
   }
 
   @Get("get-list-shift")
-  @PermissionRequired("READ_SHIFT")
+  // @PermissionRequired("READ_SHIFT")
   async getListShift(): Promise<ResponseDataSuccess<object>> {
     return new ResponseDataSuccess(
       await this.shiftService.getListShift(),

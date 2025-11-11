@@ -1,4 +1,8 @@
+import 'package:cherry_toast/cherry_toast.dart';
+import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:vietq_hrm/services/push_notification/notification.service.dart';
 import 'package:vietq_hrm/widgets/CustomAppbar/HomePageAppBar.widget.dart';
 import 'package:vietq_hrm/widgets/components/CalendarSlide.widget.dart';
 import 'package:vietq_hrm/widgets/components/TodayAttendance.widget.dart';
@@ -18,6 +22,15 @@ class _HomePageState extends State<HomePage> {
   bool isCheckIn = false;
 
   @override
+  void initState() {
+    super.initState();
+    NotificationService().requestNotificationPermission();
+    NotificationService().getToken();
+    NotificationService().firebaseInit(context);
+    NotificationService().setupInteractions(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return CustomLoadingOverlay(
@@ -27,7 +40,7 @@ class _HomePageState extends State<HomePage> {
           preferredSize: Size.fromHeight(100),
           child: HomePageAppBar(
             avatar:
-                "https://avatarngau.sbs/wp-content/uploads/2025/05/avatar-meme-7.jpg",
+                "${dotenv.env['IMAGE_ENDPOINT']}avatar/avatar-1762761355725-290262777.png",
             name: "Ho Nguyen Loc",
             position: "Software Engineer",
           ),
@@ -42,16 +55,17 @@ class _HomePageState extends State<HomePage> {
               setState(() {
                 isCheckIn = !isCheckIn;
               });
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Check in successfully'),
-                  backgroundColor: Colors.green,
-                  duration: Duration(seconds: 2),
-                  behavior: SnackBarBehavior.floating,
-                  margin: EdgeInsets.only(left: 20, right: 20, bottom: 100),
-                  elevation: 10,
+              CherryToast.success(
+                description: Text(
+                  isCheckIn
+                      ? "Check out successfully"
+                      : "Check in successfully",
+                  style: TextStyle(color: Colors.black),
                 ),
-              );
+                animationType: AnimationType.fromTop,
+                animationDuration: Duration(milliseconds: 200),
+                autoDismiss: true,
+              ).show(context);
             },
           ),
         ),

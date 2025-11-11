@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:vietq_hrm/configs/sharedPreference/SharedPreferences.config.dart';
 import 'package:vietq_hrm/screens/layout/DetailsLayout.dart';
 import 'package:vietq_hrm/widgets/BottomNavigation/bottomNavigation.widget.dart';
 import 'router.config.dart';
@@ -23,16 +24,16 @@ GoRoute toGoRoute(RouterObject r) {
       if (ListBottomNavigatonRouter.any(
         (element) => element.route == r.route,
       )) {
-        return NoTransitionPage(key: ValueKey(r.route), child: r.page);
+        return NoTransitionPage(key: state.pageKey, child: r.page);
       }
       // Nếu là iOS → dùng CupertinoPage (có gesture vuốt trái để back)
       if (Platform.isIOS) {
         print("#>>>>>>>>>>>>>>>>>>>: this ios platform ");
-        return CupertinoPage(key: ValueKey(r.route), child: r.page);
+        return CupertinoPage(key: state.pageKey, child: r.page);
       } else {
         print("#>>>>>>>>>>>>>>>>>>>: this android platform ");
         return CustomTransitionPage(
-          key: ValueKey(r.route),
+          key: state.pageKey,
           child: r.page,
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return SlideTransition(
@@ -70,12 +71,12 @@ final GoRouter appRouter = GoRouter(
         final title = (state.extra is String) ? (state.extra as String) : ' ';
         if (Platform.isIOS) {
           return CupertinoPage(
-            key: ValueKey(state.pageKey),
+            key: state.pageKey,
             child: DetailsLayout(title: title, child: child),
           );
         }
         return CustomTransitionPage(
-          key: ValueKey(state.pageKey), // Đảm bảo key duy nhất
+          key: state.pageKey, // Đảm bảo key duy nhất
           child: DetailsLayout(title: title, child: child),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return SlideTransition(
@@ -100,19 +101,20 @@ final GoRouter appRouter = GoRouter(
     // Các route công khai
     ...ListPublicRouter.map(toGoRoute),
   ],
-  //redirect check is login
-  // redirect: (context, state) async {
-  //   final loggedIn = await hasToken();
-  //   final loggingIn = state.uri.toString() == '/login';
-  //   if (!loggedIn & !loggingIn &&
-  //       ListPrivateRouter.any((e) => e.route == state.uri.toString())) {
-  //     return loggingIn ? null : '/login';
-  //   }
-  //
-  //   if (loggedIn && loggingIn) {
-  //     return '/';
-  //   }
-  //
-  //   return null;
-  // },
+  // redirect check is login
+  redirect: (context, state) async {
+    final loggedIn = SharedPreferencesConfig.users;
+    print(loggedIn);
+    final loggingIn = state.uri.toString() == '/login';
+    if (loggedIn == null && !loggingIn &&
+        ListPublicRouter.every((e) => e.route != state.uri.toString())) {
+      return loggingIn ? null : '/login';
+    }
+
+    if (loggedIn != null && loggingIn) {
+      return '/';
+    }
+
+    return null;
+  },
 );

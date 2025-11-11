@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vietq_hrm/configs/apiConfig/auth.api.dart';
+import 'package:vietq_hrm/configs/sharedPreference/SharedPreferences.config.dart';
 import 'package:vietq_hrm/routers/router.config.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -10,6 +13,11 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  @override
+  void initState(){
+    super.initState();
+    AuthApi().getListShift();
+  }
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -40,7 +48,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: CircleAvatar(
                         radius: 50,
                         backgroundImage: NetworkImage(
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbri3Z-3S3R5SfAwbsTPB07I9mI1kyrnhMsg&s', // ảnh mẫu
+                          '${dotenv.env['IMAGE_ENDPOINT']}avatar/avatar-1762761355725-290262777.png', // ảnh mẫu
                         ),
                       ),
                     ),
@@ -91,7 +99,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       padding: EdgeInsets.symmetric(vertical: 15),
                       backgroundColor: Color(0xFFF6C951),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(20),
                       ),
                     ),
                     child: Text(
@@ -112,7 +120,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       if(ListDetailProfileRouter[index].route == '/logout') {
                         return ElevatedButton(
                           onPressed: () {
-                            context.push('/login');
+                            SharedPreferencesConfig.delete('users');
+                            context.go('/');
                           },
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.zero,

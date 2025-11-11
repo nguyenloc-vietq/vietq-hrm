@@ -17,7 +17,7 @@ import { CodeGeneratorModule } from "./code-generator/code-generator.module";
 import { UserModule } from "./user/user.module";
 import { FileModule } from "./file/file.module";
 import { PermissionModule } from "./permission/permission.module";
-import { NotificationModule } from './notification/notification.module';
+import { NotificationModule } from "./notification/notification.module";
 
 @Module({
   imports: [
@@ -29,7 +29,7 @@ import { NotificationModule } from './notification/notification.module';
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: "1d" },
+      signOptions: { expiresIn: "1m" },
     }),
     DatabaseModule,
     ShiftModule,

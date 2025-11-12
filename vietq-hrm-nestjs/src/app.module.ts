@@ -29,7 +29,7 @@ import { NotificationModule } from "./notification/notification.module";
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: "1m" },
+      signOptions: { expiresIn: "10d" },
     }),
     DatabaseModule,
     ShiftModule,

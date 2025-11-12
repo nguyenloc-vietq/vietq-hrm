@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:vietq_hrm/configs/apiConfig/interceptor/api_exceptions.dart';
 import 'package:vietq_hrm/configs/apiConfig/interceptor/dio_client.dart';
 import 'package:vietq_hrm/configs/sharedPreference/SharedPreferences.config.dart';
 import 'package:vietq_hrm/routers/routes.config.dart';
 
 class ApiInterceptor extends Interceptor {
-  final dio = Dio(BaseOptions(baseUrl: 'http://localhost:1900/api'));
+  final dio = Dio(BaseOptions(baseUrl: dotenv.env['API_ENDPOINT'] as String));
   final List<String> publicRoutes = [
     '/auth/login',
     '/auth/forgot-password',
@@ -31,17 +32,20 @@ class ApiInterceptor extends Interceptor {
       print("#================> Check Authen" + checkRes.data.toString());
       // Nếu check ok -> tiếp tục request
       if (checkRes.statusCode == 200) {
-
-        options.headers['Authorization'] = 'Bearer $token';
+        final newToken = await _getToken();
+        options.headers['Authorization'] = 'Bearer $newToken';
         print('--> ${options.baseUrl} ${options.method} ${options.path}');
         print('Headers: ${options.headers}');
         print('Body: ${options.data}');
         return handler.next(options);
       }
     } on DioException catch (e) {
+      print("#================> Check Authen Chay Vao Day" );
       // Nếu server trả 401 -> logout
       if (e.response?.statusCode == 401) {
         //logout
+        print("#================> Check delete token" );
+
         SharedPreferencesConfig.delete('users');
         appRouter.go('/login');
         return handler.reject(
@@ -54,7 +58,6 @@ class ApiInterceptor extends Interceptor {
       }
     }
     // Nếu lỗi khác hoặc token null thì cũng logout
-    SharedPreferencesConfig.delete('users');
     return handler.reject(
       DioException(
         requestOptions: options,
@@ -89,6 +92,7 @@ class ApiInterceptor extends Interceptor {
     if (userJson != null && userJson.isNotEmpty) {
       final user = jsonDecode(userJson);
       try {
+        print("#================> Check token" + user['accessToken'].toString());
         return user['accessToken'] as String?;
       } catch (e) {
         print('Lỗi khi đọc token: $e');

@@ -55,11 +55,14 @@ class _HomePageState extends State<HomePage> {
               setState(() {
                 isCheckIn = !isCheckIn;
               });
+              final date = DateTime.now().toUtc();
+              print(date);
+              print(date.toLocal());
               CherryToast.success(
                 description: Text(
                   isCheckIn
-                      ? "Check out successfully"
-                      : "Check in successfully",
+                      ? "Check in successfully"
+                      : "Check out successfully",
                   style: TextStyle(color: Colors.black),
                 ),
                 animationType: AnimationType.fromTop,

@@ -2,75 +2,48 @@ part of 'calendar_bloc.dart';
 
 abstract class CalendarState extends Equatable {
   const CalendarState();
-
   @override
   List<Object?> get props => [];
 }
 
-class ScheduleInitial extends CalendarState {}
+class CalendarInitial extends CalendarState {}
 
-class ScheduleLoading extends CalendarState {}
+class CalendarLoading extends CalendarState {}
 
-class ScheduleLoaded extends CalendarState {
-  final List<ScheduleModels>? schedules;
+class CalendarLoaded extends CalendarState {
+  final List<ScheduleModels> schedules;
+  final TimeSheetModels? timeSheets;
   final bool hasReachedMax;
+  final bool isLoadingMore;
 
-  const ScheduleLoaded({required this.schedules, this.hasReachedMax = false});
+  const CalendarLoaded({
+    required this.schedules,
+    this.timeSheets,
+    this.hasReachedMax = false,
+    this.isLoadingMore = false,
+  });
 
-  ScheduleLoaded copyWith({
+  CalendarLoaded copyWith({
     List<ScheduleModels>? schedules,
+    TimeSheetModels? timeSheets,
     bool? hasReachedMax,
+    bool? isLoadingMore,
   }) {
-    return ScheduleLoaded(
+    return CalendarLoaded(
       schedules: schedules ?? this.schedules,
-      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
-    );
-  }
-
-  @override
-  // TODO: implement props
-  List<Object?> get props => [schedules, hasReachedMax];
-}
-
-class ScheduleError extends CalendarState {
-  final String message;
-
-  const ScheduleError({required this.message});
-
-  @override
-  List<Object?> get props => [message];
-}
-
-// class TimeSheetInit extends CalendarState {}
-
-class TimeSheetLoading extends CalendarState {}
-
-class TimeSheetLoaded extends CalendarState {
-  final List<TimeSheets>? timeSheets;
-  final bool hasReachedMax;
-
-  const TimeSheetLoaded({required this.timeSheets, this.hasReachedMax = false});
-
-  TimeSheetLoaded copyWith({
-    List<ScheduleModels>? schedules,
-    bool? hasReachedMax,
-  }) {
-    return TimeSheetLoaded(
       timeSheets: timeSheets ?? this.timeSheets,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
     );
   }
 
   @override
-  // TODO: implement props
-  List<Object?> get props => [timeSheets, hasReachedMax];
+  List<Object?> get props => [schedules, timeSheets, hasReachedMax, isLoadingMore];
 }
 
-class TimeSheetError extends CalendarState {
+class CalendarError extends CalendarState {
   final String message;
-
-  const TimeSheetError({required this.message});
-
+  const CalendarError({required this.message});
   @override
   List<Object?> get props => [message];
 }

@@ -1,17 +1,17 @@
-class TimeSheets {
+class TimeSheetModels {
   int? id;
   String? payrollCode;
   String? payrollName;
   String? companyCode;
   String? startDate;
   String? endDate;
-  String? paymentDate;
+  Null? paymentDate;
   String? isLocked;
   bool? isActive;
   Company? company;
   List<AttendanceRecs>? attendanceRecs;
 
-  TimeSheets(
+  TimeSheetModels(
       {this.id,
         this.payrollCode,
         this.payrollName,
@@ -24,7 +24,7 @@ class TimeSheets {
         this.company,
         this.attendanceRecs});
 
-  TimeSheets.fromJson(Map<String, dynamic> json) {
+  TimeSheetModels.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     payrollCode = json['payrollCode'];
     payrollName = json['payrollName'];

@@ -23,19 +23,27 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     FetchNotificationEvent event,
     Emitter<NotificationState> emit,
   ) async {
+    if (state is NotificationLoaded && (state as NotificationLoaded).isLoadingMore) {
+      return;
+    }
+
     if (event.isRefresh) {
       _currentPage = 1;
       _notifications.clear();
     }
 
-    if (_currentPage == 1 && !event.isRefresh) emit(NotificationLoading());
-
+    if (_currentPage == 1 && !event.isRefresh) {
+      emit(NotificationLoading());
+    }
+    else if (state is NotificationLoaded && _currentPage > 1) {
+      print("#==========> it work ");
+      emit((state as NotificationLoaded).copyWith(isLoadingMore: true));
+    }
     try {
       final newNoti = await _notificationApi.fetchNotification(
         page: _currentPage,
         pageSize: _pageSize,
       );
-      print("New Noti" + newNoti.toString());
       final bool hasReachedMax = newNoti.length < _pageSize;
 
       if(event.isRefresh || _currentPage == 1) {
@@ -47,7 +55,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       emit(NotificationLoaded(
         notifications: _notifications,
         hasReachedMax: hasReachedMax,
+        isLoadingMore: false,
       ));
+
+      if (!hasReachedMax) _currentPage++;
 
     } catch (error) {
       print(error);

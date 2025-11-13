@@ -9,6 +9,6 @@ abstract class NotificationEvent extends Equatable {
 
 class FetchNotificationEvent extends NotificationEvent {
   final bool isRefresh;
-  const FetchNotificationEvent({this.isRefresh =false});
+  const FetchNotificationEvent({this.isRefresh = false});
 }
 

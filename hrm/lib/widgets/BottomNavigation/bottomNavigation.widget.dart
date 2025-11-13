@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vietq_hrm/blocs/calendars/calendar_bloc.dart';
 import 'package:vietq_hrm/routers/router.config.dart';
 import 'package:vietq_hrm/widgets/BottomNavigation/GradientIcon.widget.dart';
 
@@ -68,7 +70,12 @@ class _BottomNavigationCustomState extends State<BottomNavigationCustom> {
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF6C951),
+                          gradient: LinearGradient(
+                            colors: [Color(0xFFF6C951), Color(0xFFB18114)],
+                            begin: Alignment.topCenter,
+                            stops: [0.3, 1.0],
+                            end: Alignment.bottomRight,
+                          ),
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
@@ -93,10 +100,10 @@ class _BottomNavigationCustomState extends State<BottomNavigationCustom> {
             } else {
               iconWidget = isActive
                   ? GradientIcon(
-                e.icon ?? const SizedBox(),
-                size: 30,
+                icon: e.icon as Widget,
+                size: 24,
                 gradient: const LinearGradient(
-                  colors: [Color(0xFFF6C951), Color(0xFFF6C951)],
+                  colors: [Color(0xFFF6C951), Color(0xFFB18114)],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),

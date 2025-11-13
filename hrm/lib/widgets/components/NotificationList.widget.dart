@@ -27,17 +27,27 @@ class _NotificationWidgetState extends State<NotificationWidget> {
 
   @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
-      // Khi cuộn gần cuối → load thêm
-      context.read<NotificationBloc>().add(const FetchNotificationEvent());
+    if (!_scrollController.hasClients) return;
+    final position = _scrollController.position;
+    final state = context.read<NotificationBloc>().state;
+    if (state is NotificationLoaded &&
+        !state.hasReachedMax &&
+        !state.isLoadingMore &&
+        position.pixels >= position.maxScrollExtent - 200) {
+      print("#==========> Load");
+      context
+          .read<NotificationBloc>()
+          .add(const FetchNotificationEvent(isRefresh: true));
     }
   }
+
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<NotificationBloc, NotificationState>(
@@ -105,18 +115,18 @@ class _NotificationWidgetState extends State<NotificationWidget> {
           return RefreshIndicator(
             onRefresh: () async {
               context.read<NotificationBloc>().add(
-                const FetchNotificationEvent(isRefresh: false),
+                const FetchNotificationEvent(),
               );
             },
             child: ListView.separated(
               controller: _scrollController,
               physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: state.notifications.length + (state.hasReachedMax ? 0 : 1),
+              itemCount: state.notifications.length +10+ (state.hasReachedMax ? 0 : 1),
               separatorBuilder: (context, index) {
                 return Divider(color: Colors.grey.shade200, height: 1);
               },
               itemBuilder: (context, index) {
-                return NotificationItems(notification: state.notifications[index]);
+                return NotificationItems(notification: state.notifications[0]);
               },
             ),
           );

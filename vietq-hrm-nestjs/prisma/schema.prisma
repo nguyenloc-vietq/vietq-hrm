@@ -349,7 +349,7 @@ model Notification {
   createdAt        DateTime                @default(now())
   updatedAt        DateTime                @updatedAt
   isActive         Boolean                 @default(true)
-  userNotifs UserNotification[]
+  userNotifs       UserNotification[]
 
   @@map("tbl_notification")
 }
@@ -440,6 +440,7 @@ model DataSourceItem {
 model PayrollConfig {
   id               Int      @id @default(autoincrement())
   companyCode      String   @unique
+  totalDay         Int      @unique @default(24)
   cycleType        String   @default("MONTHLY") // "MONTHLY", "WEEKLY", "CUSTOM"
   startDay         Int // Ngày bắt đầu kỳ lương (VD: 26)
   endDay           Int // Ngày kết thúc kỳ lương (VD: 25)

@@ -137,7 +137,7 @@ class _CalendarViewState extends State<CalendarView> {
                                     ? Colors.green
                                     : inTime.isNotEmpty
                                     ? Colors.orange
-                                    : Colors.transparent,
+                                    : Color(0xFFF6C951),
                                 width: 1.2,
                               ),
                             ),

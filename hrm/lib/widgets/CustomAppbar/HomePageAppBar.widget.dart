@@ -31,7 +31,8 @@ class HomePageAppBar extends StatelessWidget implements PreferredSizeWidget {
         padding: const EdgeInsets.only(top: 60, left: 16, right: 16),
         child: Row(
           spacing: 10,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+
           children: [
             Container(
               width: 70,
@@ -46,11 +47,11 @@ class HomePageAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
             Column(
-              // mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(name, style: textTheme.headlineMedium),
-                Text(position, style: textTheme.headlineSmall),
+                Text(position, style: textTheme.headlineSmall?.copyWith(color: Colors.grey)),
               ],
             ),
             Spacer(),

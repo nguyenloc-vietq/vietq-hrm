@@ -15,6 +15,28 @@ export class AttendanceService {
     const startOfDay = today.startOf("day").toDate();
     const endOfDay = today.endOf("day").toDate();
     // check exits check-in
+    const companyInfoSsid = await this.prisma.user.findFirst({
+      where: {
+        userCode: req.user.userCode,
+      },
+      select: {
+        company: {
+          select: {
+            ssid: true,
+          },
+        },
+      },
+    });
+
+    //check ip in offices
+
+    if (companyInfoSsid?.company.ssid !== null) {
+      const arrIp = JSON.parse(companyInfoSsid?.company.ssid as string);
+      if (!arrIp.includes(req.ip)) {
+        throw new HttpException("Check in fail, you are not in office", 400);
+      }
+    }
+
     const exitsCheckIn = await this.prisma.attendanceRecord.findFirst({
       where: {
         workDay: {
@@ -85,6 +107,29 @@ export class AttendanceService {
     const today = dayjs();
     const startOfDay = today.startOf("day").toDate();
     const endOfDay = today.endOf("day").toDate();
+
+    const companyInfoSsid = await this.prisma.user.findFirst({
+      where: {
+        userCode: req.user.userCode,
+      },
+      select: {
+        company: {
+          select: {
+            ssid: true,
+          },
+        },
+      },
+    });
+
+    //check ip in offices
+
+    if (companyInfoSsid?.company.ssid !== null) {
+      const arrIp = JSON.parse(companyInfoSsid?.company.ssid as string);
+      if (!arrIp.includes(req.ip)) {
+        throw new HttpException("Check in fail, you are not in office", 400);
+      }
+    }
+
     const exitsCheckIn = await this.prisma.attendanceRecord.findFirst({
       where: {
         workDay: {
@@ -116,7 +161,7 @@ export class AttendanceService {
     const { startMonth, endMonth } = req.query;
     const startOfMonth = dayjs().startOf("month");
     const endOfMonth = dayjs().endOf("month");
-
+    const today = req.query.today;
     try {
       // const dataTimeSheet = await this.prisma.payroll.findMany({
       //   where: {
@@ -168,6 +213,16 @@ export class AttendanceService {
               status: true,
               lateMinutes: true,
               earlyMinutes: true,
+            },
+            where: {
+              workDay: {
+                gte: today
+                  ? dayjs(today).startOf("day").toDate()
+                  : startOfMonth.toDate(),
+                lte: today
+                  ? dayjs(today).endOf("day").toDate()
+                  : endOfMonth.toDate(),
+              },
             },
           },
         },

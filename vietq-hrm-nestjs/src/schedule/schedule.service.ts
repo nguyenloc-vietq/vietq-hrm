@@ -1,3 +1,4 @@
+import { PayrollConfig } from "./../../node_modules/.prisma/client/index.d";
 import { HttpException, Injectable, Req } from "@nestjs/common";
 import { UpdateScheduleDto } from "./dto/update-schedule.dto";
 import { DatabaseService } from "../database/database.service";
@@ -84,10 +85,32 @@ export class ScheduleService {
   }
   async getSchedulesInDay(@Req() req) {
     const scheduleCode = req.query.scheduleCode;
+    const today = req.query.today;
+    console.log(today);
+    const startOfMonth = dayjs().startOf("month").toDate();
+
+    const endOfMonth = dayjs().endOf("month").toDate();
+
     try {
+      const payrollData = await this.prisma.payrollConfig.findFirst({
+        where: {
+          companyCode: req.user.companyCode,
+        },
+        select: { totalDay: true },
+      });
+      const totalWokingDay = await this.prisma.attendanceRecord.count({
+        where: {
+          userCode: req.user.userCode,
+          status: "PRESENT",
+        },
+      });
       const schedules = await this.prisma.employeeSchedule.findMany({
         where: {
           scheduleCode: scheduleCode,
+          workOn: {
+            gte: today ? dayjs(today).startOf("day").toDate() : startOfMonth,
+            lte: today ? dayjs(today).endOf("day").toDate() : endOfMonth,
+          },
           userCode: req.user.userCode,
           isActive: "Y",
         },
@@ -102,7 +125,13 @@ export class ScheduleService {
           },
         },
       });
-      return [...schedules];
+      const result = schedules.map((item) => ({
+        ...item,
+        ...payrollData,
+        totalWokingDay,
+      }));
+
+      return [...result];
     } catch (e) {
       throw new HttpException("Get schedules failed", 500);
     }

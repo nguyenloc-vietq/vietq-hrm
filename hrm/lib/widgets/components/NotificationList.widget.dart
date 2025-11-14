@@ -121,7 +121,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
             child: ListView.separated(
               controller: _scrollController,
               physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: state.notifications.length +10+ (state.hasReachedMax ? 0 : 1),
+              itemCount: state.notifications.length+ (state.hasReachedMax ? 0 : 1),
               separatorBuilder: (context, index) {
                 return Divider(color: Colors.grey.shade200, height: 1);
               },

@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_launcher_icons/ios.dart';
+import 'package:vietq_hrm/blocs/attendance/attendance_bloc.dart';
+import 'package:vietq_hrm/configs/sharedPreference/SharedPreferences.config.dart';
 import 'package:vietq_hrm/services/push_notification/notification.service.dart';
 import 'package:vietq_hrm/widgets/CustomAppbar/HomePageAppBar.widget.dart';
 import 'package:vietq_hrm/widgets/components/CalendarSlide.widget.dart';
@@ -18,12 +24,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final String currentViewDay = DateTime.now().toString();
   int num = 0;
-  bool isCheckIn = false;
-
+  String avatarUrl = '';
+  String name = '';
+  String position = '';
+  Widget? _cachedAttendanceUI;
+  Future<void> _initData() async {
+    final userData = jsonDecode(await SharedPreferencesConfig.users as String);
+    avatarUrl = userData['avatar'];
+    name = userData['fullName'];
+    position = 'Software Engineer';
+  }
   @override
   void initState() {
     super.initState();
+    _initData();
     NotificationService().requestNotificationPermission();
     NotificationService().getToken();
     NotificationService().firebaseInit(context);
@@ -32,6 +48,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return CustomLoadingOverlay(
       isLoading: false,
@@ -40,36 +58,88 @@ class _HomePageState extends State<HomePage> {
           preferredSize: Size.fromHeight(100),
           child: HomePageAppBar(
             avatar:
-                "${dotenv.env['IMAGE_ENDPOINT']}avatar/avatar-1762761355725-290262777.png",
-            name: "Ho Nguyen Loc",
-            position: "Software Engineer",
+                "${dotenv.env['IMAGE_ENDPOINT']}$avatarUrl",
+            name: name,
+            position: position,
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: SwipeToCheckIn(
-            background: isCheckIn ? Colors.red : Color(0xFFF6C951),
-            title: isCheckIn ? "Swipe to Check Out" : "Swipe to Check In",
-            onSwipe: () async {
-              setState(() {
-                isCheckIn = !isCheckIn;
-              });
-              final date = DateTime.now().toUtc();
-              print(date);
-              print(date.toLocal());
-              CherryToast.success(
-                description: Text(
-                  isCheckIn
-                      ? "Check in successfully"
-                      : "Check out successfully",
-                  style: TextStyle(color: Colors.black),
-                ),
-                animationType: AnimationType.fromTop,
-                animationDuration: Duration(milliseconds: 200),
-                autoDismiss: true,
-              ).show(context);
+          child: BlocListener<AttendanceBloc, AttendanceState>(
+            listener: (context, state) {
+              if (state is AttendanceCheckIn) {
+                CherryToast.success(
+                  description: Text(
+                    "Check In successfully",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  animationType: AnimationType.fromTop,
+                  animationDuration: Duration(milliseconds: 200),
+                  autoDismiss: true,
+                ).show(context);
+              }
+              if (state is AttendanceCheckOut) {
+                CherryToast.success(
+                  description: Text(
+                    "Check Out successfully",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  animationType: AnimationType.fromTop,
+                  animationDuration: Duration(milliseconds: 200),
+                  autoDismiss: true,
+                ).show(context);
+              }
+              if (state is AttendanceCheckInError) {
+                CherryToast.error(
+                  description: Text(
+                    state.message,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  animationType: AnimationType.fromTop,
+                  animationDuration: Duration(milliseconds: 200),
+                  autoDismiss: true,
+                ).show(context);
+              }
+              if (state is AttendanceCheckOutError) {
+                CherryToast.error(
+                  description: Text(
+                  state.message,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  animationType: AnimationType.fromTop,
+                  animationDuration: Duration(milliseconds: 200),
+                  autoDismiss: true,
+                ).show(context);
+              }
             },
+            child: BlocBuilder<AttendanceBloc, AttendanceState>(
+              buildWhen: (previous, current) {
+                if (current is AttendanceLoaded) {
+                  final list = current.timeSheets?.attendanceRecs ?? [];
+                  if (list.isNotEmpty) {
+                    final serverDay = list.first.workDay;
+                    if (serverDay != null) {
+                      return _sameDate(serverDay, currentViewDay);
+                    }
+                  }
+                  return _sameDate(current.today.toString(), currentViewDay);
+                }
+                return true;
+              },
+              builder: (context, state) {
+                if (state is AttendanceLoaded) {
+                  _cachedAttendanceUI = _buildSwipeUI(state, context);
+                  return _cachedAttendanceUI!;
+                }
+
+                if (_cachedAttendanceUI != null) {
+                  return _cachedAttendanceUI!;
+                }
+
+                return Container();
+              },
+            ),
           ),
         ),
         body: Column(
@@ -78,10 +148,7 @@ class _HomePageState extends State<HomePage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               height: 100,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: CalendarSlideWidget(),
-              ),
+              child: CalendarSlideWidget(),
             ),
             Expanded(
               child: Container(
@@ -115,4 +182,47 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
+bool _sameDate(String workDay, String uiDay) {
+  final d1 = DateTime.parse(workDay).toLocal();
+  final d2 = DateTime.parse(uiDay); // yyyy-MM-dd
+
+  return d1.year == d2.year &&
+      d1.month == d2.month &&
+      d1.day == d2.day;
+}
+
+
+Widget _buildSwipeUI(AttendanceLoaded state,BuildContext context) {
+  final dataAtt = state.timeSheets?.attendanceRecs ?? [];
+  final hasRecord = dataAtt.isNotEmpty;
+
+  final isCheckIn = hasRecord && dataAtt.first.timeIn != null;
+  final isCheckOut = hasRecord && dataAtt.first.timeOut != null;
+  return SwipeToCheckIn(
+    background: isCheckIn
+        ? (isCheckOut ? Color(0xFFF6C951) : Colors.red)
+        : Color(0xFFF6C951),
+    title: isCheckIn
+        ? (isCheckOut ? "Swipe to Check In" : "Swipe to Check Out")
+        : "Swipe to Check In",
+    onSwipe: () async {
+      if (isCheckIn && !isCheckOut) {
+        context.read<AttendanceBloc>().add(CheckOutEvent());
+      } else if (!isCheckIn && !isCheckOut) {
+        context.read<AttendanceBloc>().add(CheckInEvent());
+      } else {
+       //show toast error
+       CherryToast.error(
+         description: Text(
+           "You have checked in and checked out",
+           style: TextStyle(color: Colors.black),
+         ),
+         animationType: AnimationType.fromTop,
+         animationDuration: Duration(milliseconds: 200),
+         autoDismiss: true,
+       ).show(context);
+      }
+    },
+  );
 }

@@ -25,6 +25,7 @@ List<Map<String, dynamic>> getDaysInfoInCurrentMonth() {
       "year": date.year,
       "weekday": weekdays[date.weekday - 1],
       "currentDay": date.day == now.day,
+      "isSelected": date.day == now.day ? true : false,
     });
   }
 

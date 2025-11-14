@@ -13,6 +13,9 @@ async function bootstrap() {
     // logger: new MyLogger
     // bufferLogs: true
   });
+  app.set("trust proxy", true);
+  app.use(express.static(join(__dirname, "..", "public")));
+  app.use(express.static(join(__dirname, "..", "uploads")));
   app.enableCors({
     origin: "*", // cho phép tất cả domain
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",

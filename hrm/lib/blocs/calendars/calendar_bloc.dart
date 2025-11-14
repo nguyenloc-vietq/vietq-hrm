@@ -6,6 +6,7 @@ import 'package:vietq_hrm/models/schedule.module.dart';
 import 'package:vietq_hrm/models/timeSheet.models.dart';
 
 part 'calendar_event.dart';
+
 part 'calendar_state.dart';
 
 class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
@@ -15,21 +16,20 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
   final int _pageSize = 20;
 
   final List<ScheduleModels> _schedules = [];
+  final List<ScheduleModels> _scheduleToday = [];
   TimeSheetModels? _timeSheets;
 
   CalendarBloc(this._scheduleApi) : super(CalendarInitial()) {
     on<LoadCalendarEvent>(_onLoadCalendar);
     on<LoadMoreCalendarEvent>(_onLoadMore);
     on<RetryCalendarEvent>(_onRetry);
-
+    // on<LoadScheduleEvent>(_onLoadSchedule);
     // Load lần đầu khi khởi tạo
     add(const LoadCalendarEvent(isRefresh: true));
   }
 
-  Future<void> _onLoadCalendar(
-      LoadCalendarEvent event,
-      Emitter<CalendarState> emit,
-      ) async {
+  Future<void> _onLoadCalendar(LoadCalendarEvent event,
+      Emitter<CalendarState> emit,) async {
     // Chỉ emit loading khi là lần đầu hoặc refresh
     if (event.isRefresh || _currentPage == 1) {
       emit(CalendarLoading());
@@ -40,19 +40,28 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
       _currentPage = 1;
       _schedules.clear();
       _timeSheets = null;
-    }
 
+    }
+    if(event.today != null) {
+      _scheduleToday.clear();
+    }
     try {
       // Gọi 2 API song song → nhanh hơn, không bị chặn
       await Future.wait([
+        if (event.today != null) ...[
+          _fetchSchedulesToday(event.today!),
+        ],
+
         _fetchSchedules(),
         _fetchTimeSheets(),
       ]);
+
 
       // Emit đúng 1 lần duy nhất với dữ liệu đầy đủ
       emit(CalendarLoaded(
         schedules: List.from(_schedules), // clone để immutable
         timeSheets: _timeSheets,
+        scheduleToday: _scheduleToday,
         hasReachedMax: _hasReachedMax(),
       ));
     } catch (e) {
@@ -60,10 +69,28 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
     }
   }
 
-  Future<void> _onLoadMore(
-      LoadMoreCalendarEvent event,
-      Emitter<CalendarState> emit,
-      ) async {
+  Future<void> _fetchSchedulesToday(String today) async {
+    try {
+      final newSchedules = await _scheduleApi.fetchSchedule(
+        today: today,
+        // page: _currentPage,
+        // pageSize: _pageSize,
+      );
+
+      if (_currentPage == 1) {
+        _scheduleToday
+          ..clear()
+          ..addAll(newSchedules);
+      } else {
+        _scheduleToday.addAll(newSchedules);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> _onLoadMore(LoadMoreCalendarEvent event,
+      Emitter<CalendarState> emit,) async {
     if (state is CalendarLoaded && (state as CalendarLoaded).hasReachedMax) {
       return; // Đã hết dữ liệu
     }
@@ -81,6 +108,7 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
       ]);
 
       emit(CalendarLoaded(
+        scheduleToday: _scheduleToday,
         schedules: List.from(_schedules),
         timeSheets: _timeSheets,
         hasReachedMax: _hasReachedMax(),
@@ -94,10 +122,8 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
   }
 
   // ====================== RETRY ======================
-  Future<void> _onRetry(
-      RetryCalendarEvent event,
-      Emitter<CalendarState> emit,
-      ) async {
+  Future<void> _onRetry(RetryCalendarEvent event,
+      Emitter<CalendarState> emit,) async {
     add(const LoadCalendarEvent(isRefresh: true));
   }
 

@@ -9,6 +9,8 @@ class ScheduleModels {
   String? createdAt;
   String? updatedAt;
   Shift? shift;
+  int? totalDay;
+  int? totalWokingDay;
 
   ScheduleModels(
       {this.id,
@@ -20,7 +22,9 @@ class ScheduleModels {
         this.isActive,
         this.createdAt,
         this.updatedAt,
-        this.shift});
+        this.shift,
+        this.totalDay,
+        this.totalWokingDay});
 
   ScheduleModels.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -33,6 +37,8 @@ class ScheduleModels {
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     shift = json['shift'] != null ? new Shift.fromJson(json['shift']) : null;
+    totalDay = json['totalDay'];
+    totalWokingDay = json['totalWokingDay'];
   }
 
   Map<String, dynamic> toJson() {
@@ -49,6 +55,8 @@ class ScheduleModels {
     if (this.shift != null) {
       data['shift'] = this.shift!.toJson();
     }
+    data['totalDay'] = this.totalDay;
+    data['totalWokingDay'] = this.totalWokingDay;
     return data;
   }
 }

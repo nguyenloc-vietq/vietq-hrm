@@ -1,26 +1,29 @@
 part of 'calendar_bloc.dart';
 
-/// Base event
 abstract class CalendarEvent extends Equatable {
   const CalendarEvent();
 
   @override
   List<Object?> get props => [];
 }
+class LoadScheduleEvent extends CalendarEvent {
+  final String scheduleCode;
 
-/// Sự kiện chính: Load toàn bộ dữ liệu calendar (schedule + timesheet)
-class LoadCalendarEvent extends CalendarEvent {
-  /// true = pull-to-refresh hoặc lần đầu load
-  /// false = load more (phân trang)
-  final bool isRefresh;
-
-  const LoadCalendarEvent({required this.isRefresh});
+  const LoadScheduleEvent({required this.scheduleCode});
 
   @override
-  List<Object?> get props => [isRefresh];
+  List<Object?> get props => [scheduleCode];
+}
+class LoadCalendarEvent extends CalendarEvent {
+  final String? today;
+  final bool isRefresh;
+
+  const LoadCalendarEvent({required this.isRefresh, this.today});
+
+  @override
+  List<Object?> get props => [isRefresh, today];
 }
 
-/// Sự kiện load thêm dữ liệu khi scroll xuống cuối (nếu cần phân trang sau này)
 class LoadMoreCalendarEvent extends CalendarEvent {
   const LoadMoreCalendarEvent();
 

@@ -7,6 +7,7 @@ export class FileService {
   async getFile(filename: string, res: Response) {
     const safePath = Array.isArray(filename) ? filename.join("/") : filename;
     const file = join(process.cwd(), "src", "uploads", safePath);
+    console.log(`[===============> file |`, file);
     if (!fs.existsSync(file)) {
       throw new NotFoundException("File not found");
     }

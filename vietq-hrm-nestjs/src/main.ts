@@ -14,8 +14,9 @@ async function bootstrap() {
     // bufferLogs: true
   });
   app.set("trust proxy", true);
+  console.log(`[===============> THIS PROCESS | `, process.cwd(), "uploads");
   app.use(express.static(join(__dirname, "..", "public")));
-  app.use(express.static(join(__dirname, "..", "uploads")));
+  app.use("/api/file", express.static(join(process.cwd(), "src", "uploads")));
   app.enableCors({
     origin: "*", // cho phép tất cả domain
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",

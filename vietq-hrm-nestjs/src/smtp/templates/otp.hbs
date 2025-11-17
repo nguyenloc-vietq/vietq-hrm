@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Code</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      padding: 30px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 28px;
+      color: #333333;
+      margin-bottom: 20px;
+    }
+    h2 {
+      color: #f6c951;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 16px;
+      color: #555555;
+      margin: 10px 0;
+    }
+    .otp-code {
+      display: inline-block;
+      padding: 15px 25px;
+      font-size: 32px;
+      font-weight: bold;
+      color: #ffffff;
+      background-color: #f6c951;
+      border-radius: 8px;
+      letter-spacing: 5px;
+      margin: 20px 0;
+    }
+    .footer {
+      font-size: 14px;
+      color: #999999;
+      margin-top: 30px;
+    }
+    @media screen and (max-width: 480px) {
+      .otp-code {
+        font-size: 24px;
+        padding: 12px 20px;
+        letter-spacing: 4px;
+      }
+      h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Viet-Q HRM</h2>
+    <h1>Hello, there</h1>
+    <p>This is your OTP code</p>
+    <div class="otp-code">{{code}}</div>
+    <p>This code will expire in <strong>2 minutes</strong>. Please do not share it with anyone.</p>
+    <div class="footer">
+    Thanks for using Viet-Q HRM.<br>
+      Viet-Q HRM Team
+    </div>
+  </div>
+</body>
+</html>

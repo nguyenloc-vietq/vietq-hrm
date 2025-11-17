@@ -253,13 +253,13 @@ class _TimeSheetState extends State<TimeSheet>
                         ).toLocal(),
                       )
                       .toString(),
-                  "timeOut": DateFormat("HH:mm:ss")
+                  "timeOut": attendanceRecs[index].timeOut!= null ? DateFormat("HH:mm:ss")
                       .format(
                         DateTime.parse(
                           attendanceRecs[index].timeOut as String,
                         ).toLocal(),
                       )
-                      .toString(),
+                      .toString() : "Not yet timed out",
                   "timeLate": formatMinutesToHHMM(
                     attendanceRecs[index].lateMinutes ?? 0,
                   ),

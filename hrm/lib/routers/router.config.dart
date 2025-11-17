@@ -7,6 +7,7 @@ import 'package:vietq_hrm/screens/layout/PrivacyDetailPage.dart';
 import 'package:vietq_hrm/screens/layout/SettingPage.dart';
 import 'package:vietq_hrm/screens/layout/TermsDetailsPage.dart';
 import 'package:vietq_hrm/screens/pages/CalendarPage.dart';
+import 'package:vietq_hrm/screens/pages/ChangePasswordPage.dart';
 import 'package:vietq_hrm/screens/pages/ForgotPage.dart';
 import 'package:vietq_hrm/screens/pages/HomePage.dart';
 import 'package:vietq_hrm/screens/pages/LoginPage.dart';
@@ -14,6 +15,7 @@ import 'package:vietq_hrm/screens/pages/NotificationPage.dart';
 import 'package:vietq_hrm/screens/pages/ProfilePage.dart';
 import 'package:vietq_hrm/screens/pages/RegisterPage.dart';
 import 'package:vietq_hrm/screens/pages/ResetPasswordPage.dart';
+import 'package:vietq_hrm/screens/pages/ValidateOtpPage.dart';
 
 class RouterObject {
   final String name;
@@ -107,14 +109,21 @@ List<RouterObject> ListPublicRouter = [
     name: 'Login',
     route: '/login',
     page: LoginPage(),
-  ),RouterObject(
+  ),
+  RouterObject(
     name: 'Forgot',
     route: '/forgot',
     page: ForgotPage(),
-  ),RouterObject(
+  ),
+  RouterObject(
+    name: 'validate-otp',
+    route: '/validate_otp',
+    page: ValidateOtpPage(),
+  ),
+  RouterObject(
     name: 'reset',
     route: '/reset_password',
-    page: ResetPassword(),
+    page: ResetPasswordPage(),
   ),
   // RouterObject(
   //   name: 'Register',

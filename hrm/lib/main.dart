@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:vietq_hrm/blocs/attendance/attendance_bloc.dart';
 import 'package:vietq_hrm/blocs/calendars/calendar_bloc.dart';
+import 'package:vietq_hrm/blocs/forgot/forgot_bloc.dart';
 import 'package:vietq_hrm/configs/apiConfig/schedule.api.dart';
 import 'package:vietq_hrm/configs/sharedPreference/SharedPreferences.config.dart';
 import 'package:vietq_hrm/routers/routes.config.dart';
@@ -50,6 +51,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(
+          create: (context) => ForgotBloc(),
+        ),
         BlocProvider(
           create: (context) => CalendarBloc(ScheduleApi()),
         ),

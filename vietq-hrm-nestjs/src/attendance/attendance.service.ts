@@ -82,11 +82,6 @@ export class AttendanceService {
     const startTime = dayjs(
       `${dayjs().format("YYYY-MM-DD")}T${scheduleToday?.shift.startTime}`,
     );
-    let lateMinutes = 0;
-    if (today.isAfter(startTime)) {
-      lateMinutes = today.diff(startTime, "minute");
-    }
-
     const newAttendance = await this.prisma.attendanceRecord.create({
       data: {
         userCode: req.user.userCode,
@@ -94,7 +89,9 @@ export class AttendanceService {
         workDay: today.toDate(),
         timeIn: today.toDate(),
         status: "ABSENT",
-        lateMinutes,
+        lateMinutes: today.isAfter(startTime)
+          ? Number(today.diff(startTime, "minute"))
+          : 0,
       },
     });
     return {

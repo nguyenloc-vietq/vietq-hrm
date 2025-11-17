@@ -11,6 +11,9 @@ class ApiInterceptor extends Interceptor {
   final List<String> publicRoutes = [
     '/auth/login',
     '/auth/forgot-password',
+    '/auth/sent-otp',
+    '/auth/validate-otp',
+    '/auth/change-password',
   ];
   @override
   void onRequest(

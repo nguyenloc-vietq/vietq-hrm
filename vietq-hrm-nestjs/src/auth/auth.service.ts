@@ -11,6 +11,8 @@ import { randomInt } from "node:crypto";
 import Redis from "ioredis";
 import { TokenService } from "../token/token.service";
 import { ForgotAuthDto } from "./dto/forgot-auth.dto";
+import { MailerService } from "@nestjs-modules/mailer";
+import { SmtpService } from "src/smtp/smtp.service";
 
 @Injectable()
 export class AuthService {
@@ -18,6 +20,7 @@ export class AuthService {
     // private prisma: PrismaService,
     private readonly prisma: DatabaseService,
     private readonly tokenService: TokenService,
+    private readonly mailerService: SmtpService,
     private jwtService: JwtService,
     @Inject("REDIS_CLIENT") private readonly redisClient: Redis,
   ) {}
@@ -125,13 +128,15 @@ export class AuthService {
 
       const ttl = 120;
 
-      await this.redisClient.set(`otp:${email + ":" + req.ip}`, otp, "EX", ttl);
+      await this.redisClient.set(`otp:${email}`, otp, "EX", ttl);
 
       console.log("#================> OTP", otp);
       //sent otp to email
+      await this.mailerService.sendOtpEmail(email, otp);
 
       return {};
     } catch (e) {
+      console.log(e.message);
       throw new HttpException("Sent otp failed", 403);
     }
   }
@@ -139,15 +144,15 @@ export class AuthService {
   async validateOtp(req) {
     try {
       const { email, otp } = req.body;
-      const savedOtp = await this.redisClient.get(
-        `otp:${email + ":" + req.ip}`,
-      );
-      console.log(savedOtp);
+      console.log("#================> REQ", req.body);
+      console.log(`[===============> REQ IP | ${req.ip}`);
+      const savedOtp = await this.redisClient.get(`otp:${email}`);
+      console.log("savedOtp", savedOtp);
       if (!savedOtp) throw new HttpException("Otp expired", 403);
 
       if (savedOtp !== otp) throw new HttpException("invalid otp", 403);
 
-      await this.redisClient.del(`otp:${email + ":" + req.ip}`);
+      await this.redisClient.del(`otp:${email}`);
 
       const token = this.tokenService.sign({
         email,

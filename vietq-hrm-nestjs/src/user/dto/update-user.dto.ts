@@ -21,12 +21,12 @@ export class UpdateUserDto {
 }
 
 export class UpdateProfileDto {
-  @IsString()
   @IsEmail()
   email: string;
   @IsString()
   phone: string;
   @IsString()
   fullName: string;
-  isActive: string;
+  @IsString()
+  address: string;
 }

@@ -1,18 +1,25 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DatabaseService } from "./../database/database.service";
-import { HttpException, Injectable, Req } from "@nestjs/common";
+import { HttpException, Inject, Injectable, Req } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 // import { PrismaService } from "src/services/prisma.services";
 import { RegisterAuthDto } from "./dto/register-auth.dto";
 import { LoginAuthDto } from "./dto/login-auth.dto";
 import e from "express";
 import { comparePassword, hashPassword } from "./utils/hash.utils";
+import { randomInt } from "node:crypto";
+import Redis from "ioredis";
+import { TokenService } from "../token/token.service";
+import { ForgotAuthDto } from "./dto/forgot-auth.dto";
 
 @Injectable()
 export class AuthService {
   constructor(
     // private prisma: PrismaService,
     private readonly prisma: DatabaseService,
+    private readonly tokenService: TokenService,
     private jwtService: JwtService,
+    @Inject("REDIS_CLIENT") private readonly redisClient: Redis,
   ) {}
 
   async create(user: RegisterAuthDto) {
@@ -102,5 +109,101 @@ export class AuthService {
       };
     });
     return reslut;
+  }
+
+  async sentOtp(email: string, @Req() req: any) {
+    try {
+      const exitsUser = await this.prisma.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+
+      if (!exitsUser) throw new HttpException("User not exits", 403);
+
+      const otp = randomInt(100000, 999999).toString();
+
+      const ttl = 120;
+
+      await this.redisClient.set(`otp:${email + ":" + req.ip}`, otp, "EX", ttl);
+
+      console.log("#================> OTP", otp);
+      //sent otp to email
+
+      return {};
+    } catch (e) {
+      throw new HttpException("Sent otp failed", 403);
+    }
+  }
+
+  async validateOtp(req) {
+    try {
+      const { email, otp } = req.body;
+      const savedOtp = await this.redisClient.get(
+        `otp:${email + ":" + req.ip}`,
+      );
+      console.log(savedOtp);
+      if (!savedOtp) throw new HttpException("Otp expired", 403);
+
+      if (savedOtp !== otp) throw new HttpException("invalid otp", 403);
+
+      await this.redisClient.del(`otp:${email + ":" + req.ip}`);
+
+      const token = this.tokenService.sign({
+        email,
+        iat: Date.now(),
+      });
+
+      await this.redisClient.set(`token:${email}`, token, "EX", 120);
+
+      return {
+        email,
+        token,
+      };
+    } catch (e) {
+      console.log(e.message);
+      throw new HttpException(e.message, 403);
+    }
+  }
+
+  async changePassword(newPassword: ForgotAuthDto) {
+    try {
+      const { email, password, passwordConfirm, token } = newPassword;
+
+      const verifiToken = this.tokenService.verify(token);
+
+      if (passwordConfirm !== password)
+        throw new HttpException("Passwords do not match", 403);
+
+      const savedToken = await this.redisClient.get(`token:${email}`);
+
+      if (!savedToken || token !== savedToken)
+        throw new HttpException("Invalid token", 403);
+
+      if (!verifiToken || Date.now() - verifiToken.iat > 120 * 1000)
+        throw new HttpException("Invalid token or token is expired", 403);
+
+      const exitsUser = await this.prisma.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+      if (!exitsUser) throw new HttpException("User not exits", 403);
+      const newPasswordHash = await hashPassword(password);
+      await this.prisma.user.update({
+        where: {
+          email: email,
+        },
+        data: {
+          passwordHash: newPasswordHash,
+        },
+      });
+
+      await this.redisClient.del(`token:${email}`);
+
+      return {};
+    } catch (e) {
+      throw new HttpException(e.message, 403);
+    }
   }
 }

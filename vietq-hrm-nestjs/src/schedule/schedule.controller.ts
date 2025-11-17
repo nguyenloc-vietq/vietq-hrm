@@ -88,4 +88,15 @@ export class ScheduleController {
       "delete schedule success",
     );
   }
+
+  @Get("update-status-schedules")
+  async updateStatusSchedules(
+    @Req() req: Request,
+  ): Promise<ResponseDataSuccess<any>> {
+    return new ResponseDataSuccess(
+      await this.scheduleService.updateStatusSchedules(req),
+      200,
+      "update status schedules success",
+    );
+  }
 }

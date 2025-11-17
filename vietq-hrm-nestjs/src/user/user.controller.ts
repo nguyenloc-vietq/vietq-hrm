@@ -22,6 +22,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { extname } from "path";
 import { diskStorage } from "multer";
 import { Request } from "express";
+import { UpdateUserProfessionalDto } from "./dto/updateUserProfessional-user.dto";
 
 @Controller("user")
 export class UserController {
@@ -103,6 +104,28 @@ export class UserController {
       await this.userService.deleteUser(body),
       200,
       "delete user success",
+    );
+  }
+
+  @Post("user-update-professional")
+  async updateUserProfessional(
+    @Body(ValidationPipe) user: UpdateUserProfessionalDto,
+  ): Promise<ResponseDataSuccess<object>> {
+    return new ResponseDataSuccess(
+      await this.userService.updateUserProfessional(user),
+      200,
+      "update user professional success",
+    );
+  }
+
+  @Put("update-user-professional")
+  async editUserProfessional(
+    @Body(ValidationPipe) user: UpdateUserProfessionalDto,
+  ): Promise<ResponseDataSuccess<object>> {
+    return new ResponseDataSuccess(
+      await this.userService.editUserProfessional(user),
+      200,
+      "edit user professional success",
     );
   }
 }

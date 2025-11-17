@@ -14,6 +14,7 @@ model User {
   email        String       @unique @db.VarChar(200)
   phone        String
   fullName     String
+  address      String?
   avatar       String?
   passwordHash String       @db.VarChar(100)
   isActive     String       @default("Y") @db.VarChar(1)
@@ -30,9 +31,27 @@ model User {
   salaryConfigs SalaryConfig[]
   schedules     EmployeeSchedule[]
   userNotifs    UserNotification[]
-
+  userProfessionals UserProfessional[]
   @@index([companyCode])
   @@map("tbl_user")
+}
+
+model UserProfessional {
+  id           Int          @id @default(autoincrement())
+  userCode     String       @unique
+  companyCode  String
+  position     String
+  employeeType   String
+  isActive     String       @default("Y") @db.VarChar(1)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  user         User         @relation(fields: [userCode], references: [userCode], onDelete: Cascade)
+  company      Company      @relation(fields: [companyCode], references: [companyCode], onDelete: Cascade)
+
+  @@index([userCode])
+  @@index([companyCode])
+  @@map("tbl_user_professional")
 }
 
 model RoleEntity {
@@ -105,6 +124,14 @@ enum AttendanceStatus {
   ABSENT
 }
 
+enum ScheduleStatus {
+  PRESENT
+  ABSENT
+  LATE
+  NEXT
+  INDAY
+}
+
 enum NotificationTargetType {
   SINGLE
   ALL
@@ -130,6 +157,7 @@ model Company {
   companyCode String   @unique
   companyName String
   ssid        String?
+  address     String?
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -138,6 +166,7 @@ model Company {
   salaryConfig  SalaryConfig[]
   payrolls      Payroll[]
   salaries      Salary[]
+  userProfessionals UserProfessional[]
   PayrollConfig PayrollConfig[]
 
   @@map("tbl_company_info")
@@ -194,6 +223,7 @@ model EmployeeSchedule {
   payrollCode  String?
   userCode     String
   shiftCode    String
+  status       ScheduleStatus @default(NEXT)
   /// ERD ghi "workOn (json/nullable?)". Thực tế đa số là 1 ngày làm việc. Đổi sang DateTime; nếu bạn lưu nhiều ngày, chuyển sang bảng con.
   workOn       DateTime?
   isActive     String    @default("Y") @db.VarChar(1)

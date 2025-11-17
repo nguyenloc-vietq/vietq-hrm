@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { PayrollConfig } from "./../../node_modules/.prisma/client/index.d";
 import { HttpException, Injectable, Req } from "@nestjs/common";
 import { UpdateScheduleDto } from "./dto/update-schedule.dto";
@@ -178,6 +179,30 @@ export class ScheduleService {
         },
       });
       return [];
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+  async updateStatusSchedules(req: any) {
+    try {
+      const startDay = dayjs().startOf("day").toDate();
+      const endDay = dayjs().endOf("day").toDate();
+
+      await this.prisma.employeeSchedule.updateMany({
+        where: {
+          userCode: req.user.userCode,
+          isActive: "Y",
+          workOn: {
+            gte: dayjs().startOf("day").toDate(),
+            lte: dayjs().endOf("day").toDate(),
+          },
+        },
+        data: {
+          status: "INDAY",
+        },
+      });
+
+      return { startDay, endDay };
     } catch (error) {
       throw new HttpException(error.message, 500);
     }

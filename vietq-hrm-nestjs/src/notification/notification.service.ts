@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpException, Injectable } from "@nestjs/common";
 import { DatabaseService } from "../database/database.service";
 import { DevicesRegisterNotificationDto } from "./dto/devicesRegister-notification.dto";
@@ -5,12 +6,14 @@ import dayjs from "dayjs";
 import { CreateNotificationDto } from "./dto/create-notification.dto";
 import { CodeGeneratorService } from "../code-generator/code-generator.service";
 import { UpdateNotificationDto } from "./dto/update-notification.dto";
+import { FirebaseService } from "../firebase/firebase.service";
 
 @Injectable()
 export class NotificationService {
   constructor(
     private readonly prisma: DatabaseService,
     private codeGen: CodeGeneratorService,
+    private firebaseService: FirebaseService,
   ) {}
   async devicesRegister(dataRegister: DevicesRegisterNotificationDto) {
     try {
@@ -245,6 +248,19 @@ export class NotificationService {
         },
       });
       return notification;
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
+  async sendNotification(body: any) {
+    try {
+      const response = await this.firebaseService.sendNotification(
+        body.token,
+        body.title,
+        body.body,
+      );
+      return { response };
     } catch (error) {
       throw new HttpException(error.message, 500);
     }

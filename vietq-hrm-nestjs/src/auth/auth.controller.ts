@@ -19,6 +19,7 @@ import { ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { ResponseDataSuccess } from "src/global/globalClass";
 import { PermissionRequired } from "src/common/custom-decorator";
 import { PermitAll } from "src/common/custom-decorator";
+import { ForgotAuthDto } from "./dto/forgot-auth.dto";
 
 @Controller("auth")
 // @PermitAll()
@@ -64,5 +65,40 @@ export class AuthController {
   @PermissionRequired("QUERY")
   async getProfile(@Req() req): Promise<ResponseDataSuccess<Array<any>>> {
     return new ResponseDataSuccess(req.permission, 200, "");
+  }
+
+  @Post("sent-otp")
+  @PermitAll()
+  async sentOtp(
+    @Body() body: any,
+    @Req() req: any,
+  ): Promise<ResponseDataSuccess<object>> {
+    return new ResponseDataSuccess(
+      await this.authService.sentOtp(body.email, req),
+      200,
+      "sent otp success",
+    );
+  }
+
+  @Post("validate-otp")
+  @PermitAll()
+  async validateOtp(@Req() req: any): Promise<ResponseDataSuccess<object>> {
+    return new ResponseDataSuccess(
+      await this.authService.validateOtp(req),
+      200,
+      "validate otp success",
+    );
+  }
+
+  @Post("change-password")
+  @PermitAll()
+  async changePassword(
+    @Body(ValidationPipe) newPassword: ForgotAuthDto,
+  ): Promise<ResponseDataSuccess<object>> {
+    return new ResponseDataSuccess(
+      await this.authService.changePassword(newPassword),
+      200,
+      "change password success",
+    );
   }
 }

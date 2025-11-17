@@ -18,10 +18,13 @@ import { UserModule } from "./user/user.module";
 import { FileModule } from "./file/file.module";
 import { PermissionModule } from "./permission/permission.module";
 import { NotificationModule } from "./notification/notification.module";
+import { TokenService } from "./token/token.service";
+import { FirebaseModule } from "./firebase/firebase.module";
 
 @Module({
   imports: [
     DatabaseModule,
+    FirebaseModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -53,6 +56,7 @@ import { NotificationModule } from "./notification/notification.module";
       provide: APP_GUARD,
       useClass: PermissionRbacGuard,
     },
+    TokenService,
   ],
 })
 export class AppModule {}

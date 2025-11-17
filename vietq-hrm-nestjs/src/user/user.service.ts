@@ -10,6 +10,7 @@ import {
 import { DatabaseService } from "src/database/database.service";
 import { query } from "winston";
 import { UpdateProfileDto, UpdateUserDto } from "./dto/update-user.dto";
+import { UpdateUserProfessionalDto } from "./dto/updateUserProfessional-user.dto";
 
 @Injectable()
 export class UserService {
@@ -38,6 +39,20 @@ export class UserService {
       const user = await this.prisma.user.findUnique({
         where: {
           userCode: userCode,
+        },
+        include: {
+          company: {
+            select: {
+              address: true,
+              companyName: true,
+            },
+          },
+          userProfessionals: {
+            select: {
+              position: true,
+              employeeType: true,
+            },
+          },
         },
       });
       if (!user) throw new HttpException("User not exits", 200);
@@ -114,6 +129,36 @@ export class UserService {
       return [];
     } catch (error) {
       throw new HttpException("Delete user failed, user not exits", 500);
+    }
+  }
+
+  async updateUserProfessional(user: UpdateUserProfessionalDto) {
+    try {
+      const createNewUserProfeesional =
+        await this.prisma.userProfessional.create({
+          data: {
+            ...user,
+          },
+        });
+      return { ...createNewUserProfeesional };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
+  async editUserProfessional(user: UpdateUserProfessionalDto) {
+    try {
+      const editUserProfessional = await this.prisma.userProfessional.update({
+        where: {
+          userCode: user.userCode,
+        },
+        data: {
+          ...user,
+        },
+      });
+      return { ...editUserProfessional };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
     }
   }
 }

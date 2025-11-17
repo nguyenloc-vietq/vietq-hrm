@@ -160,4 +160,15 @@ export class NotificationController {
       "Remove notification is successfully!",
     );
   }
+
+  @Post("admin/send-notification")
+  async sendNotification(
+    @Body() data: any,
+  ): Promise<ResponseDataSuccess<object>> {
+    return new ResponseDataSuccess(
+      await this.notificationService.sendNotification(data),
+      200,
+      "Send notification is successfully!",
+    );
+  }
 }

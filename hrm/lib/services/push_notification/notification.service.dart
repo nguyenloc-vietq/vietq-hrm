@@ -1,11 +1,14 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:vietq_hrm/configs/apiConfig/notification.api.dart';
 import 'package:vietq_hrm/main.dart';
 
 
@@ -41,9 +44,33 @@ class NotificationService {
     }
   }
 
+  Future<String> getDeviceId() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      return (await deviceInfo.androidInfo).id;
+    } else if (Platform.isIOS) {
+      return (await deviceInfo.iosInfo).identifierForVendor!;
+    }
+    return '';
+  }
+
   Future<void> getToken() async {
     String? token = await _firebaseMessaging.getToken();
-    print('FCM : $token');
+    String deviceId = await getDeviceId();
+
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    try{
+      await NotificationApi().registerNotification({
+        "platform": Platform.isAndroid ? "android" : "ios",
+        "appVersion": packageInfo.version,
+        "deviceId": deviceId,
+        "fcmToken": token,
+      });
+      print('FCM : $token');
+    }catch (e){
+      print("#==========> DEVICES FCM ERROR: " + e.toString());
+    }
+
   }
 
   void initLocalNotification(BuildContext context,

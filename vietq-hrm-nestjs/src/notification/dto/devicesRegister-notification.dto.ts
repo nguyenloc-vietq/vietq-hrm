@@ -9,6 +9,4 @@ export class DevicesRegisterNotificationDto {
   deviceId: string;
   @IsString()
   fcmToken: string;
-  @IsString()
-  userCode: string;
 }

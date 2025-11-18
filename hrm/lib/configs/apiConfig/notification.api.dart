@@ -14,7 +14,9 @@ class NotificationApi {
       final response = await dio.get('/notification/user/list-notification');
       final List<dynamic> rawList = response.data['data'];
       return (rawList as List)
-          .map<NotificationModel>((item) => NotificationModel.fromJson(item as Map<String, dynamic>))
+          .map<NotificationModel>(
+            (item) => NotificationModel.fromJson(item as Map<String, dynamic>),
+          )
           .toList();
     } on DioException catch (e) {
       print(e);
@@ -24,12 +26,29 @@ class NotificationApi {
     }
   }
 
-  Future<NotificationModel> getDetailNotification({
-    required String id,
-  }) async {
+  Future<NotificationModel> getDetailNotification({required String id}) async {
     try {
       final response = await dio.get('/notification/user/notifications/$id');
-      return NotificationModel.fromJson(response.data['data'] as Map<String, dynamic>);
+      return NotificationModel.fromJson(
+        response.data['data'] as Map<String, dynamic>,
+      );
+    } on DioException catch (e) {
+      print(e);
+      final handled = handleDioError(e);
+      print(' Gọi API thất bại: ${handled}');
+      throw handled;
+    }
+  }
+
+  Future<Map<String, dynamic>> registerNotification(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      final dataNoti = await dio.post(
+        '/notification/user/devices/register',
+        data: body,
+      );
+      return dataNoti.data['data'];
     } on DioException catch (e) {
       print(e);
       final handled = handleDioError(e);

@@ -29,9 +29,10 @@ export class NotificationController {
   @Post("user/devices/register")
   async devicesRegister(
     @Body(ValidationPipe) dataRegister: DevicesRegisterNotificationDto,
+    @Req() req: any,
   ): Promise<ResponseDataSuccess<object>> {
     return new ResponseDataSuccess(
-      await this.notificationService.devicesRegister(dataRegister),
+      await this.notificationService.devicesRegister(dataRegister, req),
       200,
       "Register devices is successfully!",
     );

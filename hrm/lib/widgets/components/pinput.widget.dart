@@ -103,7 +103,7 @@ class _PinPutOtpState extends State<PinPutOtp> {
           ),
           BlocBuilder<ForgotBloc, ForgotState>(
             builder: (context, state) {
-              final isEnabled = state.otp.isValid && !state.status.isInProgress && state.status.isCanceled;
+              final isEnabled = state.otp.isValid && !state.status.isInProgress;
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: SizedBox(

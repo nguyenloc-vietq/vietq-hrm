@@ -6,6 +6,7 @@ import { Response } from "express";
 export class FileService {
   async getFile(filename: string, res: Response) {
     const safePath = Array.isArray(filename) ? filename.join("/") : filename;
+    console.log(`[===============> FULL PATH | ${safePath}`);
     const file = join(process.cwd(), "src", "uploads", safePath);
     console.log(`[===============> file |`, file);
     if (!fs.existsSync(file)) {

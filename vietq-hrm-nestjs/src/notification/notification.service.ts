@@ -15,13 +15,16 @@ export class NotificationService {
     private codeGen: CodeGeneratorService,
     private firebaseService: FirebaseService,
   ) {}
-  async devicesRegister(dataRegister: DevicesRegisterNotificationDto) {
+  async devicesRegister(
+    dataRegister: DevicesRegisterNotificationDto,
+    req: any,
+  ) {
     try {
       //chekFcmToken is exits
 
       const exitsDevices = await this.prisma.userDevice.findFirst({
         where: {
-          userCode: dataRegister.userCode,
+          userCode: req.user.userCode,
         },
       });
 
@@ -30,7 +33,7 @@ export class NotificationService {
           AND: {
             fcmToken: dataRegister.fcmToken,
             userCode: {
-              not: dataRegister.userCode,
+              not: req.user.userCode,
             },
           },
         },
@@ -49,7 +52,7 @@ export class NotificationService {
       if (exitsDevices) {
         const updateDevices = await this.prisma.userDevice.update({
           where: {
-            userCode: dataRegister.userCode,
+            userCode: req.user.userCode,
           },
           data: {
             ...dataRegister,
@@ -61,6 +64,7 @@ export class NotificationService {
         const newDevices = await this.prisma.userDevice.create({
           data: {
             ...dataRegister,
+            userCode: req.user.userCode,
           },
         });
         return newDevices;

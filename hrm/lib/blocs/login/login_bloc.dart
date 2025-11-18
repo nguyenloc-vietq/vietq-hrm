@@ -60,6 +60,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         status: FormzSubmissionStatus.failure,
         errorMessage: 'Đăng nhập thất bại!',
       ));
+      emit(state.copyWith(status: FormzSubmissionStatus.canceled));
     }
   }
 }

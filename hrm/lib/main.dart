@@ -64,7 +64,14 @@ class MyApp extends StatelessWidget {
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
         themeMode: ThemeMode.system,
+
         theme: ThemeData(
+          progressIndicatorTheme: ProgressIndicatorThemeData(
+            color: Color(0xFFF6C951),
+            linearTrackColor: Colors.redAccent,
+            borderRadius: BorderRadius.circular(5),
+            strokeWidth: 3
+          ),
           primaryColor: Color(0xFFFBE67B),
           scaffoldBackgroundColor: Colors.white,
           splashFactory: InkSplash.splashFactory,

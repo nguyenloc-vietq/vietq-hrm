@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_launcher_icons/ios.dart';
 import 'package:vietq_hrm/blocs/attendance/attendance_bloc.dart';
+import 'package:vietq_hrm/configs/apiConfig/user.api.dart';
 import 'package:vietq_hrm/configs/sharedPreference/SharedPreferences.config.dart';
 import 'package:vietq_hrm/services/push_notification/notification.service.dart';
 import 'package:vietq_hrm/widgets/CustomAppbar/HomePageAppBar.widget.dart';
@@ -26,39 +27,51 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final String currentViewDay = DateTime.now().toString();
   int num = 0;
-  String avatarUrl = '';
-  String name = '';
-  String position = '';
   Widget? _cachedAttendanceUI;
-  Future<void> _initData() async {
-    final userData = jsonDecode(await SharedPreferencesConfig.users as String);
-    avatarUrl = userData['avatar'];
-    name = userData['fullName'];
-    position = 'Software Engineer';
-  }
+  bool isLoading = true;
+  Map<String, dynamic>? userData;
+
+
   @override
   void initState() {
     super.initState();
-    _initData();
+    _getUserProfile();
     NotificationService().requestNotificationPermission();
     NotificationService().getToken();
     NotificationService().firebaseInit(context);
     NotificationService().setupInteractions(context);
   }
-
+  Future<void> _getUserProfile() async {
+    final userData = await UserApi().getProfile();
+    await SharedPreferencesConfig.add('user-profile', userData.toString());
+    print("#==========> USER PROFILE" + userData.toString());
+    setState(() {
+      isLoading = false;
+      this.userData = userData;
+    });
+  }
   @override
   Widget build(BuildContext context) {
-
-
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(child: SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator())),
+      );
+    }
+
+    final avatarUrl = userData?['avatar'] ?? '';
+    final name = userData?['fullName'] ?? '';
+    final position = userData?['userProfessionals'].length > 0 ? userData?['userProfessionals']?[0]['position'] : '';
     return CustomLoadingOverlay(
       isLoading: false,
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(100),
           child: HomePageAppBar(
-            avatar:
-                "${dotenv.env['IMAGE_ENDPOINT']}$avatarUrl",
+            avatar: "${dotenv.env['IMAGE_ENDPOINT']}$avatarUrl" ?? "",
             name: name,
             position: position,
           ),
@@ -104,7 +117,7 @@ class _HomePageState extends State<HomePage> {
               if (state is AttendanceCheckOutError) {
                 CherryToast.error(
                   description: Text(
-                  state.message,
+                    state.message,
                     style: TextStyle(color: Colors.black),
                   ),
                   animationType: AnimationType.fromTop,
@@ -183,17 +196,15 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
 bool _sameDate(String workDay, String uiDay) {
   final d1 = DateTime.parse(workDay).toLocal();
   final d2 = DateTime.parse(uiDay); // yyyy-MM-dd
 
-  return d1.year == d2.year &&
-      d1.month == d2.month &&
-      d1.day == d2.day;
+  return d1.year == d2.year && d1.month == d2.month && d1.day == d2.day;
 }
 
-
-Widget _buildSwipeUI(AttendanceLoaded state,BuildContext context) {
+Widget _buildSwipeUI(AttendanceLoaded state, BuildContext context) {
   final dataAtt = state.timeSheets?.attendanceRecs ?? [];
   final hasRecord = dataAtt.isNotEmpty;
 
@@ -212,16 +223,16 @@ Widget _buildSwipeUI(AttendanceLoaded state,BuildContext context) {
       } else if (!isCheckIn && !isCheckOut) {
         context.read<AttendanceBloc>().add(CheckInEvent());
       } else {
-       //show toast error
-       CherryToast.error(
-         description: Text(
-           "You have checked in and checked out",
-           style: TextStyle(color: Colors.black),
-         ),
-         animationType: AnimationType.fromTop,
-         animationDuration: Duration(milliseconds: 200),
-         autoDismiss: true,
-       ).show(context);
+        //show toast error
+        CherryToast.error(
+          description: Text(
+            "You have checked in and checked out",
+            style: TextStyle(color: Colors.black),
+          ),
+          animationType: AnimationType.fromTop,
+          animationDuration: Duration(milliseconds: 200),
+          autoDismiss: true,
+        ).show(context);
       }
     },
   );

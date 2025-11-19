@@ -3,6 +3,7 @@ import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
@@ -61,7 +62,7 @@ class _ValidateOtpPageState extends State<ValidateOtpPage> {
                     transform: Matrix4.translationValues(0, -lift, 0),
                     curve: Curves.easeInSine,
                     child: Container(
-                      padding: EdgeInsets.only(top: 210),
+                      padding: EdgeInsets.only(top: 210).r,
                       width: double.infinity,
                       decoration: BoxDecoration(
                         image: DecorationImage(
@@ -74,20 +75,20 @@ class _ValidateOtpPageState extends State<ValidateOtpPage> {
 
                       // color: Colors.red,
                       child: Container(
-                        padding: EdgeInsets.only(top: 20, left: 10, right: 10),
+                        padding: EdgeInsets.only(top: 20, left: 10, right: 10).r,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(30),
+                            top: Radius.circular(30).r,
                           ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              padding: EdgeInsets.only(left: 10),
+                              padding: EdgeInsets.only(left: 10).r,
                               child: Column(
-                                spacing: 10,
+                                spacing: 10.h,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
@@ -108,10 +109,10 @@ class _ValidateOtpPageState extends State<ValidateOtpPage> {
                                 ],
                               ),
                             ),
-                            SizedBox(height: 10),
+                            SizedBox(height: 10.h),
                             Container(
                               width: double.infinity,
-                              height: 200,
+                              height: 200.h,
                               child: Center(
                                 child: SvgPicture.asset(
                                   alignment: Alignment.center,
@@ -119,7 +120,7 @@ class _ValidateOtpPageState extends State<ValidateOtpPage> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 10),
+                            SizedBox(height: 10.h),
                             PinPutOtp(),
 
                             OtpResendWidget()
@@ -130,8 +131,8 @@ class _ValidateOtpPageState extends State<ValidateOtpPage> {
                     ),
                   ),
                   Positioned(
-                      top: 50,
-                      left: 10,
+                      top: 50.h,
+                      left: 10.w,
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         transform: Matrix4.translationValues(0, -lift, 0),
@@ -142,22 +143,22 @@ class _ValidateOtpPageState extends State<ValidateOtpPage> {
                         }, icon: Icon(Icons.arrow_back_ios_new_rounded), color: Colors.white,),
                       )),
                   Positioned(
-                    top: 150,
-                    left: 10,
+                    top: 150.h,
+                    left: 10.w,
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       transform: Matrix4.translationValues(0, -lift, 0),
                       // lift là biến double
                       curve: Curves.easeInSine,
-                      padding: const EdgeInsets.only(left: 10),
+                      padding: const EdgeInsets.only(left: 10).r,
                       child: Text(
                         "Password Reset",
                         style: textTheme.headlineLarge?.copyWith(
                           color: Colors.white,
-                          shadows: const [
+                          shadows: [
                             Shadow(
                               offset: Offset(0, 2),
-                              blurRadius: 50,
+                              blurRadius: 50.r,
                               color: Colors.black54,
                             ),
                           ],
@@ -169,7 +170,6 @@ class _ValidateOtpPageState extends State<ValidateOtpPage> {
               ),
             );
           }
-
       ),
     );
   }

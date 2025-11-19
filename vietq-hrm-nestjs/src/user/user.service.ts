@@ -56,7 +56,8 @@ export class UserService {
         },
       });
       if (!user) throw new HttpException("User not exits", 200);
-      return user;
+      const { passwordHash, ...payload } = user;
+      return payload;
     } catch (error) {
       throw new HttpException(error.message, 500);
     }

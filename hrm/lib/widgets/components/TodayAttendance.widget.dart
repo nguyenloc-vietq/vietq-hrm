@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -30,7 +31,7 @@ class _TodayAttendanceState extends State<TodayAttendance> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Today Attendance', style: textTheme.headlineMedium),
-        const SizedBox(height: 20),
+         SizedBox(height: 20.h),
         BlocListener<CalendarBloc, CalendarState>(
           listener: (context, state) {
             if(state is CalendarLoaded){
@@ -44,9 +45,9 @@ class _TodayAttendanceState extends State<TodayAttendance> {
             builder: (context, state) {
               return LayoutBuilder(
                 builder: (context, constraints) {
-                  double spacing = 16;
+                  double spacing = 16.h;
                   double itemWidth = (constraints.maxWidth - spacing) / 2;
-                  double itemHeight = 150;
+                  double itemHeight = 150.h;
                   return Wrap(
                     spacing: spacing,
                     runSpacing: spacing,
@@ -54,10 +55,10 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                       Container(
                         width: itemWidth,
                         height: itemHeight,
-                        padding: EdgeInsets.all(16),
+                        padding: EdgeInsets.all(16).r,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(16).r,
                         ),
                         child: Column(
                           spacing: 15,
@@ -65,20 +66,20 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Row(
-                              spacing: 10,
+                              spacing: 10.w,
                               children: [
                                 Container(
-                                  width: 30,
-                                  height: 30,
-                                  padding: EdgeInsets.all(5),
+                                  width: 30.w,
+                                  height: 30.h,
+                                  padding: EdgeInsets.all(5).r,
                                   decoration: BoxDecoration(
                                     color: Color(0xFFF6C951).withOpacity(0.3),
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(10).r,
                                   ),
                                   child: SvgPicture.asset(
                                     'assets/icons/login.svg',
-                                    width: 5,
-                                    height: 5,
+                                    width: 5.w,
+                                    height: 5.h,
                                     colorFilter: ColorFilter.mode(
                                       Color(0xFFF6C951),
                                       BlendMode.srcIn,
@@ -90,8 +91,8 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                             ),
                             if(state is CalendarLoading)
                               SizedBox(
-                                  width: 20,
-                                  height: 20,
+                                  width: 20.w,
+                                  height: 20.h,
                                   child: CircularProgressIndicator( strokeWidth: 3,)),
                             if(state is CalendarLoaded)...[
                               if(state.scheduleToday.isNotEmpty)...[
@@ -110,31 +111,31 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                       Container(
                         height: itemHeight,
                         width: itemWidth,
-                        padding: EdgeInsets.all(16),
+                        padding: EdgeInsets.all(16).r,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(16).r,
                         ),
                         child: Column(
-                          spacing: 15,
+                          spacing: 15.h,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Row(
-                              spacing: 10,
+                              spacing: 10.w,
                               children: [
                                 Container(
-                                  width: 30,
-                                  height: 30,
-                                  padding: EdgeInsets.all(5),
+                                  width: 30.w,
+                                  height: 30.h,
+                                  padding: EdgeInsets.all(5).r,
                                   decoration: BoxDecoration(
                                     color: Color(0xFFF6C951).withOpacity(0.3),
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(10).r,
                                   ),
                                   child: SvgPicture.asset(
                                     'assets/icons/logout.svg',
-                                    width: 5,
-                                    height: 5,
+                                    width: 5.w,
+                                    height: 5.h,
                                     colorFilter: ColorFilter.mode(
                                       Color(0xFFF6C951),
                                       BlendMode.srcIn,
@@ -146,8 +147,8 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                             ),
                             if(state is CalendarLoading)
                               SizedBox(
-                                  width: 20,
-                                  height: 20,
+                                  width: 20.w,
+                                  height: 20.h,
                                   child: CircularProgressIndicator( strokeWidth: 3,)),
                             if(state is CalendarLoaded) ...[
                               if(state.scheduleToday.isNotEmpty) ...[
@@ -165,31 +166,31 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                         width: itemWidth,
                         height: itemHeight,
 
-                        padding: EdgeInsets.all(16),
+                        padding: EdgeInsets.all(16).r,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(16).r,
                         ),
                         child: Column(
-                          spacing: 15,
+                          spacing: 15.h,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Row(
-                              spacing: 10,
+                              spacing: 10.w,
                               children: [
                                 Container(
-                                  width: 30,
-                                  height: 30,
-                                  padding: EdgeInsets.all(5),
+                                  width: 30.w,
+                                  height: 30.h,
+                                  padding: EdgeInsets.all(5).r,
                                   decoration: BoxDecoration(
                                     color: Color(0xFFF6C951).withOpacity(0.3),
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(10).r,
                                   ),
                                   child: SvgPicture.asset(
                                     'assets/icons/break.svg',
-                                    width: 5,
-                                    height: 5,
+                                    width: 5.w,
+                                    height: 5.h,
                                     colorFilter: ColorFilter.mode(
                                       Color(0xFFF6C951),
                                       BlendMode.srcIn,
@@ -201,9 +202,9 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                             ),
                             if(state is CalendarLoading)
                               SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator( strokeWidth: 3,)),
+                                  width: 20.w,
+                                  height: 20.h,
+                                  child: CircularProgressIndicator( strokeWidth: 3.r,)),
                             if(state is CalendarLoaded)
                               if(state.scheduleToday.isNotEmpty)...[
 
@@ -218,32 +219,32 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                       Container(
                         height: itemHeight,
                         width: itemWidth,
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(16).r,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(16).r,
                         ),
                         child: Column(
-                          spacing: 10,
+                          spacing: 10.h,
                           mainAxisSize: MainAxisSize.max,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Hàng trên: icon + tiêu đề
                             Row(
-                              spacing: 10,
+                              spacing: 10.w,
                               children: [
                                 Container(
-                                  width: 30,
-                                  height: 30,
-                                  padding: EdgeInsets.all(5),
+                                  width: 30.w,
+                                  height: 30.h,
+                                  padding: EdgeInsets.all(5).r,
                                   decoration: BoxDecoration(
                                     color: Color(0xFFF6C951).withOpacity(0.3),
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(10).r,
                                   ),
                                   child: SvgPicture.asset(
                                     'assets/icons/calendar.svg',
-                                    width: 5,
-                                    height: 5,
+                                    width: 5.w,
+                                    height: 5.h,
                                     colorFilter: ColorFilter.mode(
                                       Color(0xFFF6C951),
                                       BlendMode.srcIn,
@@ -258,7 +259,7 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                                 progress: percent,
                                 progressColor: Color(0xFFF6C951),
                                 backgroundColor: Colors.grey.shade300,
-                                size: 80,
+                                size: 80.sp,
                               ),
                             ),
                             Center(

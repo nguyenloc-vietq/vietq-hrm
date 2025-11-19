@@ -10,7 +10,8 @@ class SharedPreferencesConfig {
   //getter setter users
   static String? get users => _prefs.getString('users');
   static set users(String? value) => _prefs.setString('users', value ?? '');
-
+  static String? get userProfile => _prefs.getString('user-profile');
+  static set userProfile(String? value) => _prefs.setString('user-profile', value ?? '');
   //getter setter themes
   static bool get darkMode => _prefs.getBool('darkMode') ?? false;
   static set darkMode(bool value) => _prefs.setBool('darkMode', value);

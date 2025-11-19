@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vietq_hrm/widgets/customWidgets/CustomLoadingOverlay.dart';
 
 class PrivacyDetailPage extends StatefulWidget {
@@ -108,16 +109,16 @@ If you have any questions about this Privacy Policy, please contact:
       isLoading: false,
       child: Scaffold(
         body: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(20.0).r,
           child: SelectionArea(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Last updated: 10/10/2025 10:10:10', style: textTheme.bodySmall,),
-                  SizedBox(height: 10,),
+                  SizedBox(height: 10.h,),
                   Text('Please read these privacy, carefully before using our app operated by us.', style: textTheme.bodyMedium,),
-                  SizedBox(height: 10,),
+                  SizedBox(height: 10.h,),
                   //this content notification html converst to code
                   Html(
                     data: DataNotification['MessageBody'],
@@ -132,7 +133,7 @@ If you have any questions about this Privacy Policy, please contact:
                         margin: Margins.zero,
                       ),
                       "p": Style(
-                        margin: Margins.symmetric(vertical: 10), // giữ lại nếu bạn muốn
+                        margin: Margins.symmetric(vertical: 10.r), // giữ lại nếu bạn muốn
                         padding: HtmlPaddings.zero,
                       ),
                       "ul, ol": Style(
@@ -143,7 +144,7 @@ If you have any questions about this Privacy Policy, please contact:
                         padding: HtmlPaddings.zero,
                         margin: Margins.zero,
                       ),
-                      "h1": Style(fontSize: FontSize(24), fontWeight: FontWeight.bold),
+                      "h1": Style(fontSize: FontSize(24.sp), fontWeight: FontWeight.bold),
                       "a": Style(
                         color: Colors.blue,
                         textDecoration: TextDecoration.underline,

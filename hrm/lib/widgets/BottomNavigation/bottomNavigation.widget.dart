@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vietq_hrm/blocs/calendars/calendar_bloc.dart';
@@ -31,13 +32,13 @@ class _BottomNavigationCustomState extends State<BottomNavigationCustom> {
     return Scaffold(
       body: widget.shell,
       bottomNavigationBar: Container(
-        height: 100,
+        height: 100.h,
         // color: isDarkMode ? Colors.black : Colors.white,
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.2),
-              blurRadius: 30,
+              blurRadius: 30.r,
               offset: const Offset(1, 2),
             ),
           ],
@@ -46,8 +47,8 @@ class _BottomNavigationCustomState extends State<BottomNavigationCustom> {
           backgroundColor: isDarkMode ? Colors.black : Colors.white,
           type: BottomNavigationBarType.fixed,
           currentIndex: _currentIndex,
-          selectedLabelStyle: const TextStyle(fontSize: 10),
-          unselectedLabelStyle: const TextStyle(fontSize: 10),
+          selectedLabelStyle:  TextStyle(fontSize: 10.sp),
+          unselectedLabelStyle: TextStyle(fontSize: 10.sp),
           showSelectedLabels: false,
           showUnselectedLabels: false,
           onTap: _onTap,
@@ -60,15 +61,15 @@ class _BottomNavigationCustomState extends State<BottomNavigationCustom> {
 
             if (isCenter) {
               iconWidget = SizedBox(
-                height: 30, // 👈 Chiều cao cố định cho toàn bộ vùng
+                height: 30.h, // 👈 Chiều cao cố định cho toàn bộ vùng
                 child: Stack(
                   clipBehavior: Clip.none,
                   alignment: Alignment.center,
                   children: [
                     Positioned(
-                      top: -30,
+                      top: -30.h,
                       child: Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(12).r,
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [Color(0xFFF6C951), Color(0xFFB18114)],
@@ -80,7 +81,7 @@ class _BottomNavigationCustomState extends State<BottomNavigationCustom> {
                           boxShadow: [
                             BoxShadow(
                               color: const Color(0xFFF6C951).withOpacity(0.5),
-                              blurRadius: 12,
+                              blurRadius: 12.r,
                               offset: const Offset(0, 6),
                             ),
                           ],
@@ -88,7 +89,7 @@ class _BottomNavigationCustomState extends State<BottomNavigationCustom> {
                             color: Theme.of(context).brightness == Brightness.dark
                                 ? Colors.black
                                 : Colors.white,
-                            width: 5,
+                            width: 5.w,
                           ),
                         ),
                         child: e.icon,
@@ -101,7 +102,7 @@ class _BottomNavigationCustomState extends State<BottomNavigationCustom> {
               iconWidget = isActive
                   ? GradientIcon(
                 icon: e.icon as Widget,
-                size: 24,
+                size: 24.sp,
                 gradient: const LinearGradient(
                   colors: [Color(0xFFF6C951), Color(0xFFB18114)],
                   begin: Alignment.topCenter,

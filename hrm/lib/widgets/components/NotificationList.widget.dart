@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -144,30 +145,30 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                 child: ConstrainedBox(
                   constraints: BoxConstraints(minHeight: constraints.maxHeight),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20).r,
                     width: double.infinity,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
-                          width: 70,
-                          height: 70,
-                          padding: EdgeInsets.all(15),
+                          width: 70.w,
+                          height: 70.h,
+                          padding: EdgeInsets.all(15).r,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
+                            borderRadius: BorderRadius.circular(100).r,
                             color: Color(0xFFF8D448).withAlpha(600),
                           ),
                           child: SizedBox(
-                            width: 70,
-                            height: 70,
+                            width: 70.w,
+                            height: 70.w,
                             child: SvgPicture.asset(
                               'assets/icons/notifications.svg',
                               color: Color(0xFFF8D448),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 10,),
+                        SizedBox(height: 10.h,),
                         Text("Notification is empty", style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.center,),
                       ],
                     ),
@@ -191,7 +192,7 @@ class NotificationItems extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20).r,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.zero,
@@ -204,19 +205,19 @@ class NotificationItems extends StatelessWidget {
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 20,
+          spacing: 20.h,
           children: [
             Container(
-              padding: EdgeInsets.all(15),
-              width: 50,
-              height: 50,
+              padding: EdgeInsets.all(15).r,
+              width: 50.w,
+              height: 50.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Color(0xFFF8D448).withAlpha(600),
               ),
               child: SizedBox(
-                width: 20,
-                height: 20,
+                width: 20.w,
+                height: 20.h,
                 child: SvgPicture.asset(
                   'assets/icons/notification-icon.svg',
                   color: Color(0xFFF8D448),
@@ -225,7 +226,7 @@ class NotificationItems extends StatelessWidget {
             ),
             Expanded(
               child: Column(
-                spacing: 10,
+                spacing: 10.h,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:vietq_hrm/blocs/calendars/calendar_bloc.dart';
@@ -39,8 +40,8 @@ class _CalendarViewState extends State<CalendarView> {
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: TableCalendar(
-                  rowHeight: 80,
-                  daysOfWeekHeight: 50,
+                  rowHeight: 80.h,
+                  daysOfWeekHeight: 50.h,
                   firstDay: DateTime(DateTime.now().year, 1, 1),
                   lastDay: DateTime(DateTime.now().year, 12, 31),
                   focusedDay: _focusedDay,
@@ -56,39 +57,39 @@ class _CalendarViewState extends State<CalendarView> {
                   headerStyle: HeaderStyle(
                     formatButtonVisible: false,
                     leftChevronIcon: Container(
-                      width: 50,
-                      height: 50,
+                      width: 50.w,
+                      height: 50.w,
                       decoration: BoxDecoration(
                         shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8).r,
                         color: Color(0xFFF8D448).withAlpha(50),
                         // border: Border.all(color: Colors.orange),
                       ),
                       child: Icon(
                         Icons.chevron_left_outlined,
                         color: Color(0xFFF8D448),
-                        size: 30,
+                        size: 30.sp,
                       ),
                     ),
                     rightChevronIcon: Container(
-                      width: 50,
-                      height: 50,
+                      width: 50.w,
+                      height: 50.h,
                       decoration: BoxDecoration(
                         shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8).r,
                         color: Color(0xFFF8D448).withAlpha(50),
                         // border: Border.all(color: Colors.orange),
                       ),
                       child: Icon(
                         Icons.chevron_right_outlined,
                         color: Color(0xFFF8D448),
-                        size: 30,
+                        size: 30.sp,
                       ),
                     ),
                     headerPadding: EdgeInsets.symmetric(vertical: 8),
                     titleCentered: true,
                     titleTextStyle: TextStyle(
-                      fontSize: 20,
+                      fontSize: 20.sp,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -96,7 +97,7 @@ class _CalendarViewState extends State<CalendarView> {
                   calendarStyle: CalendarStyle(
                     todayTextStyle: TextStyle(color: Colors.orange),
                     todayDecoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(8).r,
                       color: Colors.orange[50],
                       border: Border.all(color: Colors.orange),
                     ),
@@ -119,26 +120,26 @@ class _CalendarViewState extends State<CalendarView> {
                         children: [
                           // Khối chính (nền của ô ngày)
                           Container(
-                            width: 60,
-                            margin: const EdgeInsets.all(4),
+                            width: 60.w,
+                            margin: const EdgeInsets.all(4).r,
                             padding: const EdgeInsets.symmetric(
                               vertical: 2,
                               horizontal: 4,
-                            ),
+                            ).r,
                             decoration: BoxDecoration(
                               color: outTime.isNotEmpty && inTime.isNotEmpty
                                   ? Colors.green[50]
                                   : inTime.isNotEmpty
                                   ? Colors.orange[50]
                                   : Colors.grey[50],
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(8).r,
                               border: Border.all(
                                 color: outTime.isNotEmpty && inTime.isNotEmpty
                                     ? Colors.green
                                     : inTime.isNotEmpty
                                     ? Colors.orange
                                     : Color(0xFFF6C951),
-                                width: 1.2,
+                                width: 1.2.w,
                               ),
                             ),
                             child: Column(
@@ -148,7 +149,7 @@ class _CalendarViewState extends State<CalendarView> {
                                 Text(
                                   '${day.day}',
                                   style: TextStyle(
-                                    fontSize: 13,
+                                    fontSize: 13.sp,
                                     fontWeight: FontWeight.bold,
                                     color: outTime.isNotEmpty
                                         ? Colors.green[800]
@@ -157,14 +158,14 @@ class _CalendarViewState extends State<CalendarView> {
                                         : Colors.grey[700],
                                   ),
                                 ),
-                                const SizedBox(height: 2),
+                                SizedBox(height: 2.h),
 
                                 // Hiển thị giờ vào/ra
                                 if (inTime.isNotEmpty || outTime.isNotEmpty)
                                   Text(
                                     inTime.isNotEmpty ? '$inTime <-' : '',
                                     style: TextStyle(
-                                      fontSize: 9,
+                                      fontSize: 9.sp,
                                       fontWeight: FontWeight.w600,
                                       color:
                                           inTime.isNotEmpty &&
@@ -177,7 +178,7 @@ class _CalendarViewState extends State<CalendarView> {
                                 Text(
                                   outTime.isNotEmpty ? '$outTime ->' : '',
                                   style: TextStyle(
-                                    fontSize: 9,
+                                    fontSize: 9.sp,
                                     fontWeight: FontWeight.w600,
                                     color:
                                         outTime.isNotEmpty &&
@@ -192,24 +193,24 @@ class _CalendarViewState extends State<CalendarView> {
                           ),
                           if (true)
                             Positioned(
-                              top: -5, // hơi nhô lên trên
-                              right: -10, // góc phải
+                              top: -5.h, // hơi nhô lên trên
+                              right: -10.w, // góc phải
                               child: Transform(
-                                transform: Matrix4.rotationZ(0.5),
+                                transform: Matrix4.rotationZ(0.5.r),
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 4,
                                     vertical: 2,
-                                  ),
+                                  ).r,
                                   decoration: BoxDecoration(
                                     color: Colors.redAccent,
-                                    borderRadius: BorderRadius.circular(6),
+                                    borderRadius: BorderRadius.circular(6).r,
                                   ),
-                                  child: const Text(
+                                  child: Text(
                                     'NOW',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 8,
+                                      fontSize: 8.sp,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -226,26 +227,26 @@ class _CalendarViewState extends State<CalendarView> {
                       final outTime = _checkInData[key]?.outTime ?? '';
                       final isWeeken = day.weekday == DateTime.saturday || day.weekday == DateTime.sunday;
                       return Container(
-                        width: 60,
-                        margin: const EdgeInsets.all(4),
+                        width: 60.w,
+                        margin: const EdgeInsets.all(4).r,
                         padding: const EdgeInsets.symmetric(
                           vertical: 2,
                           horizontal: 4,
-                        ),
+                        ).r,
                         decoration: BoxDecoration(
                           color: outTime.isNotEmpty && inTime.isNotEmpty
                               ? Colors.green[50]
                               : inTime.isNotEmpty
                               ? Colors.orange[50]
                               : Colors.grey[50],
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(8).r,
                           border: Border.all(
                             color: outTime.isNotEmpty && inTime.isNotEmpty
                                 ? Colors.green
                                 : inTime.isNotEmpty
                                 ? Colors.orange
                                 : Colors.transparent,
-                            width: 1.2,
+                            width: 1.2.w,
                           ),
                         ),
                         child: Column(
@@ -255,7 +256,7 @@ class _CalendarViewState extends State<CalendarView> {
                             Text(
                               '${day.day}',
                               style: TextStyle(
-                                fontSize: 13,
+                                fontSize: 13.sp,
                                 fontWeight: FontWeight.bold,
                                 color: isWeeken ? Colors.red : outTime.isNotEmpty
                                     ? Colors.green[800]
@@ -264,14 +265,14 @@ class _CalendarViewState extends State<CalendarView> {
                                     : Colors.grey[700],
                               ),
                             ),
-                            const SizedBox(height: 2),
+                            SizedBox(height: 2.h),
 
                             // Hiển thị giờ vào/ra
                             if (inTime.isNotEmpty || outTime.isNotEmpty)
                               Text(
                                 inTime.isNotEmpty ? '$inTime <-' : '',
                                 style: TextStyle(
-                                  fontSize: 9,
+                                  fontSize: 9.sp,
                                   fontWeight: FontWeight.w600,
                                   color:
                                       inTime.isNotEmpty && isBefore(inTime, "08:15")
@@ -283,7 +284,7 @@ class _CalendarViewState extends State<CalendarView> {
                             Text(
                               outTime.isNotEmpty ? '$outTime ->' : '',
                               style: TextStyle(
-                                fontSize: 9,
+                                fontSize: 9.sp,
                                 fontWeight: FontWeight.w600,
                                 color:
                                     outTime.isNotEmpty && isBefore(outTime, "17:00")

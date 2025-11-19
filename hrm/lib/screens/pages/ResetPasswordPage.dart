@@ -3,6 +3,7 @@ import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
@@ -38,9 +39,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             autoDismiss: true,
           ).show(context);
           context.push('/');
-
-        }
-        else if (state.status.isFailure) {
+        } else if (state.status.isFailure) {
           CherryToast.error(
             description: Text(
               state.errorMessage.toString(),
@@ -64,7 +63,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   transform: Matrix4.translationValues(0, -lift, 0),
                   curve: Curves.easeInSine,
                   child: Container(
-                    padding: EdgeInsets.only(top: 210),
+                    padding: EdgeInsets.only(top: 210).r,
                     width: double.infinity,
                     decoration: BoxDecoration(
                       image: DecorationImage(
@@ -77,20 +76,20 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
                     // color: Colors.red,
                     child: Container(
-                      padding: EdgeInsets.only(top: 20, left: 10, right: 10),
+                      padding: EdgeInsets.only(top: 20, left: 10, right: 10).r,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(30),
+                          top: Radius.circular(30).r,
                         ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            padding: EdgeInsets.only(left: 10),
+                            padding: EdgeInsets.only(left: 10).r,
                             child: Column(
-                              spacing: 10,
+                              spacing: 10.r,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
@@ -104,10 +103,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                               ],
                             ),
                           ),
-                          SizedBox(height: 10),
+                          SizedBox(height: 10.h),
                           Container(
                             width: double.infinity,
-                            height: 200,
+                            height: 200.h,
                             child: Center(
                               child: SvgPicture.asset(
                                 alignment: Alignment.center,
@@ -115,14 +114,14 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 10),
+                          SizedBox(height: 10.h),
 
                           Container(
                             // color: Color(0xFFF6C951),
                             padding: EdgeInsets.symmetric(
                               horizontal: 10,
                               vertical: 10,
-                            ),
+                            ).r,
                             child: Column(
                               children: [
                                 // BlocBuilder()
@@ -132,7 +131,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                       .read<ForgotBloc>()
                                       .add(PasswordChanged(pass)),
                                   decoration: InputDecoration(
-                                    errorText: state.password.displayError != null
+                                    errorText:
+                                        state.password.displayError != null
                                         ? 'Password must be at least 6 characters'
                                         : null,
                                     suffixIcon: IconButton(
@@ -154,26 +154,26 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                     labelText: 'Enter your password',
                                     // hintText: 'e.g., John Doe',
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(20).r,
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(20).r,
                                       borderSide: BorderSide(
-                                        width: 2,
+                                        width: 2.r,
                                         color: Color(0xFFF6C951),
                                       ), // Border when not focused
                                     ),
                                     focusColor: Color(0xFFF6C951),
                                     enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(20).r,
                                       borderSide: BorderSide(
-                                        width: 1,
+                                        width: 1.r,
                                         color: Colors.grey,
                                       ), // Border when not focused
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 20),
+                                SizedBox(height: 20.h),
                                 TextField(
                                   obscureText: !_isPasswordVisible,
                                   onChanged: (pass) => {
@@ -182,7 +182,11 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                     ),
                                   },
                                   decoration: InputDecoration(
-                                    errorText: state.passwordComfrim.isValid && state.passwordComfrim.error == null  ? null : 'Password không khớp',
+                                    errorText:
+                                        state.passwordComfrim.isValid &&
+                                            state.passwordComfrim.error == null
+                                        ? null
+                                        : 'Password không khớp',
                                     suffixIcon: IconButton(
                                       icon: _isPasswordVisible
                                           ? SvgPicture.asset(
@@ -202,20 +206,20 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                     labelText: 'Enter your password again',
                                     // hintText: 'e.g., John Doe',
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(20).r,
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(20).r,
                                       borderSide: BorderSide(
-                                        width: 2,
+                                        width: 2.r,
                                         color: Color(0xFFF6C951),
                                       ), // Border when not focused
                                     ),
                                     focusColor: Color(0xFFF6C951),
                                     enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(20).r,
                                       borderSide: BorderSide(
-                                        width: 1,
+                                        width: 1.r,
                                         color: Colors.grey,
                                       ), // Border when not focused
                                     ),
@@ -224,42 +228,46 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                               ],
                             ),
                           ),
-                          SizedBox(height: 10),
+                          SizedBox(height: 10.h),
 
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                            ).r,
                             child: SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
                                 onPressed:
                                     state.isValid && !state.status.isInProgress
                                     ? () => {
-                                        context.read<ForgotBloc>().add(ChangePasswordSubmitted()),
+                                        context.read<ForgotBloc>().add(
+                                          ChangePasswordSubmitted(),
+                                        ),
                                       }
                                     : null,
                                 style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
+                                    borderRadius: BorderRadius.circular(20).r,
                                   ),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 10,
                                     vertical: 15,
-                                  ),
+                                  ).r,
                                   backgroundColor: Color(0xFFF6C951),
                                 ),
                                 child: state.status.isInProgress
-                                    ? const SizedBox(
-                                        width: 30,
-                                        height: 30,
+                                    ? SizedBox(
+                                        width: 30.w,
+                                        height: 30.h,
                                         child: CircularProgressIndicator(
                                           color: Colors.white,
-                                          strokeWidth: 2,
+                                          strokeWidth: 2.r,
                                         ),
                                       )
-                                    : const Text(
+                                    : Text(
                                         'Continue',
                                         style: TextStyle(
-                                          fontSize: 18,
+                                          fontSize: 18.sp,
                                           color: Colors.white,
                                         ),
                                       ),
@@ -272,8 +280,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   ),
                 ),
                 Positioned(
-                  top: 50,
-                  left: 10,
+                  top: 50.h,
+                  left: 10.w,
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     transform: Matrix4.translationValues(0, -lift, 0),
@@ -289,22 +297,22 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   ),
                 ),
                 Positioned(
-                  top: 150,
-                  left: 10,
+                  top: 150.h,
+                  left: 10.w,
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     transform: Matrix4.translationValues(0, -lift, 0),
                     // lift là biến double
                     curve: Curves.easeInSine,
-                    padding: const EdgeInsets.only(left: 10),
+                    padding: const EdgeInsets.only(left: 10).r,
                     child: Text(
                       "Password Reset",
                       style: textTheme.headlineLarge?.copyWith(
                         color: Colors.white,
-                        shadows: const [
+                        shadows: [
                           Shadow(
                             offset: Offset(0, 2),
-                            blurRadius: 50,
+                            blurRadius: 50.r,
                             color: Colors.black54,
                           ),
                         ],

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -26,7 +27,7 @@ class _YourActivityState extends State<YourActivity> {
       builder: (context, state) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 12,
+          spacing: 12.h,
           children: [
             Text('Your Activity', style: textTheme.headlineMedium),
             if (state is AttendanceLoading)
@@ -42,32 +43,32 @@ class _YourActivityState extends State<YourActivity> {
               if (state.timeSheets?.attendanceRecs?.length != 0) ...[
                 if (state.timeSheets?.attendanceRecs?.first.timeIn != null) ...[
                   Wrap(
-                    spacing: 16,
-                    runSpacing: 16,
+                    spacing: 16.r,
+                    runSpacing: 16.r,
                     children: [
                       Container(
-                        padding: EdgeInsets.all(16),
+                        padding: EdgeInsets.all(16).r,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(16).r,
                         ),
                         child: Row(
-                          spacing: 15,
+                          spacing: 15.w,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Container(
-                              width: 40,
-                              height: 40,
-                              padding: EdgeInsets.all(5),
+                              width: 40.w,
+                              height: 40.h,
+                              padding: EdgeInsets.all(5).r,
                               decoration: BoxDecoration(
                                 color: Color(0xFFF8D448).withOpacity(0.3),
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(10).r,
                               ),
                               child: SvgPicture.asset(
                                 'assets/icons/login.svg',
-                                width: 5,
-                                height: 5,
+                                width: 5.w,
+                                height: 5.h,
                                 colorFilter: ColorFilter.mode(
                                   Color(0xFFF8D448),
                                   BlendMode.srcIn,
@@ -132,32 +133,32 @@ class _YourActivityState extends State<YourActivity> {
                 if (state.timeSheets?.attendanceRecs?.first.timeOut !=
                     null) ...[
                   Wrap(
-                    spacing: 16,
-                    runSpacing: 16,
+                    spacing: 16.r,
+                    runSpacing: 16.r,
                     children: [
                       Container(
-                        padding: EdgeInsets.all(16),
+                        padding: EdgeInsets.all(16).r,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(16).r,
                         ),
                         child: Row(
-                          spacing: 15,
+                          spacing: 15.w,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Container(
-                              width: 40,
-                              height: 40,
-                              padding: EdgeInsets.all(5),
+                              width: 40.w,
+                              height: 40.h,
+                              padding: EdgeInsets.all(5).r,
                               decoration: BoxDecoration(
                                 color: Color(0xFFF8D448).withOpacity(0.3),
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(10).r,
                               ),
                               child: SvgPicture.asset(
                                 'assets/icons/logout.svg',
-                                width: 5,
-                                height: 5,
+                                width: 5.w,
+                                height: 5.h,
                                 colorFilter: ColorFilter.mode(
                                   Color(0xFFF8D448),
                                   BlendMode.srcIn,
@@ -228,7 +229,7 @@ class _YourActivityState extends State<YourActivity> {
                 ),
               ],
             ],
-            SizedBox(height: 50),
+            SizedBox(height: 50.h),
           ],
         );
       },

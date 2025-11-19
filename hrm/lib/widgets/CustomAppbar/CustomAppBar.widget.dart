@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
@@ -32,7 +33,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             if (actions != null)
               Container(
                  child: Wrap(
-                    spacing: 4,
+                    spacing: 4.w,
                     children: actions!.map((action) => IconButton(
                       icon: SvgPicture.asset(action['icon']),
                       onPressed: action['action'],

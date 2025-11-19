@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vietq_hrm/blocs/user/user_bloc.dart';
 
 class MyProfilePage extends StatefulWidget {
   const MyProfilePage({super.key});
@@ -8,7 +11,8 @@ class MyProfilePage extends StatefulWidget {
   State<MyProfilePage> createState() => _MyProfilePageState();
 }
 
-class _MyProfilePageState extends State<MyProfilePage> with SingleTickerProviderStateMixin {
+class _MyProfilePageState extends State<MyProfilePage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -25,23 +29,21 @@ class _MyProfilePageState extends State<MyProfilePage> with SingleTickerProvider
 
   Widget _buildInfoRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      padding: const EdgeInsets.symmetric(vertical: 12.0).r,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label,
-              style: const TextStyle(
-                color: Colors.grey,
-                fontSize: 14,
-              )),
-          const SizedBox(height: 6),
-          Text(value,
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              )),
-          const Divider(height: 1, thickness: 1, color: Color(0xFFECECEC)),
+          Text(label, style: TextStyle(color: Colors.grey, fontSize: 14.sp)),
+          SizedBox(height: 6.h),
+          Text(
+            value,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+           Divider(height: 1.h, thickness: 1.r, color: Color(0xFFECECEC)),
         ],
       ),
     );
@@ -49,75 +51,103 @@ class _MyProfilePageState extends State<MyProfilePage> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-
-      body: Column(
-        children: [
-          // TabBar
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            height: 48,
-            decoration: BoxDecoration(
-              color: const Color(0xFFF4F5F9),
-              borderRadius: BorderRadius.circular(12),
+    return BlocBuilder<UserBloc, UserState>(
+      builder: (context, state) {
+        if (state is UserLoading) {
+          return Center(
+            child: SizedBox(
+              width: 30.w,
+              height: 30.h,
+              child: CircularProgressIndicator(),
             ),
-            child: TabBar(
-              controller: _tabController,
-              indicatorSize: TabBarIndicatorSize.tab,
-              indicator: BoxDecoration(
-                color: const Color(0xFFF6C951), // xanh dương
-                borderRadius: BorderRadius.circular(10),
-              ),
-              dividerColor: Colors.transparent,
-              labelColor: Colors.white,
-              unselectedLabelColor: Colors.black,
-              tabs: const [
-                Tab(text: "Personal"),
-                Tab(text: "Professional"),
-              ],
-            ),
-          ),
-
-          // TabBarView nội dung
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
+          );
+        }
+        if (state is UserLoaded) {
+          return Scaffold(
+            body: Column(
               children: [
-                // Tab 1: Personal
-                SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildInfoRow("Full Name", "Ho Nguyen Loc"),
-                      _buildInfoRow("Email Address", "nguyenloc@viet-q.com"),
-                      _buildInfoRow("Phone Number", "(037) 266-3903"),
-                      _buildInfoRow("Address",
-                          "155b Xa An Phu Tay Binh Chan h HCMC"),
+                // TabBar
+                Container(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ).r,
+                  height: 48.w,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF4F5F9),
+                    borderRadius: BorderRadius.circular(12).r,
+                  ),
+                  child: TabBar(
+                    controller: _tabController,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    indicator: BoxDecoration(
+                      color: const Color(0xFFF6C951), // xanh dương
+                      borderRadius: BorderRadius.circular(10).r,
+                    ),
+                    dividerColor: Colors.transparent,
+                    labelColor: Colors.white,
+                    unselectedLabelColor: Colors.black,
+                    tabs: const [
+                      Tab(text: "Personal"),
+                      Tab(text: "Professional"),
                     ],
                   ),
                 ),
 
-                // Tab 2: Professional
-                SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                // TabBarView nội dung
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
                     children: [
-                      _buildInfoRow("Position", "Software Engineer"),
-                      _buildInfoRow("Company Email Address", "nguyenloc@viet-q.com"),
-                      _buildInfoRow("Employee Type", "Full time"),
-                      _buildInfoRow("Address Office",
-                          "11TH Floor, Miss Ao Dai Building, 21 Nguyen Trung Ngan, Sai Gon Ward, HCMC, Viet Nam"),
+                      // Tab 1: Personal
+                      SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(horizontal: 24).r,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildInfoRow("Full Name", state.user.fullName ?? ''),
+                            _buildInfoRow(
+                              "Email Address",
+                              state.user.email ?? '',
+                            ),
+                            _buildInfoRow("Phone Number", state.user.phone ?? ''),
+                            _buildInfoRow(
+                              "Address",
+                              state.user.address ?? '',
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Tab 2: Professional
+                      SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(horizontal: 24).r,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildInfoRow("Position", state.user.userProfessionals?.first.position ?? ''),
+                            _buildInfoRow(
+                              "Company Email Address",
+                              state.user.email ?? '',
+                            ),
+                            _buildInfoRow("Employee Type", state.user.userProfessionals?.first.employeeType ?? ''),
+                            _buildInfoRow(
+                              "Address Office",
+                              state.user.company?.address ?? 'Address is not found',
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Tab 3: Documents
                     ],
                   ),
                 ),
-                // Tab 3: Documents
               ],
             ),
-          ),
-        ],
-      ),
+          );
+        }
+        return const Center(child: Text('User not found...!'));
+      },
     );
   }
 }

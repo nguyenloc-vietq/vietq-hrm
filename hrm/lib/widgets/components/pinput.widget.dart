@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
@@ -33,14 +34,14 @@ class _PinPutOtpState extends State<PinPutOtp> {
     const borderColor = Colors.grey;
 
     final defaultPinTheme = PinTheme(
-      width: 56,
-      height: 56,
-      textStyle: const TextStyle(
-        fontSize: 22,
+      width: 56.w,
+      height: 56.h,
+      textStyle: TextStyle(
+        fontSize: 22.sp,
         color: Color.fromRGBO(30, 60, 87, 1),
       ),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(19),
+        borderRadius: BorderRadius.circular(19).r,
         border: Border.all(color: borderColor),
       ),
     );
@@ -49,7 +50,7 @@ class _PinPutOtpState extends State<PinPutOtp> {
       key: formKey,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        spacing: 20,
+        spacing: 20.h,
         children: [
           Directionality(
             textDirection: TextDirection.ltr,
@@ -58,7 +59,7 @@ class _PinPutOtpState extends State<PinPutOtp> {
               controller: pinController,
               focusNode: focusNode,
               defaultPinTheme: defaultPinTheme,
-              separatorBuilder: (index) => const SizedBox(width: 10),
+              separatorBuilder: (index) => SizedBox(width: 10.h),
               hapticFeedbackType: HapticFeedbackType.lightImpact,
               keyboardType: TextInputType.number,
               inputFormatters: [
@@ -72,27 +73,27 @@ class _PinPutOtpState extends State<PinPutOtp> {
                 context.read<ForgotBloc>().add(OtpChanged(pin));
               },
               cursor: Column(
-                spacing: 10,
+                spacing: 10.h,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(bottom: 9),
-                    width: 22,
-                    height: 1,
+                    margin: const EdgeInsets.only(bottom: 9).r,
+                    width: 22.w,
+                    height: 1.h,
                     color: focusedBorderColor,
                   ),
                 ],
               ),
               focusedPinTheme: defaultPinTheme.copyWith(
                 decoration: defaultPinTheme.decoration!.copyWith(
-                  borderRadius: BorderRadius.circular(19),
+                  borderRadius: BorderRadius.circular(19).r,
                   border: Border.all(color: focusedBorderColor),
                 ),
               ),
               submittedPinTheme: defaultPinTheme.copyWith(
                 decoration: defaultPinTheme.decoration!.copyWith(
                   color: fillColor,
-                  borderRadius: BorderRadius.circular(19),
+                  borderRadius: BorderRadius.circular(19).r,
                   border: Border.all(color: focusedBorderColor),
                 ),
               ),
@@ -105,7 +106,7 @@ class _PinPutOtpState extends State<PinPutOtp> {
             builder: (context, state) {
               final isEnabled = state.otp.isValid && !state.status.isInProgress;
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10).r,
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -116,26 +117,26 @@ class _PinPutOtpState extends State<PinPutOtp> {
                         : null,
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(20).r,
                       ),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 10,
                         vertical: 15,
-                      ),
+                      ).r,
                       backgroundColor: const Color(0xFFF6C951),
                     ),
                     child: state.status.isInProgress
-                        ? const SizedBox(
-                      width: 30,
-                      height: 30,
+                        ? SizedBox(
+                      width: 30.w,
+                      height: 30.h,
                       child: CircularProgressIndicator(
                         color: Colors.white,
-                        strokeWidth: 2,
+                        strokeWidth: 2.r,
                       ),
                     )
-                        : const Text(
+                        : Text(
                       'Verify OTP',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+                      style: TextStyle(fontSize: 18.sp, color: Colors.white),
                     ),
                   ),
                 ),

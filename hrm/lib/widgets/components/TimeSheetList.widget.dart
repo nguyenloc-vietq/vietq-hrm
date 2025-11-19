@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:vietq_hrm/blocs/calendars/calendar_bloc.dart';
@@ -17,15 +18,15 @@ class TimeSheet extends StatefulWidget {
 Widget _timeSheetItems(Map<String, dynamic> dataItem, BuildContext context) {
   final textTheme = Theme.of(context).textTheme;
   return Container(
-    margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+    margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20).r,
     width: double.infinity,
     decoration: BoxDecoration(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(20).r,
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(0.1),
-          blurRadius: 10,
+          blurRadius: 10.r,
           offset: const Offset(0, 5),
         ),
       ],
@@ -34,7 +35,7 @@ Widget _timeSheetItems(Map<String, dynamic> dataItem, BuildContext context) {
       child: Row(
         children: [
           Container(
-            width: 10,
+            width: 10.w,
             decoration: BoxDecoration(
               color: dataItem['attendance_status'] == 'late'
                   ? Colors.red
@@ -46,25 +47,25 @@ Widget _timeSheetItems(Map<String, dynamic> dataItem, BuildContext context) {
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20),
                 bottomLeft: Radius.circular(20),
-              ),
+              ).r,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(10.0).r,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 10,
+              spacing: 10.h,
               children: [
                 Row(
-                  spacing: 10,
+                  spacing: 10.w,
                   children: [
                     SizedBox(
-                      width: 20,
-                      height: 20,
+                      width: 20.w,
+                      height: 20.h,
                       child: SvgPicture.asset(
                         'assets/icons/calendar.svg',
-                        width: 5,
-                        height: 5,
+                        width: 5.sp,
+                        height: 5.sp,
                         colorFilter: ColorFilter.mode(
                           Color(0xFFF6C951),
                           BlendMode.srcIn,
@@ -83,23 +84,23 @@ Widget _timeSheetItems(Map<String, dynamic> dataItem, BuildContext context) {
                 Text('Early Leaving: ${dataItem['earlyLeaving']}'),
                 // Text('Over Time: ${dataItem['overtime']}'),
                 Row(
-                  spacing: 20,
+                  spacing: 20.w,
                   children: [
                     Row(
-                      spacing: 10,
+                      spacing: 10.w,
                       children: [
                         Container(
-                          width: 30,
-                          height: 30,
-                          padding: EdgeInsets.all(5),
+                          width: 30.w,
+                          height: 30.h,
+                          padding: EdgeInsets.all(5).r,
                           decoration: BoxDecoration(
                             color: Color(0xFFF6C951).withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(10).r,
                           ),
                           child: SvgPicture.asset(
                             'assets/icons/login.svg',
-                            width: 5,
-                            height: 5,
+                            width: 5.w,
+                            height: 5.h,
                             colorFilter: ColorFilter.mode(
                               Color(0xFFF6C951),
                               BlendMode.srcIn,
@@ -110,20 +111,20 @@ Widget _timeSheetItems(Map<String, dynamic> dataItem, BuildContext context) {
                       ],
                     ),
                     Row(
-                      spacing: 10,
+                      spacing: 10.w,
                       children: [
                         Container(
-                          width: 30,
-                          height: 30,
-                          padding: EdgeInsets.all(5),
+                          width: 30.w,
+                          height: 30.h,
+                          padding: EdgeInsets.all(5).r,
                           decoration: BoxDecoration(
                             color: Color(0xFFF6C951).withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(10).r,
                           ),
                           child: SvgPicture.asset(
                             'assets/icons/logout.svg',
-                            width: 5,
-                            height: 5,
+                            width: 5.w,
+                            height: 5.h,
                             colorFilter: ColorFilter.mode(
                               Color(0xFFF6C951),
                               BlendMode.srcIn,
@@ -155,13 +156,13 @@ class _TimeSheetState extends State<TimeSheet>
     return BlocBuilder<CalendarBloc, CalendarState>(
       builder: (context, state) {
         if (state is CalendarLoading) {
-          return const Center(
+          return Center(
             child: SizedBox(
-              width: 20,
-              height: 20,
+              width: 20.w,
+              height: 20.h,
               child: CircularProgressIndicator(
                 color: Color(0xFFF8D448),
-                strokeWidth: 3,
+                strokeWidth: 3.r,
               ),
             ),
           );
@@ -182,30 +183,30 @@ class _TimeSheetState extends State<TimeSheet>
                       minHeight: constraints.maxHeight,
                     ),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 20).r,
                       width: double.infinity,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
-                            width: 70,
-                            height: 70,
-                            padding: EdgeInsets.all(15),
+                            width: 70.w,
+                            height: 70.h,
+                            padding: EdgeInsets.all(15).r,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
+                              borderRadius: BorderRadius.circular(100).r,
                               color: Color(0xFFF8D448).withAlpha(600),
                             ),
                             child: SizedBox(
-                              width: 70,
-                              height: 70,
+                              width: 70.w,
+                              height: 70.h,
                               child: SvgPicture.asset(
                                 'assets/icons/calendar-error.svg',
                                 color: Color(0xFFF8D448),
                               ),
                             ),
                           ),
-                          const SizedBox(height: 10),
+                          SizedBox(height: 10.h),
                           Text(
                             "Fetch calendar is error, please refresh calendar ${state.message}",
                             style: Theme.of(context).textTheme.bodyMedium,

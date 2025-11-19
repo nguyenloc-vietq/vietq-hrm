@@ -1,14 +1,13 @@
 import 'dart:convert';
-
 import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_launcher_icons/ios.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:vietq_hrm/blocs/attendance/attendance_bloc.dart';
-import 'package:vietq_hrm/configs/apiConfig/user.api.dart';
-import 'package:vietq_hrm/configs/sharedPreference/SharedPreferences.config.dart';
+import 'package:vietq_hrm/blocs/user/user_bloc.dart';
 import 'package:vietq_hrm/services/push_notification/notification.service.dart';
 import 'package:vietq_hrm/widgets/CustomAppbar/HomePageAppBar.widget.dart';
 import 'package:vietq_hrm/widgets/components/CalendarSlide.widget.dart';
@@ -28,57 +27,55 @@ class _HomePageState extends State<HomePage> {
   final String currentViewDay = DateTime.now().toString();
   int num = 0;
   Widget? _cachedAttendanceUI;
-  bool isLoading = true;
-  Map<String, dynamic>? userData;
-
 
   @override
   void initState() {
     super.initState();
-    _getUserProfile();
+    context.read<UserBloc>().add(LoadUserEvent());
     NotificationService().requestNotificationPermission();
     NotificationService().getToken();
     NotificationService().firebaseInit(context);
     NotificationService().setupInteractions(context);
   }
-  Future<void> _getUserProfile() async {
-    final userData = await UserApi().getProfile();
-    await SharedPreferencesConfig.add('user-profile', userData.toString());
-    print("#==========> USER PROFILE" + userData.toString());
-    setState(() {
-      isLoading = false;
-      this.userData = userData;
-    });
-  }
+
   @override
   Widget build(BuildContext context) {
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    if (isLoading) {
-      return const Scaffold(
-        body: Center(child: SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator())),
-      );
-    }
 
-    final avatarUrl = userData?['avatar'] ?? '';
-    final name = userData?['fullName'] ?? '';
-    final position = userData?['userProfessionals'].length > 0 ? userData?['userProfessionals']?[0]['position'] : '';
     return CustomLoadingOverlay(
       isLoading: false,
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(100),
-          child: HomePageAppBar(
-            avatar: "${dotenv.env['IMAGE_ENDPOINT']}$avatarUrl" ?? "",
-            name: name,
-            position: position,
+          preferredSize: Size.fromHeight(100.r),
+          child: BlocBuilder<UserBloc, UserState>(
+            builder: (context, state) {
+              if (state is UserLoaded) {
+                final avatarUrl = state.user.avatar ?? '';
+                final name = state.user.fullName ?? '';
+                final position = state.user.userProfessionals?.first != null
+                    ? state.user.userProfessionals?.first.position
+                    : '';
+                return HomePageAppBar(
+                  avatar: "${dotenv.env['IMAGE_ENDPOINT']}$avatarUrl" ?? "",
+                  name: name,
+                  position: position ?? '',
+                );
+              }
+              return Skeletonizer(
+                effect: PulseEffect(),
+                enabled: true,
+                child: HomePageAppBar(
+                  avatar: "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.jpg",
+                  name: "name",
+                  position: "position",
+                ),
+              );
+            },
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0).r,
           child: BlocListener<AttendanceBloc, AttendanceState>(
             listener: (context, state) {
               if (state is AttendanceCheckIn) {
@@ -156,11 +153,11 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         body: Column(
-          spacing: 20,
+          spacing: 20.h,
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              height: 100,
+              padding: const EdgeInsets.symmetric(horizontal: 16).r,
+              height: 100.h,
               child: CalendarSlideWidget(),
             ),
             Expanded(
@@ -171,7 +168,7 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(30),
                     topRight: Radius.circular(30),
-                  ),
+                  ).r,
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -179,7 +176,7 @@ class _HomePageState extends State<HomePage> {
                     left: 20,
                     right: 20,
                     bottom: 40,
-                  ),
+                  ).r,
                   child: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

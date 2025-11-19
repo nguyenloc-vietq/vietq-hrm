@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 class HalfCircleProgress extends StatelessWidget {
   final double progress; // 0.0 → 1.0
   final double size;
@@ -46,13 +48,13 @@ class _HalfCirclePainter extends CustomPainter {
 
     final backgroundPaint = Paint()
       ..color = backgroundColor
-      ..strokeWidth = 10
+      ..strokeWidth = 10.r
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
     final progressPaint = Paint()
       ..color = progressColor
-      ..strokeWidth = 10
+      ..strokeWidth = 10.r
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 

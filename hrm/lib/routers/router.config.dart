@@ -8,6 +8,7 @@ import 'package:vietq_hrm/screens/layout/SettingPage.dart';
 import 'package:vietq_hrm/screens/layout/TermsDetailsPage.dart';
 import 'package:vietq_hrm/screens/pages/CalendarPage.dart';
 import 'package:vietq_hrm/screens/pages/ChangePasswordPage.dart';
+import 'package:vietq_hrm/screens/pages/EditProfilePage.dart';
 import 'package:vietq_hrm/screens/pages/ForgotPage.dart';
 import 'package:vietq_hrm/screens/pages/HomePage.dart';
 import 'package:vietq_hrm/screens/pages/LoginPage.dart';
@@ -149,7 +150,19 @@ List<RouterObject> ListDetailsRouter = [
     route: '/notification/:idNotification',
     page: NotificationDetailPages(),
   ),
+  RouterObject(
+    name: 'Edit profile',
+    // icon: SvgPicture.asset(
+    //   'assets/icons/user.svg',
+    //   width: 24,
+    //   height: 24,
+    //   colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+    // ),
+    route: '/edit-profile',
+    page: EditProfilePage(),
+  ),
 ];
+
 List<RouterObject> ListDetailProfileRouter = [
   RouterObject(
     name: 'My Profile',
@@ -206,4 +219,5 @@ List<RouterObject> ListDetailProfileRouter = [
     route: '/logout',
     page: NotificationDetailPages(),
   ),
+
 ];

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
@@ -28,21 +29,21 @@ class HomePageAppBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: true,
       flexibleSpace: Container(
         color: isDarkMode ? Colors.black : Colors.white,
-        padding: const EdgeInsets.only(top: 60, left: 16, right: 16),
+        padding: const EdgeInsets.only(top: 60, left: 16, right: 16).r,
         child: Row(
-          spacing: 10,
+          spacing: 10.w,
           crossAxisAlignment: CrossAxisAlignment.center,
 
           children: [
             Container(
-              width: 70,
-              height: 70,
+              width: 70.w,
+              height: 70.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Color(0xFFF6C951), width: 3),
+                border: Border.all(color: Color(0xFFF6C951), width: 3.r),
               ),
               child: CircleAvatar(
-                radius: 50,
+                radius: 50.r,
                 backgroundImage: NetworkImage(avatar),
               ),
             ),
@@ -56,15 +57,15 @@ class HomePageAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             Spacer(),
             Container(
-              width: 50,
-              height: 50,
+              width: 50.w,
+              height: 50.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.grey, width: 1),
+                border: Border.all(color: Colors.grey, width: 1.r),
               ),
               child: SizedBox(
-                width: 30,
-                height: 30,
+                width: 30.w,
+                height: 30.h,
                 child: IconButton(onPressed: () {
                   context.go("/notification");
                 }, icon: SvgPicture.asset(

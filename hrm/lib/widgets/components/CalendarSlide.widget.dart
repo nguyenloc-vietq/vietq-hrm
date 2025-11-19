@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vietq_hrm/blocs/attendance/attendance_bloc.dart';
 import 'package:vietq_hrm/blocs/calendars/calendar_bloc.dart';
 import 'package:vietq_hrm/utils/getDayInMonth.dart';
@@ -29,26 +30,24 @@ class _CalendarSlideWidgetState extends State<CalendarSlideWidget> {
 
       final currentIndex = listDay.indexWhere((day) => day["currentDay"] == true);
       listDay[currentIndex]["isSelected"] = true;
-
+      print("DAYYYYY" + listDay[currentIndex]["day"].toString());
       result = _toUtcIsoString(
         listDay[currentIndex]["year"].toString(),
         listDay[currentIndex]["month"].toString(),
-        listDay[currentIndex]["day"] .toString(),
+        listDay[currentIndex]["day"].toString(),
       );
-
     } else {
       for (var day in listDay) {
         day["isSelected"] = false;
       }
 
       listDay[index]["isSelected"] = true;
-
+      print("DAYYYYY" + listDay[index]["day"].toString());
       result = _toUtcIsoString(
         listDay[index]["year"].toString(),
         listDay[index]["month"].toString(),
         listDay[index]["day"].toString(),
       );
-
     }
 
     setState(() {});
@@ -62,7 +61,7 @@ class _CalendarSlideWidgetState extends State<CalendarSlideWidget> {
     final m = int.parse(month.padLeft(2, '0'));
     final d = int.parse(day.padLeft(2, '0'));
 
-    return DateTime(y, m, d).toUtc().toIso8601String();
+    return DateTime.utc(y, m, d).toIso8601String();
   }
 
   void _scrollToCurrentDay() {
@@ -70,7 +69,7 @@ class _CalendarSlideWidgetState extends State<CalendarSlideWidget> {
     final currentIndex = listDay.indexWhere((day) => day["currentDay"] == true);
 
     if (currentIndex != -1) {
-      const itemWidth = 86.0; // 80 (width) + 6 (margin)
+      final itemWidth = 86.0.w; // 80 (width) + 6 (margin)
       final position = (currentIndex - 2) * itemWidth;
       _scrollController.animateTo(
         position,
@@ -86,7 +85,7 @@ class _CalendarSlideWidgetState extends State<CalendarSlideWidget> {
     return BlocBuilder<CalendarBloc, CalendarState>(
       builder: (context, state) {
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10.0),
+          padding: const EdgeInsets.symmetric(vertical: 10.0).r,
           child: ListView.builder(
             clipBehavior: Clip.none,
             scrollDirection: Axis.horizontal,
@@ -97,6 +96,7 @@ class _CalendarSlideWidgetState extends State<CalendarSlideWidget> {
               return ElevatedButton(
                 onPressed: () async {
                   final day = await _onSelectDay(index);
+                  print("#==========> ON SELECT DAY" + day);
                   context.read<CalendarBloc>().add(LoadCalendarEvent(isRefresh: true, today: day.toString()));
                   context.read<AttendanceBloc>().add(LoadAttendanceEvent(today: day.toString()));
                 },
@@ -112,13 +112,13 @@ class _CalendarSlideWidgetState extends State<CalendarSlideWidget> {
                   clipBehavior: Clip.none,
                   children: [
                     Container(
-                      width: 80,
-                      margin: const EdgeInsets.only(right: 6),
+                      width: 80.w,
+                      margin: const EdgeInsets.only(right: 6).r,
                       decoration: BoxDecoration(
                         color: day["isSelected"]
                             ? Color(0xFFF6C951).withOpacity(0.8)
                             : Colors.white ,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(12).r,
                         border: Border.all(
                           color: day["isSelected"]
                               ? Color(0xFFF6C951)
@@ -134,7 +134,7 @@ class _CalendarSlideWidgetState extends State<CalendarSlideWidget> {
                               color: day["isSelected"] ? Colors.white : Colors.black,
                             ),
                           ),
-                          const SizedBox(height: 6),
+                          SizedBox(height: 6.h),
                           Text(
                             day["weekday"].toString(),
                             style: textTheme.bodyMedium?.copyWith(
@@ -146,25 +146,25 @@ class _CalendarSlideWidgetState extends State<CalendarSlideWidget> {
                     ),
                     if(day["currentDay"])
                      Positioned(
-                      top: -10, // hơi nhô lên trên
-                      left: 20, // góc phải
+                      top: -10.h, // hơi nhô lên trên
+                      left: 20.w, // góc phải
                       child: Transform(
-                        transform: Matrix4.rotationZ(0),
+                        transform: Matrix4.rotationZ(0.r),
                         child: Container(
-                          width: 40,
+                          width: 40.w,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 4,
                             vertical: 2,
-                          ),
+                          ).r,
                           decoration: BoxDecoration(
                             color: Colors.redAccent,
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(6).r,
                           ),
-                          child: const Text(
+                          child: Text(
                             'Today',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 10,
+                              fontSize: 10.sp,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

@@ -80,4 +80,15 @@ class ScheduleApi {
       throw handle;
     }
   }
+
+  Future<void> updateStatusSchedules() async {
+    try {
+      await dio.get('/schedule/update-status-schedules');
+      print("#==========> UPDATE STATUS SCHEDULES IS SUCCESS!:");
+    } on DioException catch (e) {
+      print("#==========> ${e.message}");
+      final handle = handleDioError(e);
+      throw handle;
+    }
+  }
 }

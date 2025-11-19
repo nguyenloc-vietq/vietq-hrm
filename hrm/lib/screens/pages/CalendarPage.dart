@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vietq_hrm/blocs/calendars/calendar_bloc.dart';
 import 'package:vietq_hrm/configs/apiConfig/schedule.api.dart';
 import 'package:vietq_hrm/widgets/CustomAppbar/CustomAppBar.widget.dart';
@@ -40,11 +41,11 @@ class _CalendarPageState extends State<CalendarPage>
         children: [
           // TabBar
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            height: 48,
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8).r,
+            height: 48.h,
             decoration: BoxDecoration(
               color: const Color(0xFFF4F5F9),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12).r,
             ),
             child: TabBar(
               controller: _tabController,
@@ -52,7 +53,7 @@ class _CalendarPageState extends State<CalendarPage>
               // indicatorPadding: const EdgeInsets.symmetric(horizontal: 16),
               indicator: BoxDecoration(
                 color: const Color(0xFFF6C951), // xanh dương
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10).r,
               ),
               dividerColor: Colors.transparent,
               labelColor: Colors.white,
@@ -72,11 +73,11 @@ class _CalendarPageState extends State<CalendarPage>
                 if (state is CalendarLoading) {
                   return Center(
                     child: SizedBox(
-                      width: 20,
-                      height: 20,
+                      width: 20.w,
+                      height: 20.h,
                       child: CircularProgressIndicator(
                         color: Color(0xFFF8D448),
-                        strokeWidth: 3,
+                        strokeWidth: 3.r,
                       ),
                     ),
                   );

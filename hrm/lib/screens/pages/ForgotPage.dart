@@ -3,6 +3,7 @@ import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
@@ -31,7 +32,7 @@ class _ForgotPageState extends State<ForgotPage> {
               transform: Matrix4.translationValues(0, -lift, 0),
               curve: Curves.easeInSine,
               child: Container(
-                padding: EdgeInsets.only(top: 210),
+                padding: EdgeInsets.only(top: 210).r,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   image: DecorationImage(
@@ -44,20 +45,20 @@ class _ForgotPageState extends State<ForgotPage> {
 
                 // color: Colors.red,
                 child: Container(
-                  padding: EdgeInsets.only(top: 20, left: 10, right: 10),
+                  padding: EdgeInsets.only(top: 20, left: 10, right: 10).r,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(30),
+                      top: Radius.circular(30).r,
                     ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: EdgeInsets.only(left: 10),
+                        padding: EdgeInsets.only(left: 10).r,
                         child: Column(
-                          spacing: 10,
+                          spacing: 10.h,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
@@ -71,10 +72,10 @@ class _ForgotPageState extends State<ForgotPage> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: 10.h),
                       Container(
                         width: double.infinity,
-                        height: 200,
+                        height: 200.h,
                         child: Center(
                           child: SvgPicture.asset(
                             alignment: Alignment.center,
@@ -91,7 +92,7 @@ class _ForgotPageState extends State<ForgotPage> {
                             padding: EdgeInsets.symmetric(
                               horizontal: 10,
                               vertical: 10,
-                            ),
+                            ).r,
                             child: Column(
                               children: [
                                 TextField(
@@ -109,10 +110,10 @@ class _ForgotPageState extends State<ForgotPage> {
                                     labelText: 'Enter your email address',
                                     // hintText: 'e.g., John Doe',
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(20).r,
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(20).r,
                                       borderSide: BorderSide(
                                         width: 2,
                                         color: Color(0xFFF6C951),
@@ -120,7 +121,7 @@ class _ForgotPageState extends State<ForgotPage> {
                                     ),
                                     focusColor: Color(0xFFF6C951),
                                     enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(20).r,
                                       borderSide: BorderSide(
                                         width: 1,
                                         color: Colors.grey,
@@ -128,7 +129,7 @@ class _ForgotPageState extends State<ForgotPage> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 20),
+                                SizedBox(height: 20.h),
                                 // BlocBuilder()
                               ],
                             ),
@@ -180,22 +181,22 @@ class _ForgotPageState extends State<ForgotPage> {
                                bloc.add(ForgotSubmitted()),
                             } : null,
                             style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20).r),
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15).r,
                               backgroundColor: Color(0xFFF6C951),
                             ),
                             child: state.status.isInProgress
-                                ? const SizedBox(
-                              width: 30,
-                              height: 30,
+                                ? SizedBox(
+                              width: 30.w,
+                              height: 30.h,
                               child: CircularProgressIndicator(
                                 color: Colors.white,
-                                strokeWidth: 2,
+                                strokeWidth: 2.r,
                               ),
                             )
-                                : const Text(
+                                : Text(
                               'Continue',
-                              style: TextStyle(fontSize: 18, color: Colors.white),
+                              style: TextStyle(fontSize: 18.sp, color: Colors.white),
                             ),
                           ),
                         ),
@@ -210,8 +211,8 @@ class _ForgotPageState extends State<ForgotPage> {
               ),
             ),
             Positioned(
-                top: 50,
-                left: 10,
+                top: 50.h,
+                left: 10.w,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   transform: Matrix4.translationValues(0, -lift, 0),
@@ -222,22 +223,22 @@ class _ForgotPageState extends State<ForgotPage> {
                   }, icon: Icon(Icons.arrow_back_ios_new_rounded), color: Colors.white,),
                 )),
             Positioned(
-              top: 150,
-              left: 10,
+              top: 150.h,
+              left: 10.w,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 transform: Matrix4.translationValues(0, -lift, 0),
                 // lift là biến double
                 curve: Curves.easeInSine,
-                padding: const EdgeInsets.only(left: 10),
+                padding: const EdgeInsets.only(left: 10).r,
                 child: Text(
                   "Password Reset",
                   style: textTheme.headlineLarge?.copyWith(
                     color: Colors.white,
-                    shadows: const [
+                    shadows: [
                       Shadow(
                         offset: Offset(0, 2),
-                        blurRadius: 50,
+                        blurRadius: 50.r,
                         color: Colors.black54,
                       ),
                     ],

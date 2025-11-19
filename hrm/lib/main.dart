@@ -5,13 +5,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:vietq_hrm/blocs/attendance/attendance_bloc.dart';
 import 'package:vietq_hrm/blocs/calendars/calendar_bloc.dart';
 import 'package:vietq_hrm/blocs/forgot/forgot_bloc.dart';
+import 'package:vietq_hrm/blocs/user/user_bloc.dart';
 import 'package:vietq_hrm/configs/apiConfig/schedule.api.dart';
+import 'package:vietq_hrm/configs/apiConfig/user.api.dart';
 import 'package:vietq_hrm/configs/sharedPreference/SharedPreferences.config.dart';
 import 'package:vietq_hrm/routers/routes.config.dart';
 import 'package:vietq_hrm/services/firebase/firebase_options.dart';
@@ -49,80 +52,112 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => ForgotBloc(),
-        ),
-        BlocProvider(
-          create: (context) => CalendarBloc(ScheduleApi()),
-        ),
-        BlocProvider(
-          create: (context) => AttendanceBloc(ScheduleApi()),
-        ),
-      ],
-      child: MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        themeMode: ThemeMode.system,
+    return ScreenUtilInit(
+      designSize: const Size(428, 926),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (context) => ForgotBloc()),
+            BlocProvider(create: (context) => UserBloc(UserApi())),
+            BlocProvider(create: (context) => CalendarBloc(ScheduleApi())),
+            BlocProvider(create: (context) => AttendanceBloc(ScheduleApi())),
+          ],
+          child: GestureDetector(
+            // Khi chạm vào bất cứ chỗ nào không phải TextField
+            onTap: () {
+              // Hủy focus để ẩn bàn phím
+              FocusScope.of(context).unfocus();
+            },
+            child: MaterialApp.router(
+              debugShowCheckedModeBanner: false,
+              themeMode: ThemeMode.system,
 
-        theme: ThemeData(
-          progressIndicatorTheme: ProgressIndicatorThemeData(
-            color: Color(0xFFF6C951),
-            linearTrackColor: Colors.redAccent,
-            borderRadius: BorderRadius.circular(5),
-            strokeWidth: 3
-          ),
-          primaryColor: Color(0xFFFBE67B),
-          scaffoldBackgroundColor: Colors.white,
-          splashFactory: InkSplash.splashFactory,
-          splashColor: Colors.transparent,
-          hoverColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          appBarTheme: AppBarTheme(backgroundColor: Colors.white),
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFFFBE67B),
-            brightness: Brightness.light,
-          ),
-          textTheme: TextTheme(
-            headlineLarge: GoogleFonts.ubuntu(
-              fontSize: 25,
-              fontWeight: FontWeight.bold,
+              theme: ThemeData(
+                progressIndicatorTheme: ProgressIndicatorThemeData(
+                  color: Color(0xFFF6C951),
+                  linearTrackColor: Colors.redAccent,
+                  borderRadius: BorderRadius.circular(5.r),
+                  strokeWidth: 3.r,
+                ),
+                primaryColor: Color(0xFFFBE67B),
+                scaffoldBackgroundColor: Colors.white,
+                splashFactory: InkSplash.splashFactory,
+                splashColor: Colors.transparent,
+                hoverColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                appBarTheme: AppBarTheme(backgroundColor: Colors.white),
+                colorScheme: ColorScheme.fromSeed(
+                  seedColor: const Color(0xFFFBE67B),
+                  brightness: Brightness.light,
+                ),
+                textTheme: TextTheme(
+                  headlineLarge: GoogleFonts.ubuntu(
+                    fontSize: 25.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  headlineMedium: GoogleFonts.ubuntu(
+                    fontSize: 22.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  headlineSmall: GoogleFonts.ubuntu(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  bodyLarge: GoogleFonts.ubuntu(fontSize: 16.sp),
+                  bodyMedium: GoogleFonts.ubuntu(
+                    fontSize: 14.sp,
+                    color: Colors.grey[800],
+                  ),
+                  bodySmall: GoogleFonts.ubuntu(fontSize: 14.sp, color: Colors.grey),
+                ),
+              ),
+              darkTheme: ThemeData(
+                splashFactory: InkSplash.splashFactory,
+                splashColor: Colors.transparent,
+                hoverColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                brightness: Brightness.dark,
+                primaryColor: Color(0xFFFBE67B),
+                scaffoldBackgroundColor: const Color(0xFF121212),
+                appBarTheme: const AppBarTheme(
+                  backgroundColor: Color(0xFF121212),
+                  foregroundColor: Colors.white,
+                ),
+                colorScheme: ColorScheme.fromSeed(
+                  seedColor: Color(0xFFF8D448),
+                  brightness: Brightness.dark,
+                ),
+                textTheme: TextTheme(
+                  headlineLarge: GoogleFonts.ubuntu(
+                    fontSize: 25.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  headlineMedium: GoogleFonts.ubuntu(
+                    fontSize: 22.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  headlineSmall: GoogleFonts.ubuntu(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  bodyLarge: GoogleFonts.ubuntu(fontSize: 16.sp),
+                  bodyMedium: GoogleFonts.ubuntu(
+                    fontSize: 14.sp,
+                    color: Colors.grey[800],
+                  ),
+                  bodySmall: GoogleFonts.ubuntu(fontSize: 14.sp, color: Colors.grey),
+                ),
+              ),
+              routerConfig: appRouter,
+              // builder: (context, child) {
+              //   return HeroControllerScope.none(child: child!);
+              // },
             ),
-            headlineMedium: GoogleFonts.ubuntu(
-              fontSize: 22,
-              fontWeight: FontWeight.w600,
-            ),
-            headlineSmall: GoogleFonts.ubuntu(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-            ),
-            bodyLarge: GoogleFonts.ubuntu(fontSize: 16,),
-            bodyMedium: GoogleFonts.ubuntu(fontSize: 14, color: Colors.grey[800]),
-            bodySmall: GoogleFonts.ubuntu(fontSize: 14, color: Colors.grey)
           ),
-        ),
-        darkTheme: ThemeData(
-          splashFactory: InkSplash.splashFactory,
-          splashColor: Colors.transparent,
-          hoverColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          brightness: Brightness.dark,
-          primaryColor: Color(0xFFFBE67B),
-          scaffoldBackgroundColor: const Color(0xFF121212),
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Color(0xFF121212),
-            foregroundColor: Colors.white,
-          ),
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Color(0xFFF8D448),
-            brightness: Brightness.dark,
-          ),
-        ),
-        routerConfig: appRouter,
-        // builder: (context, child) {
-        //   return HeroControllerScope.none(child: child!);
-        // },
-      ),
+        );
+      }
     );
   }
 }
@@ -172,7 +207,6 @@ class _MyHomePageState extends State<MyHomePage> {
         // in the middle of the parent.
         child: Text('H2 Subtitle', style: textTheme.headlineMedium),
       ),
-
     );
   }
 }

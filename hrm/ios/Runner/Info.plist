@@ -6,6 +6,12 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>Ứng dụng cần truy cập thư viện ảnh để chọn ảnh avatar</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Ứng dụng cần lưu ảnh mới vào thư viện</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Ứng dụng cần truy cập camera để chụp ảnh hồ sơ hoặc tài liệu.</string>
 	<key>CFBundleDisplayName</key>
 	<string>Hrm</string>
 	<key>CFBundleExecutable</key>

@@ -8,6 +8,7 @@ class ScheduleModels {
   String? isActive;
   String? createdAt;
   String? updatedAt;
+  String? status;
   Shift? shift;
   int? totalDay;
   int? totalWokingDay;
@@ -19,6 +20,7 @@ class ScheduleModels {
         this.userCode,
         this.shiftCode,
         this.workOn,
+        this.status,
         this.isActive,
         this.createdAt,
         this.updatedAt,
@@ -33,6 +35,7 @@ class ScheduleModels {
     userCode = json['userCode'];
     shiftCode = json['shiftCode'];
     workOn = json['workOn'];
+    status = json['status'];
     isActive = json['isActive'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
@@ -47,6 +50,7 @@ class ScheduleModels {
     data['scheduleCode'] = this.scheduleCode;
     data['payrollCode'] = this.payrollCode;
     data['userCode'] = this.userCode;
+    data['status'] = this.status;
     data['shiftCode'] = this.shiftCode;
     data['workOn'] = this.workOn;
     data['isActive'] = this.isActive;
@@ -65,6 +69,7 @@ class Shift {
   String? shiftCode;
   String? name;
   String? startTime;
+
   String? endTime;
 
   Shift({this.shiftCode, this.name, this.startTime, this.endTime});

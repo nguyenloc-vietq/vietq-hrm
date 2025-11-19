@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:vietq_hrm/configs/apiConfig/notification.api.dart';
@@ -52,16 +53,16 @@ class _NotificationDetailPagesState extends State<NotificationDetailPages> {
       isLoading: isLoading,
       child: Scaffold(
         body: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(20.0).r,
           child: SelectionArea(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(dataNotification?.notification?.title ?? '', style: textTheme.headlineMedium,),
-                  SizedBox(height: 10,),
+                  SizedBox(height: 10.h,),
                   dataNotification != null ? Text('Last updated: ${DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.parse(dataNotification?.updatedAt as String).toLocal()).toString() }', style: textTheme.bodySmall,): SizedBox(height: 10,),
-                  SizedBox(height: 10,),
+                  SizedBox(height: 10.h,),
                   //this content notification html converst to code
                   Html(
                     data: dataNotification?.notification?.body ?? '',
@@ -75,7 +76,7 @@ class _NotificationDetailPagesState extends State<NotificationDetailPages> {
                         margin: Margins.zero,
                       ),
                       "p": Style(
-                        margin: Margins.symmetric(vertical: 10), // giữ lại nếu bạn muốn
+                        margin: Margins.symmetric(vertical: 10.r), // giữ lại nếu bạn muốn
                         padding: HtmlPaddings.zero,
                       ),
                       "ul, ol": Style(
@@ -86,7 +87,7 @@ class _NotificationDetailPagesState extends State<NotificationDetailPages> {
                         padding: HtmlPaddings.zero,
                         margin: Margins.zero,
                       ),
-                      "h1": Style(fontSize: FontSize(24), fontWeight: FontWeight.bold),
+                      "h1": Style(fontSize: FontSize(24.sp), fontWeight: FontWeight.bold),
                       "a": Style(
                         color: Colors.blue,
                         textDecoration: TextDecoration.underline,

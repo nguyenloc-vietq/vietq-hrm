@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vietq_hrm/configs/apiConfig/auth.api.dart';
 import 'package:vietq_hrm/configs/sharedPreference/SharedPreferences.config.dart';
 import 'package:vietq_hrm/routers/router.config.dart';
+import 'package:vietq_hrm/widgets/components/InfoUser.widget.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -26,90 +28,15 @@ class _ProfilePageState extends State<ProfilePage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(20.0).r,
             child: Column(
               children: [
-                const SizedBox(height: 20),
+                 SizedBox(height: 20.h),
           
                 // Avatar + Edit icon
-                Stack(
-                  alignment: Alignment.bottomRight,
-                  clipBehavior: Clip.none,
-                  children: [
-                    Container(
-                      width: 100,
-                      height: 100,
-                      padding: const EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                        // color: Color(0xFFF6C951),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Color(0xFFF6C951), width: 5),
-                      ),
-                      child: CircleAvatar(
-                        radius: 50,
-                        backgroundImage: NetworkImage(
-                          '${dotenv.env['IMAGE_ENDPOINT']}avatar/avatar-1762761355725-290262777.png', // ảnh mẫu
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: -5,
-                      right: -5,
-                      child: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                          border: Border.all(color: Colors.white, width: 2),
-                        ),
-                        child: const Icon(
-                          Icons.camera_alt,
-                          color: Colors.white,
-                          size: 25,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                InfoUserWidget(),
           
-                const SizedBox(height: 16),
-          
-                // Name + Job
-                Text(
-                  "Ho Nguyen Loc",
-                  style: textTheme.headlineMedium,
-                ),
-                const SizedBox(height: 10),
-          
-                Text(
-                  "Software Engineer",
-                  style: textTheme.bodyMedium ,
-          
-                ),
-          
-                const SizedBox(height: 20),
-          
-                // Edit Profile Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 15),
-                      backgroundColor: Color(0xFFF6C951),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: Text(
-                      "Edit Profile",
-                      style: textTheme.bodyLarge?.copyWith(color: Colors.white),
-                    ),
-                  ),
-                ),
-          
-                const SizedBox(height: 30),
+                 SizedBox(height: 30.h),
           
                 // Menu List
                  ListView.separated(
@@ -131,7 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             shadowColor: Colors.transparent,
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            padding: const EdgeInsets.symmetric(vertical: 10).r,
                             child: Row(
                               children: [
                                 Container(
@@ -140,13 +67,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                     shape: BoxShape.circle,
                                     border: Border.all(color: Colors.red.shade50),
                                   ),
-                                  width: 50,
-                                  height: 50,
-                                  child: Padding(padding: EdgeInsets.all(10),
+                                  width: 50.w,
+                                  height: 50.h,
+                                  child: Padding(padding: EdgeInsets.all(10).r,
                                     child: ListDetailProfileRouter[index].icon,
                                   ),
                                 ),
-                                SizedBox(width: 20,),
+                                SizedBox(width: 20.w,),
                                 Text(ListDetailProfileRouter[index].name,
                                   style: textTheme.bodyLarge?.copyWith(color: Colors.red),),
                               ],
@@ -166,7 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               backgroundColor: Colors.transparent,
                               shadowColor: Colors.transparent,
                             ),                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            padding: const EdgeInsets.symmetric(vertical: 10).r,
                             child: Row(
                               children: [
                                 Container(
@@ -175,13 +102,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                     shape: BoxShape.circle,
                                     border: Border.all(color: Colors.grey.shade200),
                                   ),
-                                  width: 50,
-                                  height: 50,
-                                  child: Padding(padding: EdgeInsets.all(10),
+                                  width: 50.w,
+                                  height: 50.h,
+                                  child: Padding(padding: EdgeInsets.all(10).r,
                                     child: ListDetailProfileRouter[index].icon,
                                   ),
                                 ),
-                                SizedBox(width: 20,),
+                                SizedBox(width: 20.w,),
                                 Text(ListDetailProfileRouter[index].name,
                                   style: textTheme.bodyLarge,),
                                 Spacer(),

@@ -29,7 +29,7 @@ class _PinPutOtpState extends State<PinPutOtp> {
 
   @override
   Widget build(BuildContext context) {
-    const focusedBorderColor = Color(0xFFF6C951);
+    final focusedBorderColor = Theme.of(context).colorScheme.primary;
     const fillColor = Color.fromRGBO(243, 246, 249, 0);
     const borderColor = Colors.grey;
 
@@ -123,7 +123,7 @@ class _PinPutOtpState extends State<PinPutOtp> {
                         horizontal: 10,
                         vertical: 15,
                       ).r,
-                      backgroundColor: const Color(0xFFF6C951),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
                     ),
                     child: state.status.isInProgress
                         ? SizedBox(

@@ -17,12 +17,19 @@ class TimeSheet extends StatefulWidget {
 
 Widget _timeSheetItems(Map<String, dynamic> dataItem, BuildContext context) {
   final textTheme = Theme.of(context).textTheme;
+  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
   return Container(
     margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20).r,
     width: double.infinity,
     decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(20).r,
+      color: !isDarkMode ? Colors.white : Theme.of(context).appBarTheme.foregroundColor,
+      borderRadius: BorderRadius.only(
+        topRight: Radius.circular(20),
+        topLeft: Radius.circular(12),
+        bottomRight: Radius.circular(20),
+        bottomLeft: Radius.circular(12),
+      ).r,
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(0.1),
@@ -67,7 +74,7 @@ Widget _timeSheetItems(Map<String, dynamic> dataItem, BuildContext context) {
                         width: 5.sp,
                         height: 5.sp,
                         colorFilter: ColorFilter.mode(
-                          Color(0xFFF6C951),
+                          Theme.of(context).colorScheme.primary,
                           BlendMode.srcIn,
                         ),
                       ),
@@ -94,7 +101,7 @@ Widget _timeSheetItems(Map<String, dynamic> dataItem, BuildContext context) {
                           height: 30.h,
                           padding: EdgeInsets.all(5).r,
                           decoration: BoxDecoration(
-                            color: Color(0xFFF6C951).withOpacity(0.3),
+                            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
                             borderRadius: BorderRadius.circular(10).r,
                           ),
                           child: SvgPicture.asset(
@@ -102,7 +109,7 @@ Widget _timeSheetItems(Map<String, dynamic> dataItem, BuildContext context) {
                             width: 5.w,
                             height: 5.h,
                             colorFilter: ColorFilter.mode(
-                              Color(0xFFF6C951),
+                              Theme.of(context).colorScheme.primary,
                               BlendMode.srcIn,
                             ),
                           ),
@@ -118,7 +125,7 @@ Widget _timeSheetItems(Map<String, dynamic> dataItem, BuildContext context) {
                           height: 30.h,
                           padding: EdgeInsets.all(5).r,
                           decoration: BoxDecoration(
-                            color: Color(0xFFF6C951).withOpacity(0.3),
+                            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
                             borderRadius: BorderRadius.circular(10).r,
                           ),
                           child: SvgPicture.asset(
@@ -126,7 +133,7 @@ Widget _timeSheetItems(Map<String, dynamic> dataItem, BuildContext context) {
                             width: 5.w,
                             height: 5.h,
                             colorFilter: ColorFilter.mode(
-                              Color(0xFFF6C951),
+                              Theme.of(context).colorScheme.primary,
                               BlendMode.srcIn,
                             ),
                           ),
@@ -161,7 +168,7 @@ class _TimeSheetState extends State<TimeSheet>
               width: 20.w,
               height: 20.h,
               child: CircularProgressIndicator(
-                color: Color(0xFFF8D448),
+                color: Theme.of(context).primaryColor,
                 strokeWidth: 3.r,
               ),
             ),
@@ -195,14 +202,14 @@ class _TimeSheetState extends State<TimeSheet>
                             padding: EdgeInsets.all(15).r,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(100).r,
-                              color: Color(0xFFF8D448).withAlpha(600),
+                              color: Theme.of(context).primaryColor.withAlpha(600),
                             ),
                             child: SizedBox(
                               width: 70.w,
                               height: 70.h,
                               child: SvgPicture.asset(
                                 'assets/icons/calendar-error.svg',
-                                color: Color(0xFFF8D448),
+                                color: Theme.of(context).primaryColor,
                               ),
                             ),
                           ),
@@ -299,14 +306,14 @@ class _TimeSheetState extends State<TimeSheet>
                           padding: EdgeInsets.all(15),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(100),
-                            color: Color(0xFFF8D448).withAlpha(600),
+                            color: Theme.of(context).primaryColor.withAlpha(600),
                           ),
                           child: SizedBox(
                             width: 70,
                             height: 70,
                             child: SvgPicture.asset(
                               'assets/icons/calendar.svg',
-                              color: Color(0xFFF8D448),
+                              color: Theme.of(context).primaryColor,
                             ),
                           ),
                         ),

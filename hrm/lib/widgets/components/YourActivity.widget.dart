@@ -23,6 +23,7 @@ class _YourActivityState extends State<YourActivity> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final double percent = totalDays == 0 ? 0 : workingDays / totalDays;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return BlocBuilder<AttendanceBloc, AttendanceState>(
       builder: (context, state) {
         return Column(
@@ -49,7 +50,7 @@ class _YourActivityState extends State<YourActivity> {
                       Container(
                         padding: EdgeInsets.all(16).r,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: isDarkMode ? Theme.of(context).appBarTheme.foregroundColor : Colors.white,
                           borderRadius: BorderRadius.circular(16).r,
                         ),
                         child: Row(
@@ -62,7 +63,7 @@ class _YourActivityState extends State<YourActivity> {
                               height: 40.h,
                               padding: EdgeInsets.all(5).r,
                               decoration: BoxDecoration(
-                                color: Color(0xFFF8D448).withOpacity(0.3),
+                                color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
                                 borderRadius: BorderRadius.circular(10).r,
                               ),
                               child: SvgPicture.asset(
@@ -70,7 +71,7 @@ class _YourActivityState extends State<YourActivity> {
                                 width: 5.w,
                                 height: 5.h,
                                 colorFilter: ColorFilter.mode(
-                                  Color(0xFFF8D448),
+                                  Theme.of(context).colorScheme.primary,
                                   BlendMode.srcIn,
                                 ),
                               ),
@@ -139,7 +140,7 @@ class _YourActivityState extends State<YourActivity> {
                       Container(
                         padding: EdgeInsets.all(16).r,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: isDarkMode ? Theme.of(context).appBarTheme.foregroundColor : Colors.white,
                           borderRadius: BorderRadius.circular(16).r,
                         ),
                         child: Row(
@@ -152,7 +153,7 @@ class _YourActivityState extends State<YourActivity> {
                               height: 40.h,
                               padding: EdgeInsets.all(5).r,
                               decoration: BoxDecoration(
-                                color: Color(0xFFF8D448).withOpacity(0.3),
+                                color: Theme.of(context).primaryColor.withOpacity(0.3),
                                 borderRadius: BorderRadius.circular(10).r,
                               ),
                               child: SvgPicture.asset(
@@ -160,7 +161,7 @@ class _YourActivityState extends State<YourActivity> {
                                 width: 5.w,
                                 height: 5.h,
                                 colorFilter: ColorFilter.mode(
-                                  Color(0xFFF8D448),
+                                  Theme.of(context).primaryColor,
                                   BlendMode.srcIn,
                                 ),
                               ),

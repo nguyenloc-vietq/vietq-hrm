@@ -88,7 +88,7 @@ class _ForgotPageState extends State<ForgotPage> {
                       BlocBuilder<ForgotBloc, ForgotState>(
                         builder: (context, state) {
                           return Container(
-                            // color: Color(0xFFF6C951),
+                            // color: Theme.of(context).colorScheme.primary,
                             padding: EdgeInsets.symmetric(
                               horizontal: 10,
                               vertical: 10,
@@ -96,6 +96,9 @@ class _ForgotPageState extends State<ForgotPage> {
                             child: Column(
                               children: [
                                 TextField(
+                                  style: TextStyle(
+                                    color: Colors.black
+                                  ),
                                   onChanged: (value) {
                                     context.read<ForgotBloc>().add(
                                       EmailChanged(value),
@@ -116,10 +119,10 @@ class _ForgotPageState extends State<ForgotPage> {
                                       borderRadius: BorderRadius.circular(20).r,
                                       borderSide: BorderSide(
                                         width: 2,
-                                        color: Color(0xFFF6C951),
+                                        color: Theme.of(context).colorScheme.primary,
                                       ), // Border when not focused
                                     ),
-                                    focusColor: Color(0xFFF6C951),
+                                    focusColor: Theme.of(context).colorScheme.primary,
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(20).r,
                                       borderSide: BorderSide(
@@ -183,7 +186,7 @@ class _ForgotPageState extends State<ForgotPage> {
                             style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20).r),
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15).r,
-                              backgroundColor: Color(0xFFF6C951),
+                              backgroundColor: Theme.of(context).colorScheme.primary,
                             ),
                             child: state.status.isInProgress
                                 ? SizedBox(

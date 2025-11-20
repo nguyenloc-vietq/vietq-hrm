@@ -34,7 +34,7 @@ class CustomLoadingOverlay extends StatelessWidget {
                 // Loader giữa màn hình
                 Center(
                   child: SizedBox(
-                    height: 80.w,
+                    height: 80.h,
                     width: 80.h,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
@@ -52,7 +52,7 @@ class CustomLoadingOverlay extends StatelessWidget {
                         padding: EdgeInsets.all(25.0).r,
                         child: CircularProgressIndicator(
                           strokeWidth: 4.r,
-                          color: Color(0xFFF8D448),
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ),

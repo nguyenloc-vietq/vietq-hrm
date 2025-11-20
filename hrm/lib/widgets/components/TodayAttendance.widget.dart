@@ -27,6 +27,7 @@ class _TodayAttendanceState extends State<TodayAttendance> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final double percent = totalDays == 0 ? 0 : workingDays / totalDays;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -57,7 +58,7 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                         height: itemHeight,
                         padding: EdgeInsets.all(16).r,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: isDarkMode ? Theme.of(context).appBarTheme.foregroundColor : Colors.white,
                           borderRadius: BorderRadius.circular(16).r,
                         ),
                         child: Column(
@@ -70,10 +71,10 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                               children: [
                                 Container(
                                   width: 30.w,
-                                  height: 30.h,
+                                  height: 30.w,
                                   padding: EdgeInsets.all(5).r,
                                   decoration: BoxDecoration(
-                                    color: Color(0xFFF6C951).withOpacity(0.3),
+                                    color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
                                     borderRadius: BorderRadius.circular(10).r,
                                   ),
                                   child: SvgPicture.asset(
@@ -81,7 +82,7 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                                     width: 5.w,
                                     height: 5.h,
                                     colorFilter: ColorFilter.mode(
-                                      Color(0xFFF6C951),
+                                      Theme.of(context).colorScheme.primary,
                                       BlendMode.srcIn,
                                     ),
                                   ),
@@ -92,7 +93,7 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                             if(state is CalendarLoading)
                               SizedBox(
                                   width: 20.w,
-                                  height: 20.h,
+                                  height: 20.w,
                                   child: CircularProgressIndicator( strokeWidth: 3,)),
                             if(state is CalendarLoaded)...[
                               if(state.scheduleToday.isNotEmpty)...[
@@ -113,7 +114,7 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                         width: itemWidth,
                         padding: EdgeInsets.all(16).r,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: isDarkMode ? Theme.of(context).appBarTheme.foregroundColor : Colors.white,
                           borderRadius: BorderRadius.circular(16).r,
                         ),
                         child: Column(
@@ -126,10 +127,10 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                               children: [
                                 Container(
                                   width: 30.w,
-                                  height: 30.h,
+                                  height: 30.w,
                                   padding: EdgeInsets.all(5).r,
                                   decoration: BoxDecoration(
-                                    color: Color(0xFFF6C951).withOpacity(0.3),
+                                    color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
                                     borderRadius: BorderRadius.circular(10).r,
                                   ),
                                   child: SvgPicture.asset(
@@ -137,7 +138,7 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                                     width: 5.w,
                                     height: 5.h,
                                     colorFilter: ColorFilter.mode(
-                                      Color(0xFFF6C951),
+                                      Theme.of(context).colorScheme.primary,
                                       BlendMode.srcIn,
                                     ),
                                   ),
@@ -148,7 +149,7 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                             if(state is CalendarLoading)
                               SizedBox(
                                   width: 20.w,
-                                  height: 20.h,
+                                  height: 20.w,
                                   child: CircularProgressIndicator( strokeWidth: 3,)),
                             if(state is CalendarLoaded) ...[
                               if(state.scheduleToday.isNotEmpty) ...[
@@ -168,7 +169,7 @@ class _TodayAttendanceState extends State<TodayAttendance> {
 
                         padding: EdgeInsets.all(16).r,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: isDarkMode ? Theme.of(context).appBarTheme.foregroundColor : Colors.white,
                           borderRadius: BorderRadius.circular(16).r,
                         ),
                         child: Column(
@@ -181,10 +182,10 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                               children: [
                                 Container(
                                   width: 30.w,
-                                  height: 30.h,
+                                  height: 30.w,
                                   padding: EdgeInsets.all(5).r,
                                   decoration: BoxDecoration(
-                                    color: Color(0xFFF6C951).withOpacity(0.3),
+                                    color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
                                     borderRadius: BorderRadius.circular(10).r,
                                   ),
                                   child: SvgPicture.asset(
@@ -192,7 +193,7 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                                     width: 5.w,
                                     height: 5.h,
                                     colorFilter: ColorFilter.mode(
-                                      Color(0xFFF6C951),
+                                      Theme.of(context).colorScheme.primary,
                                       BlendMode.srcIn,
                                     ),
                                   ),
@@ -203,7 +204,7 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                             if(state is CalendarLoading)
                               SizedBox(
                                   width: 20.w,
-                                  height: 20.h,
+                                  height: 20.w,
                                   child: CircularProgressIndicator( strokeWidth: 3.r,)),
                             if(state is CalendarLoaded)
                               if(state.scheduleToday.isNotEmpty)...[
@@ -221,7 +222,7 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                         width: itemWidth,
                         padding: const EdgeInsets.all(16).r,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: isDarkMode ? Theme.of(context).appBarTheme.foregroundColor : Colors.white,
                           borderRadius: BorderRadius.circular(16).r,
                         ),
                         child: Column(
@@ -235,10 +236,10 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                               children: [
                                 Container(
                                   width: 30.w,
-                                  height: 30.h,
+                                  height: 30.w,
                                   padding: EdgeInsets.all(5).r,
                                   decoration: BoxDecoration(
-                                    color: Color(0xFFF6C951).withOpacity(0.3),
+                                    color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
                                     borderRadius: BorderRadius.circular(10).r,
                                   ),
                                   child: SvgPicture.asset(
@@ -246,7 +247,7 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                                     width: 5.w,
                                     height: 5.h,
                                     colorFilter: ColorFilter.mode(
-                                      Color(0xFFF6C951),
+                                      Theme.of(context).colorScheme.primary,
                                       BlendMode.srcIn,
                                     ),
                                   ),
@@ -257,7 +258,7 @@ class _TodayAttendanceState extends State<TodayAttendance> {
                             Center(
                               child: HalfCircleProgress(
                                 progress: percent,
-                                progressColor: Color(0xFFF6C951),
+                                progressColor: Theme.of(context).colorScheme.primary,
                                 backgroundColor: Colors.grey.shade300,
                                 size: 80.sp,
                               ),

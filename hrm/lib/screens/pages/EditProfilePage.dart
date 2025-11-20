@@ -34,10 +34,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
       labelText: label,
       hintText: hintText,
       errorText: errorText,
+      labelStyle: TextStyle(
+        color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black, // Sets the color of the input text
+      ),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(20),
-        borderSide: const BorderSide(width: 2, color: Color(0xFFF6C951)),
+        borderSide: BorderSide(width: 2, color: Theme.of(context).colorScheme.primary),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(20),
@@ -61,6 +64,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         }
 
         return Scaffold(
+          backgroundColor: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).appBarTheme.backgroundColor : Colors.white,
           body: Padding(
             padding: const EdgeInsets.all(20.0).r,
             child: Form(
@@ -109,7 +113,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 15).r,
-                        backgroundColor: const Color(0xFFF6C951),
+                        backgroundColor: Theme.of(context).colorScheme.primary,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20).r),
                       ),
                       child: Text('Update Profile', style: textTheme.bodyLarge?.copyWith(color: Colors.white)),

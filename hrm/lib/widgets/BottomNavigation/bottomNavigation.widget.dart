@@ -44,7 +44,7 @@ class _BottomNavigationCustomState extends State<BottomNavigationCustom> {
           ],
         ),
         child: BottomNavigationBar(
-          backgroundColor: isDarkMode ? Colors.black : Colors.white,
+          backgroundColor: isDarkMode ? Theme.of(context).appBarTheme.backgroundColor : Colors.white,
           type: BottomNavigationBarType.fixed,
           currentIndex: _currentIndex,
           selectedLabelStyle:  TextStyle(fontSize: 10.sp),
@@ -72,7 +72,8 @@ class _BottomNavigationCustomState extends State<BottomNavigationCustom> {
                         padding: const EdgeInsets.all(12).r,
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Color(0xFFF6C951), Color(0xFFB18114)],
+                            colors: [Theme.of(context).colorScheme.primary, Color(
+                                0xFF303030)],
                             begin: Alignment.topCenter,
                             stops: [0.3, 1.0],
                             end: Alignment.bottomRight,
@@ -80,7 +81,7 @@ class _BottomNavigationCustomState extends State<BottomNavigationCustom> {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFF6C951).withOpacity(0.5),
+                              color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
                               blurRadius: 12.r,
                               offset: const Offset(0, 6),
                             ),
@@ -103,8 +104,9 @@ class _BottomNavigationCustomState extends State<BottomNavigationCustom> {
                   ? GradientIcon(
                 icon: e.icon as Widget,
                 size: 24.sp,
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFF6C951), Color(0xFFB18114)],
+                gradient: LinearGradient(
+                  colors: [Theme.of(context).colorScheme.primary, Color(
+                      0xFF3C3C3C)],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),

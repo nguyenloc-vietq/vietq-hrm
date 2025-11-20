@@ -52,6 +52,7 @@ class _NotificationDetailPagesState extends State<NotificationDetailPages> {
     return CustomLoadingOverlay(
       isLoading: isLoading,
       child: Scaffold(
+        backgroundColor: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).appBarTheme.backgroundColor : Colors.white,
         body: Padding(
           padding: const EdgeInsets.all(20.0).r,
           child: SelectionArea(

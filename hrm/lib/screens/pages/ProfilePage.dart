@@ -23,8 +23,9 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDarkMode ? Theme.of(context).appBarTheme.backgroundColor : Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -48,6 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         return ElevatedButton(
                           onPressed: () {
                             SharedPreferencesConfig.delete('users');
+                            SharedPreferencesConfig.delete('themeColor');
                             context.go('/');
                           },
                           style: ElevatedButton.styleFrom(
@@ -63,9 +65,9 @@ class _ProfilePageState extends State<ProfilePage> {
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
-                                    color: Colors.red.shade50,
+                                    color: Colors.red.shade50.withAlpha(20),
                                     shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.red.shade50),
+                                    border: Border.all(color: Colors.red.shade50.withAlpha(20)),
                                   ),
                                   width: 50.w,
                                   height: 50.h,
@@ -98,9 +100,9 @@ class _ProfilePageState extends State<ProfilePage> {
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
-                                    color: Colors.grey.shade200,
+                                    color: Colors.grey.shade200.withAlpha(20),
                                     shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.grey.shade200),
+                                    border: Border.all(color: Colors.grey.shade200.withAlpha(20)),
                                   ),
                                   width: 50.w,
                                   height: 50.h,

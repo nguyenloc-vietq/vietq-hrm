@@ -37,11 +37,7 @@ class _MyProfilePageState extends State<MyProfilePage>
           SizedBox(height: 6.h),
           Text(
             value,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w500,
-            ),
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
            Divider(height: 1.h, thickness: 1.r, color: Color(0xFFECECEC)),
         ],
@@ -64,24 +60,23 @@ class _MyProfilePageState extends State<MyProfilePage>
         }
         if (state is UserLoaded) {
           return Scaffold(
+            backgroundColor: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).appBarTheme.backgroundColor : Colors.white,
             body: Column(
               children: [
                 // TabBar
                 Container(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ).r,
-                  height: 48.w,
+                  margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8).r,
+                  height: 48.h,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF4F5F9),
+                    color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFFA1A1A1).withAlpha(600) : const Color(0xFFF4F5F9),
                     borderRadius: BorderRadius.circular(12).r,
                   ),
                   child: TabBar(
                     controller: _tabController,
                     indicatorSize: TabBarIndicatorSize.tab,
+                    // indicatorPadding: const EdgeInsets.symmetric(horizontal: 16),
                     indicator: BoxDecoration(
-                      color: const Color(0xFFF6C951), // xanh dương
+                      color: Theme.of(context).colorScheme.primary, // xanh dương
                       borderRadius: BorderRadius.circular(10).r,
                     ),
                     dividerColor: Colors.transparent,

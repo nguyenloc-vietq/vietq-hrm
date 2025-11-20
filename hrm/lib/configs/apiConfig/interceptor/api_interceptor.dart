@@ -21,27 +21,27 @@ class ApiInterceptor extends Interceptor {
     RequestInterceptorHandler handler,
   ) async {
     try {
-      final token = await _getToken();
-      print(options.path);
-      if (publicRoutes.any((r) => options.path.contains(r))) {
-        print(publicRoutes.any((r) => options.path.contains(r)));
-        print("Public route");
-        return handler.next(options);
-      }
-      final checkRes = await dio.get('/auth/check-auth',
-          options: Options(headers: {
-            'Authorization': 'Bearer $token',
-          }));
-      print("#================> Check Authen" + checkRes.data.toString());
-      // Nếu check ok -> tiếp tục request
-      if (checkRes.statusCode == 200) {
+      // final token = await _getToken();
+      // print(options.path);
+      // if (publicRoutes.any((r) => options.path.contains(r))) {
+      //   print(publicRoutes.any((r) => options.path.contains(r)));
+      //   print("Public route");
+      //   return handler.next(options);
+      // }
+      // final checkRes = await dio.get('/auth/check-auth',
+      //     options: Options(headers: {
+      //       'Authorization': 'Bearer $token',
+      //     }));
+      // print("#================> Check Authen" + checkRes.data.toString());
+      // // Nếu check ok -> tiếp tục request
+      // if (checkRes.statusCode == 200) {
         final newToken = await _getToken();
         options.headers['Authorization'] = 'Bearer $newToken';
         print('--> ${options.baseUrl} ${options.method} ${options.path}');
         print('Headers: ${options.headers}');
         print('Body: ${options.data}');
         return handler.next(options);
-      }
+      // }
     } on DioException catch (e) {
       print("#================> Check Authen Chay Vao Day" );
       // Nếu server trả 401 -> logout

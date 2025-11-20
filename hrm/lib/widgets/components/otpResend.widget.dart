@@ -76,7 +76,7 @@ class _OtpResendWidgetState extends State<OtpResendWidget> {
               child: Text(
                 "Resend $countdownText",
                 style: textTheme.bodySmall?.copyWith( fontWeight: FontWeight.w600,
-                  color: _canResend ? const Color(0xFFF6C951) : Colors.grey,
+                  color: _canResend ? Theme.of(context).colorScheme.primary : Colors.grey,
                 ),
               ),
             );

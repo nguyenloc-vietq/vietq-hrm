@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesConfig {
@@ -16,7 +18,17 @@ class SharedPreferencesConfig {
   static bool get darkMode => _prefs.getBool('darkMode') ?? false;
   static set darkMode(bool value) => _prefs.setBool('darkMode', value);
 
+  static bool get allowNotification => _prefs.getBool('allowNotification') ?? true;
+  static set allowNotification(bool value) => _prefs.setBool('allowNotification', value);
+  static Color get themeColor {
+    int colorValue = _prefs.getInt('themeColor') ?? 0xFFF6C951; // default
+    return Color(colorValue);
+  }
 
+  // Lưu màu
+  static set themeColor(Color color) {
+    _prefs.setInt('themeColor', color.value);
+  }
   //delete all preferences
   static Future deleteAll() async => _prefs.clear();
 

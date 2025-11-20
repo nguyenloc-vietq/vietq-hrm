@@ -54,11 +54,11 @@ class _NotificationWidgetState extends State<NotificationWidget> {
     return BlocBuilder<NotificationBloc, NotificationState>(
       builder: (context, state) {
         if (state is NotificationLoading) {
-          return const Center(child: SizedBox(
+          return Center(child: SizedBox(
               width: 20,
               height: 20,
               child: CircularProgressIndicator(
-                color: Color(0xFFF8D448),
+                color: Theme.of(context).primaryColor,
                 strokeWidth: 3,
               ))
 
@@ -90,14 +90,14 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                             padding: EdgeInsets.all(15),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(100),
-                            color: Color(0xFFF8D448).withAlpha(600),
+                            color: Theme.of(context).primaryColor.withAlpha(600),
                             ),
                             child: SizedBox(
                               width: 70,
                               height: 70,
                               child: SvgPicture.asset(
                                 'assets/icons/notification-error.svg',
-                                color: Color(0xFFF8D448),
+                                color: Theme.of(context).primaryColor,
                               ),
                             ),
                           ),
@@ -157,14 +157,14 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                           padding: EdgeInsets.all(15).r,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(100).r,
-                            color: Color(0xFFF8D448).withAlpha(600),
+                            color: Theme.of(context).primaryColor.withAlpha(600),
                           ),
                           child: SizedBox(
                             width: 70.w,
                             height: 70.w,
                             child: SvgPicture.asset(
                               'assets/icons/notifications.svg',
-                              color: Color(0xFFF8D448),
+                              color: Theme.of(context).primaryColor,
                             ),
                           ),
                         ),
@@ -201,7 +201,7 @@ class NotificationItems extends StatelessWidget {
           shadowColor: Colors.transparent,
         ),
         onPressed: () {
-          context.push('/notification/${notification.notificationCode}');
+          context.push('/notification/${notification.notificationCode}', extra: "Notification");
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,14 +213,14 @@ class NotificationItems extends StatelessWidget {
               height: 50.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color(0xFFF8D448).withAlpha(600),
+                color: Theme.of(context).primaryColor.withAlpha(600),
               ),
               child: SizedBox(
                 width: 20.w,
                 height: 20.h,
                 child: SvgPicture.asset(
                   'assets/icons/notification-icon.svg',
-                  color: Color(0xFFF8D448),
+                  color: Theme.of(context).primaryColor,
                 ),
               ),
             ),

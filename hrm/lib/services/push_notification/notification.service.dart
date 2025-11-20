@@ -9,6 +9,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:vietq_hrm/configs/apiConfig/notification.api.dart';
+import 'package:vietq_hrm/configs/sharedPreference/SharedPreferences.config.dart';
 import 'package:vietq_hrm/main.dart';
 
 
@@ -55,6 +56,9 @@ class NotificationService {
   }
 
   Future<void> getToken() async {
+    final bool isAllowNotification = await SharedPreferencesConfig.allowNotification;
+    if(!isAllowNotification) throw new Exception("Notification is disabled");
+
     String? token = await _firebaseMessaging.getToken();
     String deviceId = await getDeviceId();
 
@@ -71,6 +75,11 @@ class NotificationService {
       print("#==========> DEVICES FCM ERROR: " + e.toString());
     }
 
+  }
+
+  Future<void> deleteToken() async {
+    await _firebaseMessaging.deleteToken();
+    SharedPreferencesConfig.allowNotification = false;
   }
 
   void initLocalNotification(BuildContext context,

@@ -82,6 +82,7 @@ class _CalendarSlideWidgetState extends State<CalendarSlideWidget> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return BlocBuilder<CalendarBloc, CalendarState>(
       builder: (context, state) {
         return Padding(
@@ -116,12 +117,12 @@ class _CalendarSlideWidgetState extends State<CalendarSlideWidget> {
                       margin: const EdgeInsets.only(right: 6).r,
                       decoration: BoxDecoration(
                         color: day["isSelected"]
-                            ? Color(0xFFF6C951).withOpacity(0.8)
-                            : Colors.white ,
+                            ? Theme.of(context).colorScheme.primary.withOpacity(0.8)
+                            : isDarkMode ? Theme.of(context).appBarTheme.foregroundColor : Colors.white,
                         borderRadius: BorderRadius.circular(12).r,
                         border: Border.all(
                           color: day["isSelected"]
-                              ? Color(0xFFF6C951)
+                              ? Theme.of(context).colorScheme.primary
                               : Colors.grey.shade300,
                         ),
                       ),
@@ -131,14 +132,14 @@ class _CalendarSlideWidgetState extends State<CalendarSlideWidget> {
                           Text(
                             day["day"].toString(),
                             style: textTheme.headlineMedium?.copyWith(
-                              color: day["isSelected"] ? Colors.white : Colors.black,
+                              color: day["isSelected"] ?  Colors.white : isDarkMode ?  Colors.white : Theme.of(context).appBarTheme.foregroundColor
                             ),
                           ),
                           SizedBox(height: 6.h),
                           Text(
                             day["weekday"].toString(),
                             style: textTheme.bodyMedium?.copyWith(
-                              color: day["isSelected"] ? Colors.white : Colors.black,
+                              color: day["isSelected"] ?  Colors.white : isDarkMode ? Colors.white : Theme.of(context).appBarTheme.foregroundColor
                             ),
                           ),
                         ],
@@ -146,12 +147,12 @@ class _CalendarSlideWidgetState extends State<CalendarSlideWidget> {
                     ),
                     if(day["currentDay"])
                      Positioned(
-                      top: -10.h, // hơi nhô lên trên
+                      top: -10.w, // hơi nhô lên trên
                       left: 20.w, // góc phải
                       child: Transform(
                         transform: Matrix4.rotationZ(0.r),
                         child: Container(
-                          width: 40.w,
+                          width: 40.h,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 4,
                             vertical: 2,
@@ -161,6 +162,7 @@ class _CalendarSlideWidgetState extends State<CalendarSlideWidget> {
                             borderRadius: BorderRadius.circular(6).r,
                           ),
                           child: Text(
+                            textAlign: TextAlign.center,
                             'Today',
                             style: TextStyle(
                               color: Colors.white,

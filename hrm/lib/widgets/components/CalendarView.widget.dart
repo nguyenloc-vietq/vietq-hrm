@@ -28,98 +28,232 @@ class _CalendarViewState extends State<CalendarView> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return BlocBuilder<CalendarBloc, CalendarState>(
       builder: (context, state) {
         print(state);
         if (state is CalendarLoaded) {
           return Scaffold(
+            backgroundColor: isDarkMode ? Theme.of(context).appBarTheme.backgroundColor : Colors.white,
             body: RefreshIndicator(
               onRefresh: () async {
-                context.read<CalendarBloc>().add(LoadCalendarEvent(isRefresh: true));
+                context.read<CalendarBloc>().add(
+                  LoadCalendarEvent(isRefresh: true),
+                );
               },
-              child: SingleChildScrollView(
+              child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                child: TableCalendar(
-                  rowHeight: 80.h,
-                  daysOfWeekHeight: 50.h,
-                  firstDay: DateTime(DateTime.now().year, 1, 1),
-                  lastDay: DateTime(DateTime.now().year, 12, 31),
-                  focusedDay: _focusedDay,
-                  calendarFormat: _calendarFormat,
-                  // locale: '',
-                  daysOfWeekStyle: DaysOfWeekStyle(
-                    weekdayStyle: TextStyle(fontWeight: FontWeight.w600),
-                    weekendStyle: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.red,
-                    ),
-                  ),
-                  headerStyle: HeaderStyle(
-                    formatButtonVisible: false,
-                    leftChevronIcon: Container(
-                      width: 50.w,
-                      height: 50.w,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(8).r,
-                        color: Color(0xFFF8D448).withAlpha(50),
-                        // border: Border.all(color: Colors.orange),
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: TableCalendar(
+                      availableGestures: AvailableGestures.horizontalSwipe,
+                      rowHeight: 80.h,
+                      daysOfWeekHeight: 50.h,
+                      firstDay: DateTime(DateTime.now().year, 1, 1),
+                      lastDay: DateTime(DateTime.now().year, 12, 31),
+                      focusedDay: _focusedDay,
+                      calendarFormat: _calendarFormat,
+                      // locale: '',
+                      daysOfWeekStyle: DaysOfWeekStyle(
+                        weekdayStyle: TextStyle(fontWeight: FontWeight.w600,
+                        color: isDarkMode ? Colors.white : Colors.black ),
+                        weekendStyle: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.red,
+                        ),
                       ),
-                      child: Icon(
-                        Icons.chevron_left_outlined,
-                        color: Color(0xFFF8D448),
-                        size: 30.sp,
+                      headerStyle: HeaderStyle(
+                        formatButtonVisible: false,
+                        leftChevronIcon: Container(
+                          width: 50.w,
+                          height: 50.w,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(8).r,
+                            color: Theme.of(context).primaryColor.withAlpha(50),
+                            // border: Border.all(color: Colors.orange),
+                          ),
+                          child: Icon(
+                            Icons.chevron_left_outlined,
+                            color: Theme.of(context).primaryColor,
+                            size: 30.sp,
+                          ),
+                        ),
+                        rightChevronIcon: Container(
+                          width: 50.w,
+                          height: 50.w,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(8).r,
+                            color: Theme.of(context).primaryColor.withAlpha(50),
+                            // border: Border.all(color: Colors.orange),
+                          ),
+                          child: Icon(
+                            Icons.chevron_right_outlined,
+                            color: Theme.of(context).primaryColor,
+                            size: 30.sp,
+                          ),
+                        ),
+                        headerPadding: EdgeInsets.symmetric(vertical: 8),
+                        titleCentered: true,
+                        titleTextStyle: TextStyle(
+                          color: isDarkMode ? Colors.white : Colors.black,
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    rightChevronIcon: Container(
-                      width: 50.w,
-                      height: 50.h,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(8).r,
-                        color: Color(0xFFF8D448).withAlpha(50),
-                        // border: Border.all(color: Colors.orange),
+
+                      calendarStyle: CalendarStyle(
+                        todayTextStyle: TextStyle(color: Colors.orange),
+                        todayDecoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8).r,
+                          color: Colors.orange[50],
+                          border: Border.all(color: Colors.orange),
+                        ),
+
+                        weekendTextStyle: TextStyle(color: Colors.red),
                       ),
-                      child: Icon(
-                        Icons.chevron_right_outlined,
-                        color: Color(0xFFF8D448),
-                        size: 30.sp,
-                      ),
-                    ),
-                    headerPadding: EdgeInsets.symmetric(vertical: 8),
-                    titleCentered: true,
-                    titleTextStyle: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
 
-                  calendarStyle: CalendarStyle(
-                    todayTextStyle: TextStyle(color: Colors.orange),
-                    todayDecoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8).r,
-                      color: Colors.orange[50],
-                      border: Border.all(color: Colors.orange),
-                    ),
-                    weekendTextStyle: TextStyle(color: Colors.red),
-                  ),
+                      startingDayOfWeek: StartingDayOfWeek.monday,
+                      availableCalendarFormats: const {
+                        CalendarFormat.month: 'Tháng',
+                      },
 
-                  startingDayOfWeek: StartingDayOfWeek.monday,
-                  availableCalendarFormats: const {CalendarFormat.month: 'Tháng'},
+                      calendarBuilders: CalendarBuilders(
+                        todayBuilder: (context, day, focusedDay) {
+                          final key = DateTime(day.year, day.month, day.day);
+                          final _checkInData = parseCheckInData(
+                            state.timeSheets,
+                          );
+                          final inTime = _checkInData[key]?.inTime ?? '';
+                          final outTime = _checkInData[key]?.outTime ?? '';
 
-                  calendarBuilders: CalendarBuilders(
+                          return Stack(
+                            clipBehavior: Clip.none,
+                            // Cho phép overlay ra ngoài
+                            children: [
+                              // Khối chính (nền của ô ngày)
+                              Container(
+                                width: 60.w,
+                                margin: const EdgeInsets.all(4).r,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 2,
+                                  horizontal: 4,
+                                ).r,
+                                decoration: BoxDecoration(
+                                  color: outTime.isNotEmpty && inTime.isNotEmpty
+                                      ? !isDarkMode
+                                      ? Colors.green[50]
+                                      : Colors.green[50]?.withAlpha(50)
+                                      : inTime.isNotEmpty
+                                      ? !isDarkMode
+                                      ? Colors.orange[50]
+                                      : Colors.orange[50]?.withAlpha(50)
+                                      : !isDarkMode
+                                      ? Colors.grey[50]
+                                      : Colors.grey[50]?.withAlpha(50),
+                                  borderRadius: BorderRadius.circular(8).r,
+                                  border: Border.all(
+                                    color:
+                                        outTime.isNotEmpty && inTime.isNotEmpty
+                                        ? Colors.green
+                                        : inTime.isNotEmpty
+                                        ? Colors.orange
+                                        : Theme.of(context).colorScheme.primary,
+                                    width: 1.2.w,
+                                  ),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    // Số ngày
+                                    Text(
+                                      '${day.day}',
+                                      style: TextStyle(
+                                        fontSize: 13.sp,
+                                        fontWeight: FontWeight.bold,
+                                        color: outTime.isNotEmpty
+                                            ? Colors.green[800]
+                                            : inTime.isNotEmpty
+                                            ? Colors.orange[800]
+                                            : Colors.grey[700],
+                                      ),
+                                    ),
+                                    SizedBox(height: 2.h),
 
-                    todayBuilder: (context, day, focusedDay) {
-                      final key = DateTime(day.year, day.month, day.day);
-                      final _checkInData = parseCheckInData(state.timeSheets);
-                      final inTime = _checkInData[key]?.inTime ?? '';
-                      final outTime = _checkInData[key]?.outTime ?? '';
-
-                      return Stack(
-                        clipBehavior: Clip.none, // Cho phép overlay ra ngoài
-                        children: [
-                          // Khối chính (nền của ô ngày)
-                          Container(
+                                    // Hiển thị giờ vào/ra
+                                    if (inTime.isNotEmpty || outTime.isNotEmpty)
+                                      Text(
+                                        inTime.isNotEmpty ? '$inTime <-' : '',
+                                        style: TextStyle(
+                                          fontSize: 9.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color:
+                                              inTime.isNotEmpty &&
+                                                  isBefore(inTime, "08:15")
+                                              ? Colors.green[700]
+                                              : Colors.red[600],
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    Text(
+                                      outTime.isNotEmpty ? '$outTime ->' : '',
+                                      style: TextStyle(
+                                        fontSize: 9.sp,
+                                        fontWeight: FontWeight.w600,
+                                        color:
+                                            outTime.isNotEmpty &&
+                                                isBefore(outTime, "17:00")
+                                            ? Colors.red[600]
+                                            : Colors.green[700],
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              if (true)
+                                Positioned(
+                                  top: -5.h, // hơi nhô lên trên
+                                  right: -10.w, // góc phải
+                                  child: Transform(
+                                    transform: Matrix4.rotationZ(0.5.r),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 4,
+                                        vertical: 2,
+                                      ).r,
+                                      decoration: BoxDecoration(
+                                        color: Colors.redAccent,
+                                        borderRadius: BorderRadius.circular(
+                                          6,
+                                        ).r,
+                                      ),
+                                      child: Text(
+                                        'NOW',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 8.sp,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
+                        defaultBuilder: (context, day, focusedDay) {
+                          final key = DateTime(day.year, day.month, day.day);
+                          final _checkInData = parseCheckInData(
+                            state.timeSheets,
+                          );
+                          final inTime = _checkInData[key]?.inTime ?? '';
+                          final outTime = _checkInData[key]?.outTime ?? '';
+                          final isWeeken =
+                              day.weekday == DateTime.saturday ||
+                              day.weekday == DateTime.sunday;
+                          return Container(
                             width: 60.w,
                             margin: const EdgeInsets.all(4).r,
                             padding: const EdgeInsets.symmetric(
@@ -128,17 +262,23 @@ class _CalendarViewState extends State<CalendarView> {
                             ).r,
                             decoration: BoxDecoration(
                               color: outTime.isNotEmpty && inTime.isNotEmpty
-                                  ? Colors.green[50]
+                                  ? !isDarkMode
+                                      ? Colors.green[50]
+                                      : Colors.green[50]?.withAlpha(50)
                                   : inTime.isNotEmpty
-                                  ? Colors.orange[50]
-                                  : Colors.grey[50],
+                                  ? !isDarkMode
+                                      ? Colors.orange[50]
+                                      : Colors.orange[50]?.withAlpha(50)
+                                  : !isDarkMode
+                                      ? Colors.grey[50]
+                                      : Colors.grey[50]?.withAlpha(50),
                               borderRadius: BorderRadius.circular(8).r,
                               border: Border.all(
                                 color: outTime.isNotEmpty && inTime.isNotEmpty
                                     ? Colors.green
                                     : inTime.isNotEmpty
                                     ? Colors.orange
-                                    : Color(0xFFF6C951),
+                                    : Colors.transparent,
                                 width: 1.2.w,
                               ),
                             ),
@@ -151,11 +291,15 @@ class _CalendarViewState extends State<CalendarView> {
                                   style: TextStyle(
                                     fontSize: 13.sp,
                                     fontWeight: FontWeight.bold,
-                                    color: outTime.isNotEmpty
+                                    color: isWeeken
+                                        ? Colors.red
+                                        : outTime.isNotEmpty
                                         ? Colors.green[800]
                                         : inTime.isNotEmpty
                                         ? Colors.orange[800]
-                                        : Colors.grey[700],
+                                        : isDarkMode
+                                            ? Colors.white
+                                            : Colors.grey[700],
                                   ),
                                 ),
                                 SizedBox(height: 2.h),
@@ -190,115 +334,12 @@ class _CalendarViewState extends State<CalendarView> {
                                 ),
                               ],
                             ),
-                          ),
-                          if (true)
-                            Positioned(
-                              top: -5.h, // hơi nhô lên trên
-                              right: -10.w, // góc phải
-                              child: Transform(
-                                transform: Matrix4.rotationZ(0.5.r),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 4,
-                                    vertical: 2,
-                                  ).r,
-                                  decoration: BoxDecoration(
-                                    color: Colors.redAccent,
-                                    borderRadius: BorderRadius.circular(6).r,
-                                  ),
-                                  child: Text(
-                                    'NOW',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 8.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
-                      );
-                    },
-                    defaultBuilder: (context, day, focusedDay) {
-                      final key = DateTime(day.year, day.month, day.day);
-                      final _checkInData = parseCheckInData(state.timeSheets);
-                      final inTime = _checkInData[key]?.inTime ?? '';
-                      final outTime = _checkInData[key]?.outTime ?? '';
-                      final isWeeken = day.weekday == DateTime.saturday || day.weekday == DateTime.sunday;
-                      return Container(
-                        width: 60.w,
-                        margin: const EdgeInsets.all(4).r,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 2,
-                          horizontal: 4,
-                        ).r,
-                        decoration: BoxDecoration(
-                          color: outTime.isNotEmpty && inTime.isNotEmpty
-                              ? Colors.green[50]
-                              : inTime.isNotEmpty
-                              ? Colors.orange[50]
-                              : Colors.grey[50],
-                          borderRadius: BorderRadius.circular(8).r,
-                          border: Border.all(
-                            color: outTime.isNotEmpty && inTime.isNotEmpty
-                                ? Colors.green
-                                : inTime.isNotEmpty
-                                ? Colors.orange
-                                : Colors.transparent,
-                            width: 1.2.w,
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // Số ngày
-                            Text(
-                              '${day.day}',
-                              style: TextStyle(
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.bold,
-                                color: isWeeken ? Colors.red : outTime.isNotEmpty
-                                    ? Colors.green[800]
-                                    : inTime.isNotEmpty
-                                    ? Colors.orange[800]
-                                    : Colors.grey[700],
-                              ),
-                            ),
-                            SizedBox(height: 2.h),
-
-                            // Hiển thị giờ vào/ra
-                            if (inTime.isNotEmpty || outTime.isNotEmpty)
-                              Text(
-                                inTime.isNotEmpty ? '$inTime <-' : '',
-                                style: TextStyle(
-                                  fontSize: 9.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color:
-                                      inTime.isNotEmpty && isBefore(inTime, "08:15")
-                                      ? Colors.green[700]
-                                      : Colors.red[600],
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            Text(
-                              outTime.isNotEmpty ? '$outTime ->' : '',
-                              style: TextStyle(
-                                fontSize: 9.sp,
-                                fontWeight: FontWeight.w600,
-                                color:
-                                    outTime.isNotEmpty && isBefore(outTime, "17:00")
-                                    ? Colors.red[600]
-                                    : Colors.green[700],
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                          );
+                        },
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
           );

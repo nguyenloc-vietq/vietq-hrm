@@ -28,7 +28,7 @@ class HomePageAppBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       centerTitle: true,
       flexibleSpace: Container(
-        color: isDarkMode ? Colors.black : Colors.white,
+        color: isDarkMode ? Theme.of(context).appBarTheme.backgroundColor : Colors.white,
         padding: const EdgeInsets.only(top: 60, left: 16, right: 16).r,
         child: Row(
           spacing: 10.w,
@@ -40,7 +40,7 @@ class HomePageAppBar extends StatelessWidget implements PreferredSizeWidget {
               height: 70.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Color(0xFFF6C951), width: 3.r),
+                border: Border.all(color: Theme.of(context).colorScheme.primary, width: 3.r),
               ),
               child: CircleAvatar(
                 radius: 50.r,

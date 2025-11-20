@@ -105,9 +105,11 @@ If you have any questions about this Privacy Policy, please contact:
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return CustomLoadingOverlay(
       isLoading: false,
       child: Scaffold(
+        backgroundColor: isDarkMode ? Theme.of(context).appBarTheme.backgroundColor : Colors.white,
         body: Padding(
           padding: const EdgeInsets.all(20.0).r,
           child: SelectionArea(

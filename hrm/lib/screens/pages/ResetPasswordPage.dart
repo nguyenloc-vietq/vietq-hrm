@@ -117,7 +117,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                           SizedBox(height: 10.h),
 
                           Container(
-                            // color: Color(0xFFF6C951),
+                            // color: Theme.of(context).colorScheme.primary,
                             padding: EdgeInsets.symmetric(
                               horizontal: 10,
                               vertical: 10,
@@ -126,13 +126,16 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                               children: [
                                 // BlocBuilder()
                                 TextField(
+                                  style: TextStyle(
+                                    color: Colors.black // Sets the color of the input text
+                                  ),
                                   obscureText: !_isPasswordVisible,
                                   onChanged: (pass) => context
                                       .read<ForgotBloc>()
                                       .add(PasswordChanged(pass)),
                                   decoration: InputDecoration(
                                     errorText:
-                                        state.password.displayError != null
+                                        state.password.value.isNotEmpty && state.password.displayError != null
                                         ? 'Password must be at least 6 characters'
                                         : null,
                                     suffixIcon: IconButton(
@@ -160,10 +163,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                       borderRadius: BorderRadius.circular(20).r,
                                       borderSide: BorderSide(
                                         width: 2.r,
-                                        color: Color(0xFFF6C951),
+                                        color: Theme.of(context).colorScheme.primary,
                                       ), // Border when not focused
                                     ),
-                                    focusColor: Color(0xFFF6C951),
+                                    focusColor: Theme.of(context).colorScheme.primary,
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(20).r,
                                       borderSide: BorderSide(
@@ -175,6 +178,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                 ),
                                 SizedBox(height: 20.h),
                                 TextField(
+                                  style: TextStyle(
+                                    color: Colors.black// Sets the color of the input text
+                                  ),
                                   obscureText: !_isPasswordVisible,
                                   onChanged: (pass) => {
                                     context.read<ForgotBloc>().add(
@@ -183,10 +189,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                   },
                                   decoration: InputDecoration(
                                     errorText:
-                                        state.passwordComfrim.isValid &&
+                                    state.password.value.isNotEmpty ? state.passwordComfrim.isValid &&
                                             state.passwordComfrim.error == null
-                                        ? null
-                                        : 'Password không khớp',
+                                        ? null : 'Password không khớp'
+                                        : null,
                                     suffixIcon: IconButton(
                                       icon: _isPasswordVisible
                                           ? SvgPicture.asset(
@@ -212,10 +218,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                       borderRadius: BorderRadius.circular(20).r,
                                       borderSide: BorderSide(
                                         width: 2.r,
-                                        color: Color(0xFFF6C951),
+                                        color: Theme.of(context).colorScheme.primary,
                                       ), // Border when not focused
                                     ),
-                                    focusColor: Color(0xFFF6C951),
+                                    focusColor: Theme.of(context).colorScheme.primary,
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(20).r,
                                       borderSide: BorderSide(
@@ -253,7 +259,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                     horizontal: 10,
                                     vertical: 15,
                                   ).r,
-                                  backgroundColor: Color(0xFFF6C951),
+                                  backgroundColor: Theme.of(context).colorScheme.primary,
                                 ),
                                 child: state.status.isInProgress
                                     ? SizedBox(

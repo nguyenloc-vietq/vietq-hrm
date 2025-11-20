@@ -103,7 +103,7 @@ class _ValidateOtpPageState extends State<ValidateOtpPage> {
                                     state.email.value,
                                     style: textTheme.bodySmall?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                      color: Color(0xFFF6C951)
+                                      color: Theme.of(context).colorScheme.primary
                                     ),
                                   ),
                                 ],

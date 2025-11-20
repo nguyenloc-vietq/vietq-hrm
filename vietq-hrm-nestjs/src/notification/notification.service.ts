@@ -259,6 +259,7 @@ export class NotificationService {
 
   async sendNotification(body: any) {
     try {
+      console.log(`[===============> SENT NOTIF | `, body);
       const response = await this.firebaseService.sendNotification(
         body.token,
         body.title,

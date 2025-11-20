@@ -112,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                               Text(
                                 'VIET-Q HR Attendee',
                                 style: textTheme.headlineLarge?.copyWith(
-                                  color: Color(0xFFF6C951),
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                               ),
                               Text(
@@ -126,7 +126,7 @@ class _LoginPageState extends State<LoginPage> {
                         BlocBuilder<LoginBloc, LoginState>(
                           builder: (context, state) {
                             return Container(
-                              // color: Color(0xFFF6C951),
+                              // color: Theme.of(context).colorScheme.primary,
                               padding: EdgeInsets.symmetric(
                                 horizontal: 10,
                                 vertical: 10,
@@ -134,12 +134,16 @@ class _LoginPageState extends State<LoginPage> {
                               child: Column(
                                 children: [
                                   TextField(
+                                    style: TextStyle(
+                                      color: Colors.black, // Sets the color of the input text
+                                    ),
                                     onChanged: (value) {
                                       context.read<LoginBloc>().add(
                                         EmailChanged(value),
                                       );
                                     },
                                     decoration: InputDecoration(
+
                                       errorText:
                                           state.email.displayError != null
                                           ? state.email.error ==
@@ -156,10 +160,10 @@ class _LoginPageState extends State<LoginPage> {
                                         borderRadius: BorderRadius.circular(20).r,
                                         borderSide: BorderSide(
                                           width: 2.w,
-                                          color: Color(0xFFF6C951),
+                                          color: Theme.of(context).colorScheme.primary,
                                         ), // Border when not focused
                                       ),
-                                      focusColor: Color(0xFFF6C951),
+                                      focusColor: Theme.of(context).colorScheme.primary,
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(20).r,
                                         borderSide: BorderSide(
@@ -172,6 +176,9 @@ class _LoginPageState extends State<LoginPage> {
                                   SizedBox(height: 20.h),
                                   // BlocBuilder()
                                   TextField(
+                                    style: TextStyle(
+                                      color: Colors.black // Sets the color of the input text
+                                    ),
                                     obscureText: !_isPasswordVisible,
                                     onChanged: (pass) => context
                                         .read<LoginBloc>()
@@ -197,6 +204,7 @@ class _LoginPageState extends State<LoginPage> {
                                           });
                                         },
                                       ),
+
                                       labelText: 'Enter your password',
                                       // hintText: 'e.g., John Doe',
                                       border: OutlineInputBorder(
@@ -206,10 +214,10 @@ class _LoginPageState extends State<LoginPage> {
                                         borderRadius: BorderRadius.circular(20).r,
                                         borderSide: BorderSide(
                                           width: 2,
-                                          color: Color(0xFFF6C951),
+                                          color: Theme.of(context).colorScheme.primary,
                                         ), // Border when not focused
                                       ),
-                                      focusColor: Color(0xFFF6C951),
+                                      focusColor: Theme.of(context).colorScheme.primary,
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(20).r,
                                         borderSide: BorderSide(
@@ -274,7 +282,7 @@ class _LoginPageState extends State<LoginPage> {
                                       vertical: 15,
                                     ).r,
                                     overlayColor: Colors.transparent,
-                                    backgroundColor: Color(0xFFF6C951),
+                                    backgroundColor: Theme.of(context).colorScheme.primary,
                                     foregroundColor: Colors.transparent,
                                     elevation: 0,
                                     shadowColor: Colors.transparent,

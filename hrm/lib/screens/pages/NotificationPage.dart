@@ -18,6 +18,7 @@ class _NotificationPageState extends State<NotificationPage> {
     return BlocProvider(
       create: (context) => NotificationBloc(NotificationApi()),
       child: Scaffold(
+        backgroundColor: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).appBarTheme.backgroundColor : Colors.white,
         appBar: CustomAppBar(title: 'Notification', actions: [
           {
             'icon': 'assets/icons/setting.svg',

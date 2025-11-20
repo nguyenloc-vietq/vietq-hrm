@@ -45,6 +45,7 @@ class _HomePageState extends State<HomePage> {
     return CustomLoadingOverlay(
       isLoading: false,
       child: Scaffold(
+        backgroundColor: isDarkMode ? Theme.of(context).appBarTheme.backgroundColor : Colors.white,
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(100.r),
           child: BlocBuilder<UserBloc, UserState>(
@@ -164,7 +165,7 @@ class _HomePageState extends State<HomePage> {
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: isDarkMode ? Colors.black : Colors.grey.shade100,
+                  color: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade100,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(30),
                     topRight: Radius.circular(30),
@@ -209,8 +210,8 @@ Widget _buildSwipeUI(AttendanceLoaded state, BuildContext context) {
   final isCheckOut = hasRecord && dataAtt.first.timeOut != null;
   return SwipeToCheckIn(
     background: isCheckIn
-        ? (isCheckOut ? Color(0xFFF6C951) : Colors.red)
-        : Color(0xFFF6C951),
+        ? (isCheckOut ? Theme.of(context).colorScheme.primary : Colors.red)
+        : Theme.of(context).colorScheme.primary,
     title: isCheckIn
         ? (isCheckOut ? "Swipe to Check In" : "Swipe to Check Out")
         : "Swipe to Check In",

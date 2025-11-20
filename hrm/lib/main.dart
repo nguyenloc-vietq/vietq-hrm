@@ -12,6 +12,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:vietq_hrm/blocs/attendance/attendance_bloc.dart';
 import 'package:vietq_hrm/blocs/calendars/calendar_bloc.dart';
 import 'package:vietq_hrm/blocs/forgot/forgot_bloc.dart';
+import 'package:vietq_hrm/blocs/theme/theme_bloc.dart';
 import 'package:vietq_hrm/blocs/user/user_bloc.dart';
 import 'package:vietq_hrm/configs/apiConfig/schedule.api.dart';
 import 'package:vietq_hrm/configs/apiConfig/user.api.dart';
@@ -52,112 +53,156 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(428, 926),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      builder: (context, child) {
-        return MultiBlocProvider(
-          providers: [
-            BlocProvider(create: (context) => ForgotBloc()),
-            BlocProvider(create: (context) => UserBloc(UserApi())),
-            BlocProvider(create: (context) => CalendarBloc(ScheduleApi())),
-            BlocProvider(create: (context) => AttendanceBloc(ScheduleApi())),
-          ],
-          child: GestureDetector(
-            // Khi chạm vào bất cứ chỗ nào không phải TextField
-            onTap: () {
-              // Hủy focus để ẩn bàn phím
-              FocusScope.of(context).unfocus();
-            },
-            child: MaterialApp.router(
-              debugShowCheckedModeBanner: false,
-              themeMode: ThemeMode.system,
-
-              theme: ThemeData(
-                progressIndicatorTheme: ProgressIndicatorThemeData(
-                  color: Color(0xFFF6C951),
-                  linearTrackColor: Colors.redAccent,
-                  borderRadius: BorderRadius.circular(5.r),
-                  strokeWidth: 3.r,
-                ),
-                primaryColor: Color(0xFFFBE67B),
-                scaffoldBackgroundColor: Colors.white,
-                splashFactory: InkSplash.splashFactory,
-                splashColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                appBarTheme: AppBarTheme(backgroundColor: Colors.white),
-                colorScheme: ColorScheme.fromSeed(
-                  seedColor: const Color(0xFFFBE67B),
-                  brightness: Brightness.light,
-                ),
-                textTheme: TextTheme(
-                  headlineLarge: GoogleFonts.ubuntu(
-                    fontSize: 25.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  headlineMedium: GoogleFonts.ubuntu(
-                    fontSize: 22.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  headlineSmall: GoogleFonts.ubuntu(
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  bodyLarge: GoogleFonts.ubuntu(fontSize: 16.sp),
-                  bodyMedium: GoogleFonts.ubuntu(
-                    fontSize: 14.sp,
-                    color: Colors.grey[800],
-                  ),
-                  bodySmall: GoogleFonts.ubuntu(fontSize: 14.sp, color: Colors.grey),
-                ),
+    return BlocProvider(
+      create: (context) => ThemeBloc(),
+      child: ScreenUtilInit(
+        designSize: const Size(428, 926),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        builder: (context, child) {
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (context) => ForgotBloc()),
+              BlocProvider(create: (context) => UserBloc(UserApi())),
+              BlocProvider(create: (context) => CalendarBloc(ScheduleApi())),
+              BlocProvider(create: (context) => AttendanceBloc(ScheduleApi())),
+            ],
+            child: GestureDetector(
+              // Khi chạm vào bất cứ chỗ nào không phải TextField
+              onTap: () {
+                // Hủy focus để ẩn bàn phím
+                FocusScope.of(context).unfocus();
+              },
+              child: BlocBuilder<ThemeBloc, ThemeState>(
+                builder: (context, themeState) {
+                  print("#==========> ${themeState.primaryColor}");
+                  return MaterialApp.router(
+                    debugShowCheckedModeBanner: false,
+                    themeMode: ThemeMode.system,
+                    theme: ThemeData(
+                      progressIndicatorTheme: ProgressIndicatorThemeData(
+                        color: themeState.progressIndicatorColor,
+                        linearTrackColor: Colors.redAccent,
+                        borderRadius: BorderRadius.circular(5.r),
+                        strokeWidth: 3.r,
+                      ),
+                      primaryColor: themeState.primaryColor,
+                      scaffoldBackgroundColor: Colors.white,
+                      splashFactory: InkSplash.splashFactory,
+                      splashColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      appBarTheme: AppBarTheme(backgroundColor: Colors.white),
+                      colorScheme: ColorScheme(
+                        brightness: Brightness.light,
+                        primary: themeState.primaryColor,
+                        // màu gốc
+                        onPrimary: Colors.white,
+                        secondary: themeState.primaryColor,
+                        // đồng bộ luôn
+                        onSecondary: Colors.white,
+                        error: Colors.red,
+                        onError: Colors.white,
+                        background: Colors.white,
+                        onBackground: Colors.black,
+                        surface: Colors.white,
+                        onSurface: Colors.black,
+                      ),
+                      useMaterial3: true,
+                      textTheme: TextTheme(
+                        headlineLarge: GoogleFonts.ubuntu(
+                          fontSize: 25.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        headlineMedium: GoogleFonts.ubuntu(
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        headlineSmall: GoogleFonts.ubuntu(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        bodyLarge: GoogleFonts.ubuntu(fontSize: 16.sp),
+                        bodyMedium: GoogleFonts.ubuntu(
+                          fontSize: 14.sp,
+                          color: Colors.grey[800],
+                        ),
+                        bodySmall: GoogleFonts.ubuntu(
+                          fontSize: 14.sp,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                    darkTheme: ThemeData(
+                      splashFactory: InkSplash.splashFactory,
+                      splashColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      brightness: Brightness.dark,
+                      progressIndicatorTheme: ProgressIndicatorThemeData(
+                        color: themeState.progressIndicatorColor,
+                        linearTrackColor: Colors.redAccent,
+                        borderRadius: BorderRadius.circular(5.r),
+                        strokeWidth: 3.r,
+                      ),
+                      colorScheme: ColorScheme(
+                        brightness: Brightness.dark,
+                        primary: themeState.primaryColor,
+                        onPrimary: Colors.white,
+                        secondary: themeState.primaryColor,
+                        onSecondary: Colors.white,
+                        error: Colors.red,
+                        onError: Colors.white,
+                        background: Colors.white,
+                        onBackground: Colors.black,
+                        surface: Colors.white,
+                        onSurface: Colors.black,
+                      ),
+                      primaryColor: themeState.primaryColor,
+                      appBarTheme: const AppBarTheme(
+                        backgroundColor: Color(0xFF1F2937),
+                        foregroundColor: Color(0xFF1e1e1e),
+                      ),
+                      textTheme: TextTheme(
+                        headlineLarge: GoogleFonts.ubuntu(
+                          fontSize: 25.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        headlineMedium: GoogleFonts.ubuntu(
+                          color: Colors.white,
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        headlineSmall: GoogleFonts.ubuntu(
+                          color: Colors.white,
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        bodyLarge: GoogleFonts.ubuntu(
+                          fontSize: 16.sp,
+                          color: Colors.white,
+                        ),
+                        bodyMedium: GoogleFonts.ubuntu(
+                          fontSize: 14.sp,
+                          color: Colors.white,
+                        ),
+                        bodySmall: GoogleFonts.ubuntu(
+                          fontSize: 14.sp,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                    routerConfig: appRouter,
+                    // builder: (context, child) {
+                    //   return HeroControllerScope.none(child: child!);
+                    // },
+                  );
+                },
               ),
-              darkTheme: ThemeData(
-                splashFactory: InkSplash.splashFactory,
-                splashColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                brightness: Brightness.dark,
-                primaryColor: Color(0xFFFBE67B),
-                scaffoldBackgroundColor: const Color(0xFF121212),
-                appBarTheme: const AppBarTheme(
-                  backgroundColor: Color(0xFF121212),
-                  foregroundColor: Colors.white,
-                ),
-                colorScheme: ColorScheme.fromSeed(
-                  seedColor: Color(0xFFF8D448),
-                  brightness: Brightness.dark,
-                ),
-                textTheme: TextTheme(
-                  headlineLarge: GoogleFonts.ubuntu(
-                    fontSize: 25.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  headlineMedium: GoogleFonts.ubuntu(
-                    fontSize: 22.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  headlineSmall: GoogleFonts.ubuntu(
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  bodyLarge: GoogleFonts.ubuntu(fontSize: 16.sp),
-                  bodyMedium: GoogleFonts.ubuntu(
-                    fontSize: 14.sp,
-                    color: Colors.grey[800],
-                  ),
-                  bodySmall: GoogleFonts.ubuntu(fontSize: 14.sp, color: Colors.grey),
-                ),
-              ),
-              routerConfig: appRouter,
-              // builder: (context, child) {
-              //   return HeroControllerScope.none(child: child!);
-              // },
             ),
-          ),
-        );
-      }
+          );
+        },
+      ),
     );
   }
 }

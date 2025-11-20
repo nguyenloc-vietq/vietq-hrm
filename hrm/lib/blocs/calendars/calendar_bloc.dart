@@ -51,7 +51,6 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
         if (event.today != null) ...[
           _fetchSchedulesToday(event.today!),
         ],
-
         _fetchSchedules(),
         _fetchTimeSheets(),
       ]);

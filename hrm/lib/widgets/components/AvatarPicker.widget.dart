@@ -45,7 +45,7 @@ class _AvatarPickerState extends State<AvatarPicker> {
           padding: const EdgeInsets.all(5).r,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: const Color(0xFFF6C951), width: 5.r),
+            border: Border.all(color: Theme.of(context).colorScheme.primary, width: 5.r),
           ),
           child: CircleAvatar(
             radius: 50.r,

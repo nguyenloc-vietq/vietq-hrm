@@ -42,7 +42,7 @@ class _InfoUserWidgetState extends State<InfoUserWidget> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: const Color(0xFFF6C951),
+                            color: Theme.of(context).colorScheme.primary,
                             width: 5.w,
                           ),
                         ),
@@ -93,7 +93,7 @@ class _InfoUserWidgetState extends State<InfoUserWidget> {
                       },
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.symmetric(vertical: 15).r,
-                        backgroundColor: Color(0xFFF6C951),
+                        backgroundColor: Theme.of(context).colorScheme.primary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20).r,
                         ),
@@ -153,7 +153,7 @@ class _InfoUserWidgetState extends State<InfoUserWidget> {
                     },
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 15).r,
-                      backgroundColor: Color(0xFFF6C951),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20).r,
                       ),

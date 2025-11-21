@@ -16,6 +16,7 @@ class BadRequestException extends ApiException {
 
 class UnauthorizedException extends ApiException {
   UnauthorizedException(super.message) : super(statusCode: 401);
+
 }
 
 class NotFoundException extends ApiException {

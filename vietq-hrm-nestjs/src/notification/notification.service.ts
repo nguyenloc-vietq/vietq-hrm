@@ -100,7 +100,10 @@ export class NotificationService {
           notification: true,
         },
       });
-      return listNotification;
+      const result = Array.from({ length: 10 }, (_, index) => ({
+        ...listNotification[index],
+      }));
+      return result;
     } catch (error) {
       throw new HttpException(error.message, 500);
     }

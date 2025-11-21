@@ -7,11 +7,16 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:vietq_hrm/blocs/attendance/attendance_bloc.dart';
+import 'package:vietq_hrm/blocs/calendars/calendar_bloc.dart';
+import 'package:vietq_hrm/blocs/notifications/notifications_bloc.dart';
 import 'package:vietq_hrm/blocs/user/user_bloc.dart';
 import 'package:vietq_hrm/services/push_notification/notification.service.dart';
 import 'package:vietq_hrm/widgets/CustomAppbar/HomePageAppBar.widget.dart';
 import 'package:vietq_hrm/widgets/components/CalendarSlide.widget.dart';
+import 'package:vietq_hrm/widgets/components/Notification.widget.dart';
+import 'package:vietq_hrm/widgets/components/SalaryInfo.widget.dart';
 import 'package:vietq_hrm/widgets/components/TodayAttendance.widget.dart';
+import 'package:vietq_hrm/widgets/components/TodayInfomation.widget.dart';
 import 'package:vietq_hrm/widgets/components/YourActivity.widget.dart';
 import 'package:vietq_hrm/widgets/customWidgets/CustomLoadingOverlay.dart';
 import 'package:vietq_hrm/widgets/customWidgets/SwipeToCheckIn.widget.dart';
@@ -156,11 +161,11 @@ class _HomePageState extends State<HomePage> {
         body: Column(
           spacing: 20.h,
           children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16).r,
-              height: 100.h,
-              child: CalendarSlideWidget(),
-            ),
+            // Container(
+            //   padding: const EdgeInsets.symmetric(horizontal: 16).r,
+            //   height: 100.h,
+            //   child: CalendarSlideWidget(),
+            // ),
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -176,13 +181,24 @@ class _HomePageState extends State<HomePage> {
                     top: 20,
                     left: 20,
                     right: 20,
-                    bottom: 40,
+                    bottom: 10,
                   ).r,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 20,
-                      children: [TodayAttendance(), YourActivity()],
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      context.read<UserBloc>().add(LoadUserEvent());
+                      context.read<NotificationBloc>().add(FetchNotificationEvent(isRefresh: false));
+                      context.read<AttendanceBloc>().add(LoadAttendanceEvent(today: DateTime.now().toString()));
+                      context.read<CalendarBloc>().add(LoadCalendarEvent(isRefresh: true, today: DateTime.now().toString()));
+                    },
+                    child: SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        spacing: 20,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        // children: [TodayAttendance(), YourActivity()],
+                        children: [TodayInfoWidget() ,YourActivity(), SalaryInfoWidget(), NotificationHomeWidget()],
+                      ),
                     ),
                   ),
                 ),
@@ -205,33 +221,39 @@ bool _sameDate(String workDay, String uiDay) {
 Widget _buildSwipeUI(AttendanceLoaded state, BuildContext context) {
   final dataAtt = state.timeSheets?.attendanceRecs ?? [];
   final hasRecord = dataAtt.isNotEmpty;
-
   final isCheckIn = hasRecord && dataAtt.first.timeIn != null;
   final isCheckOut = hasRecord && dataAtt.first.timeOut != null;
-  return SwipeToCheckIn(
-    background: isCheckIn
-        ? (isCheckOut ? Theme.of(context).colorScheme.primary : Colors.red)
-        : Theme.of(context).colorScheme.primary,
-    title: isCheckIn
-        ? (isCheckOut ? "Swipe to Check In" : "Swipe to Check Out")
-        : "Swipe to Check In",
-    onSwipe: () async {
-      if (isCheckIn && !isCheckOut) {
-        context.read<AttendanceBloc>().add(CheckOutEvent());
-      } else if (!isCheckIn && !isCheckOut) {
-        context.read<AttendanceBloc>().add(CheckInEvent());
-      } else {
-        //show toast error
-        CherryToast.error(
-          description: Text(
-            "You have checked in and checked out",
-            style: TextStyle(color: Colors.black),
-          ),
-          animationType: AnimationType.fromTop,
-          animationDuration: Duration(milliseconds: 200),
-          autoDismiss: true,
-        ).show(context);
-      }
-    },
-  );
+  print("#==========> Check state check in ${isCheckIn}");
+  print("#==========> Check state check in ${isCheckOut}");
+
+  if(isCheckOut && isCheckIn){
+    return Container();
+  }else {
+    return SwipeToCheckIn(
+      background: isCheckIn
+          ? (isCheckOut ? Theme.of(context).colorScheme.primary : Colors.red)
+          : Theme.of(context).colorScheme.primary,
+      title: isCheckIn
+          ? (isCheckOut ? "Swipe to Check In" : "Swipe to Check Out")
+          : "Swipe to Check In",
+      onSwipe: () async {
+        if (isCheckIn && !isCheckOut) {
+          context.read<AttendanceBloc>().add(CheckOutEvent());
+        } else if (!isCheckIn && !isCheckOut) {
+          context.read<AttendanceBloc>().add(CheckInEvent());
+        } else {
+          //show toast error
+          CherryToast.error(
+            description: Text(
+              "You have checked in and checked out",
+              style: TextStyle(color: Colors.black),
+            ),
+            animationType: AnimationType.fromTop,
+            animationDuration: Duration(milliseconds: 200),
+            autoDismiss: true,
+          ).show(context);
+        }
+      },
+    );
+  }
 }

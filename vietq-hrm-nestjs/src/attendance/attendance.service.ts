@@ -212,6 +212,7 @@ export class AttendanceService {
               earlyMinutes: true,
             },
             where: {
+              userCode: req.user.userCode,
               workDay: {
                 gte: today
                   ? dayjs(today).startOf("day").toDate()

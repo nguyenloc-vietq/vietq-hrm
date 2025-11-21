@@ -15,20 +15,22 @@ class NotificationPage extends StatefulWidget {
 class _NotificationPageState extends State<NotificationPage> {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => NotificationBloc(NotificationApi()),
-      child: Scaffold(
-        backgroundColor: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).appBarTheme.backgroundColor : Colors.white,
-        appBar: CustomAppBar(title: 'Notification', actions: [
+    return Scaffold(
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? Theme.of(context).appBarTheme.backgroundColor
+          : Colors.white,
+      appBar: CustomAppBar(
+        title: 'Notification',
+        actions: [
           {
             'icon': 'assets/icons/setting.svg',
             'action': () {
               print('hello');
             },
-          }
-        ],),
-        body: NotificationWidget()
+          },
+        ],
       ),
+      body: NotificationWidget(),
     );
   }
 }

@@ -10,10 +10,13 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:vietq_hrm/blocs/attendance/attendance_bloc.dart';
+import 'package:vietq_hrm/blocs/blocManager/bloc_manager.dart';
 import 'package:vietq_hrm/blocs/calendars/calendar_bloc.dart';
 import 'package:vietq_hrm/blocs/forgot/forgot_bloc.dart';
+import 'package:vietq_hrm/blocs/notifications/notifications_bloc.dart';
 import 'package:vietq_hrm/blocs/theme/theme_bloc.dart';
 import 'package:vietq_hrm/blocs/user/user_bloc.dart';
+import 'package:vietq_hrm/configs/apiConfig/notification.api.dart';
 import 'package:vietq_hrm/configs/apiConfig/schedule.api.dart';
 import 'package:vietq_hrm/configs/apiConfig/user.api.dart';
 import 'package:vietq_hrm/configs/sharedPreference/SharedPreferences.config.dart';
@@ -61,12 +64,8 @@ class MyApp extends StatelessWidget {
         splitScreenMode: true,
         builder: (context, child) {
           return MultiBlocProvider(
-            providers: [
-              BlocProvider(create: (context) => ForgotBloc()),
-              BlocProvider(create: (context) => UserBloc(UserApi())),
-              BlocProvider(create: (context) => CalendarBloc(ScheduleApi())),
-              BlocProvider(create: (context) => AttendanceBloc(ScheduleApi())),
-            ],
+            // key: appKey,
+            providers: BlocManager.buildProviders(),
             child: GestureDetector(
               // Khi chạm vào bất cứ chỗ nào không phải TextField
               onTap: () {

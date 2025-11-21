@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:vietq_hrm/blocs/attendance/attendance_bloc.dart';
 import 'package:vietq_hrm/widgets/customWidgets/HalfCircleProgress.widget.dart';
 
@@ -30,9 +31,81 @@ class _YourActivityState extends State<YourActivity> {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 12.h,
           children: [
+
             Text('Your Activity', style: textTheme.headlineMedium),
             if (state is AttendanceLoading)
-              const Center(child: CircularProgressIndicator())
+              Skeletonizer(
+                enabled: true,
+                effect: PulseEffect(),
+                child: Container(
+                  height: 70.h,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    spacing: 15.w,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Skeleton.replace(
+                        child: Container(
+                          width: 40.w,
+                          height: 40.h,
+                          padding: EdgeInsets.all(5).r,
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primary.withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(10).r,
+                          ),
+                          child: SvgPicture.asset(
+                            'assets/icons/login.svg',
+                            width: 5.w,
+                            height: 5.h,
+                            colorFilter: ColorFilter.mode(
+                              Theme.of(context).colorScheme.primary,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Check In',
+                            style: textTheme.headlineSmall,
+                          ),
+                          Text(
+                            "ske",
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Spacer(),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "ske",
+                            style: textTheme.headlineSmall,
+                          ),
+                          Text(
+                            'On Office',
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              )
             else if (state is AttendanceError)
               Center(
                 child: Text(
@@ -50,7 +123,9 @@ class _YourActivityState extends State<YourActivity> {
                       Container(
                         padding: EdgeInsets.all(16).r,
                         decoration: BoxDecoration(
-                          color: isDarkMode ? Theme.of(context).appBarTheme.foregroundColor : Colors.white,
+                          color: isDarkMode
+                              ? Theme.of(context).appBarTheme.foregroundColor
+                              : Colors.white,
                           borderRadius: BorderRadius.circular(16).r,
                         ),
                         child: Row(
@@ -63,7 +138,9 @@ class _YourActivityState extends State<YourActivity> {
                               height: 40.h,
                               padding: EdgeInsets.all(5).r,
                               decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primary.withOpacity(0.3),
                                 borderRadius: BorderRadius.circular(10).r,
                               ),
                               child: SvgPicture.asset(
@@ -140,7 +217,9 @@ class _YourActivityState extends State<YourActivity> {
                       Container(
                         padding: EdgeInsets.all(16).r,
                         decoration: BoxDecoration(
-                          color: isDarkMode ? Theme.of(context).appBarTheme.foregroundColor : Colors.white,
+                          color: isDarkMode
+                              ? Theme.of(context).appBarTheme.foregroundColor
+                              : Colors.white,
                           borderRadius: BorderRadius.circular(16).r,
                         ),
                         child: Row(
@@ -153,7 +232,9 @@ class _YourActivityState extends State<YourActivity> {
                               height: 40.h,
                               padding: EdgeInsets.all(5).r,
                               decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor.withOpacity(0.3),
+                                color: Theme.of(
+                                  context,
+                                ).primaryColor.withOpacity(0.3),
                                 borderRadius: BorderRadius.circular(10).r,
                               ),
                               child: SvgPicture.asset(
@@ -224,13 +305,13 @@ class _YourActivityState extends State<YourActivity> {
               ] else ...[
                 Center(
                   child: Text(
-                    "Your activity empty!",
+                    "You haven't clocked in yet today",
                     style: textTheme.bodyMedium?.copyWith(color: Colors.grey),
                   ),
                 ),
               ],
             ],
-            SizedBox(height: 50.h),
+
           ],
         );
       },

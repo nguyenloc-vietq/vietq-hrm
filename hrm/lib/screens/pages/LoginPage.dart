@@ -255,7 +255,7 @@ class _LoginPageState extends State<LoginPage> {
                                 child: Text(
                                   'Forgot Password?',
                                   style: textTheme.bodyLarge?.copyWith(
-                                    color: Color(0xFFFFBB00),
+                                    color: Theme.of(context).colorScheme.primary,
                                   ),
                                   textAlign: TextAlign.end,
                                 ),

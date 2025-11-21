@@ -192,7 +192,7 @@ class NotificationItems extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20).r,
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16).r,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.zero,
@@ -226,7 +226,7 @@ class NotificationItems extends StatelessWidget {
             ),
             Expanded(
               child: Column(
-                spacing: 10.h,
+                spacing: 5.h,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -234,13 +234,13 @@ class NotificationItems extends StatelessWidget {
                     style: textTheme.headlineSmall,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Text(
-                    extractCleanText(notification.notification?.body ?? ''),
-                    // notification.notification?.body ?? '',
-                    style: textTheme.bodyMedium,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  // Text(
+                  //   extractCleanText(notification.notification?.body ?? ''),
+                  //   // notification.notification?.body ?? '',
+                  //   style: textTheme.bodyMedium,
+                  //   maxLines: 2,
+                  //   overflow: TextOverflow.ellipsis,
+                  // ),
                   Text(
                     DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.parse(notification.updatedAt as String).toLocal()).toString(),
                     style: textTheme.bodySmall,

@@ -82,19 +82,23 @@ export const schemaHelper = {
    * defaultValue === '' || null
    */
   file: (props) =>
-    zod.custom().transform((data, ctx) => {
-      const hasFile = data instanceof File || (typeof data === 'string' && !!data.length);
+    zod
+      .custom()
+      .transform((data, ctx) => {
+        const hasFile = data instanceof File || (typeof data === 'string' && !!data.length);
+        const isRequired = !!props?.message?.required_error;
+        if (!hasFile && isRequired) {
+          ctx.addIssue({
+            code: zod.ZodIssueCode.custom,
+            message: props?.message?.required_error ?? 'File is required!',
+          });
+          return null;
+        }
 
-      if (!hasFile) {
-        ctx.addIssue({
-          code: zod.ZodIssueCode.custom,
-          message: props?.message?.required_error ?? 'File is required!',
-        });
-        return null;
-      }
-
-      return data;
-    }),
+        return hasFile ? data : null;
+      })
+      .optional()
+      .nullable(),
   /**
    * files
    * defaultValue === []

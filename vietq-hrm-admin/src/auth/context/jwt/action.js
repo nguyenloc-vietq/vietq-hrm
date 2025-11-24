@@ -17,10 +17,9 @@ export const signInWithPassword = async ({ email, password }) => {
     if (!accessToken) {
       throw new Error('Access token not found in response');
     }
-
     setSession(accessToken);
   } catch (error) {
-    console.error('Error during sign in:', error);
+    console.error('username or password is incorrect', error);
     throw error;
   }
 };

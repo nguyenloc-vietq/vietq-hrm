@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vietq_hrm/configs/sharedPreference/SharedPreferences.config.dart';
 import 'package:vietq_hrm/services/push_notification/notification.service.dart';
+import 'package:vietq_hrm/widgets/components/ChangePassword.widget.dart';
 import 'package:vietq_hrm/widgets/customWidgets/ThemePicker.widget.dart';
 
 class SettingPage extends StatefulWidget {
@@ -49,11 +50,13 @@ class _SettingPageState extends State<SettingPage> {
               overlayColor: MaterialStateProperty.all(Colors.transparent),
               activeColor: Colors.transparent,
               activeTrackColor: Theme.of(context).colorScheme.primary,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 18),
               inactiveTrackColor: Colors.grey[200],
               title: Text("Push Notifications", style: textTheme.headlineSmall),
               value: _isEnabled,
               onChanged: _onChanged,
             ),
+            ChangePasswordWidget(),
             PaletteColorPicker()
           ],
         ),

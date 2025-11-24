@@ -23,6 +23,7 @@ import { extname } from "path";
 import { diskStorage } from "multer";
 import { Request } from "express";
 import { UpdateUserProfessionalDto } from "./dto/updateUserProfessional-user.dto";
+import { CreateUserDto } from "./dto/create-user.dto";
 
 @Controller("user")
 export class UserController {
@@ -126,6 +127,18 @@ export class UserController {
       await this.userService.editUserProfessional(user),
       200,
       "edit user professional success",
+    );
+  }
+
+  @Post("create-user")
+  async createUser(
+    @Body(ValidationPipe) createUser: CreateUserDto,
+    @Req() req,
+  ): Promise<ResponseDataSuccess<object>> {
+    return new ResponseDataSuccess(
+      await this.userService.createUser(createUser, req),
+      200,
+      "create user success",
     );
   }
 }

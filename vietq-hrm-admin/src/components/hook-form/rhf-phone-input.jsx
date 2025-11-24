@@ -6,6 +6,7 @@ import { PhoneInput } from '../phone-input';
 
 export function RHFPhoneInput({ name, helperText, ...other }) {
   const { control, setValue } = useFormContext();
+  console.log(control, setValue);
 
   return (
     <Controller

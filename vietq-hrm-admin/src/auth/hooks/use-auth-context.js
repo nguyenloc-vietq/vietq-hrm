@@ -6,7 +6,6 @@ import { AuthContext } from '../context/auth-context';
 
 export function useAuthContext() {
   const context = useContext(AuthContext);
-  console.log('this context', context);
 
   if (!context) {
     throw new Error('useAuthContext: Context must be used inside AuthProvider');

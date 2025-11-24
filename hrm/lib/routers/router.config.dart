@@ -161,6 +161,17 @@ List<RouterObject> ListDetailsRouter = [
     route: '/edit-profile',
     page: EditProfilePage(),
   ),
+  RouterObject(
+    name: 'Change Password',
+    // icon: SvgPicture.asset(
+    //   'assets/icons/user.svg',
+    //   width: 24,
+    //   height: 24,
+    //   colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+    // ),
+    route: '/user/change-password',
+    page: ChangePasswordPage(),
+  ),
 ];
 
 List<RouterObject> ListDetailProfileRouter = [

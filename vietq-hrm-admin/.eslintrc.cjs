@@ -59,6 +59,7 @@ module.exports = {
       0,
       { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' },
     ],
+
     // perfectionist
     'perfectionist/sort-exports': [1, { order: 'asc', type: 'line-length' }],
     'perfectionist/sort-named-imports': [1, { order: 'asc', type: 'line-length' }],
@@ -66,6 +67,7 @@ module.exports = {
     'perfectionist/sort-imports': [
       1,
       {
+        // autofix: false,
         order: 'asc',
         type: 'line-length',
         'newlines-between': 'always',

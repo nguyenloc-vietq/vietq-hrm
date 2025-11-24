@@ -1,7 +1,7 @@
+import { useForm, Controller } from 'react-hook-form'; // useForm trước Controller
 import { z as zod } from 'zod';
 import { useMemo } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, Controller } from 'react-hook-form';
 import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
 import Box from '@mui/material/Box';
@@ -10,65 +10,78 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
 import Grid from '@mui/material/Unstable_Grid2';
+import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
+import InputAdornment from '@mui/material/InputAdornment';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
+
+import { useBoolean } from 'src/hooks/use-boolean';
+import usePasswordGenerator from 'src/hooks/use-generate-password';
 
 import { fData } from 'src/utils/format-number';
 
+import UserApi from 'src/services/api/user.api';
+
 import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
+// "fullName": "Ho Nguyen Loc 2",
+// "email": "nguyenlocsss@viet-q.com",
+// "phone": "0372663903",a
+// "password": "Locasd4499@",
+// "position": "Developer",
+// "employeeType": "Fluu Time"
 export const NewUserSchema = zod.object({
-  avatarUrl: schemaHelper.file({
-    message: { required_error: 'Avatar is required!' },
-  }),
-  name: zod.string().min(1, { message: 'Name is required!' }),
+  avatarUrl: schemaHelper.file().optional(),
+  fullName: zod.string().min(1, { message: 'Name is required!' }),
   email: zod
     .string()
     .min(1, { message: 'Email is required!' })
     .email({ message: 'Email must be a valid email address!' }),
-  phoneNumber: schemaHelper.phoneNumber({ isValidPhoneNumber }),
-  country: schemaHelper.objectOrNull({
-    message: { required_error: 'Country is required!' },
-  }),
-  address: zod.string().min(1, { message: 'Address is required!' }),
-  company: zod.string().min(1, { message: 'Company is required!' }),
-  state: zod.string().min(1, { message: 'State is required!' }),
-  city: zod.string().min(1, { message: 'City is required!' }),
-  role: zod.string().min(1, { message: 'Role is required!' }),
-  zipCode: zod.string().min(1, { message: 'Zip code is required!' }),
-  // Not required
-  status: zod.string(),
-  isVerified: zod.boolean(),
+  phone: schemaHelper.phoneNumber({ isValidPhoneNumber }),
+  employeeType: zod.string().min(1, { message: 'Address is required!' }),
+  position: zod.string().min(1, { message: 'Company is required!' }),
+  password: zod
+    .string()
+    .min(6, { message: 'Password must be at least 6 characters' })
+    .max(20, { message: 'Password must be at most 20 characters' })
+    .refine((password) => /[A-Z]/.test(password), {
+      message: 'Password must contain at least one uppercase letter',
+    })
+    .refine((password) => /[a-z]/.test(password), {
+      message: 'Password must contain at least one lowercase letter',
+    })
+    .refine((password) => /[0-9]/.test(password), {
+      message: 'Password must contain at least one number',
+    })
+    .refine((password) => /[!@#$%^&*]/.test(password), {
+      message: 'Password must contain at least one special character (!@#$%^&*)',
+    }),
 });
 
 // ----------------------------------------------------------------------
 
 export function UserNewEditForm({ currentUser }) {
   const router = useRouter();
+  const password = useBoolean();
+  const generatePassword = usePasswordGenerator();
 
   const defaultValues = useMemo(
     () => ({
-      status: currentUser?.status || '',
       avatarUrl: currentUser?.avatarUrl || null,
-      isVerified: currentUser?.isVerified || true,
-      name: currentUser?.name || '',
+      fullName: currentUser?.fullName || '',
       email: currentUser?.email || '',
-      phoneNumber: currentUser?.phoneNumber || '',
-      country: currentUser?.country || '',
-      state: currentUser?.state || '',
-      city: currentUser?.city || '',
-      address: currentUser?.address || '',
-      zipCode: currentUser?.zipCode || '',
-      company: currentUser?.company || '',
-      role: currentUser?.role || '',
+      phone: currentUser?.phone || '',
+      employeeType: currentUser?.employeeType || '',
+      position: currentUser?.position || '',
+      password: '',
     }),
     [currentUser]
   );
@@ -78,6 +91,7 @@ export function UserNewEditForm({ currentUser }) {
     resolver: zodResolver(NewUserSchema),
     defaultValues,
   });
+  const { setValue } = methods;
 
   const {
     reset,
@@ -91,12 +105,14 @@ export function UserNewEditForm({ currentUser }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      reset();
+      const dataNewUser = await UserApi.createUser(data);
       toast.success(currentUser ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.user.list);
+      // router.push(paths.dashboard.user.list);
+      console.log(`[===============> success | `, dataNewUser);
       console.info('DATA', data);
+      reset();
     } catch (error) {
+      toast.error(error.message);
       console.error(error);
     }
   });
@@ -178,22 +194,6 @@ export function UserNewEditForm({ currentUser }) {
               />
             )}
 
-            <Field.Switch
-              name="isVerified"
-              labelPlacement="start"
-              label={
-                <>
-                  <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                    Email verified
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Disabling this will automatically send the user a verification email
-                  </Typography>
-                </>
-              }
-              sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
-            />
-
             {currentUser && (
               <Stack justifyContent="center" alignItems="center" sx={{ mt: 3 }}>
                 <Button variant="soft" color="error">
@@ -215,23 +215,80 @@ export function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <Field.Text name="name" label="Full name" />
-              <Field.Text name="email" label="Email address" />
-              <Field.Phone name="phoneNumber" label="Phone number" />
-
-              <Field.CountrySelect
-                fullWidth
-                name="country"
-                label="Country"
-                placeholder="Choose a country"
+              <Field.Text
+                name="fullName"
+                label={
+                  <>
+                    Full name <span style={{ color: "red" }}>*</span>
+                  </>
+                }
+              />
+              <Field.Text
+                name="email"
+                label={
+                  <>
+                    Email address <span style={{ color: "red" }}>*</span>
+                  </>
+                }
+              />
+              <Field.Phone
+                name="phone"
+                label={
+                  <>
+                    Phone number <span style={{ color: "red" }}>*</span>
+                  </>
+                }
+              />
+              <Field.Text
+                name="position"
+                label={
+                  <>
+                    Position <span style={{ color: "red" }}>*</span>
+                  </>
+                }
               />
 
-              <Field.Text name="state" label="State/region" />
-              <Field.Text name="city" label="City" />
-              <Field.Text name="address" label="Address" />
-              <Field.Text name="zipCode" label="Zip/code" />
-              <Field.Text name="company" label="Company" />
-              <Field.Text name="role" label="Role" />
+              <Field.Text
+                name="password"
+                label={
+                  <>
+                  Password <span style={{ color: "red" }}>*</span>
+                  </>
+                }
+                placeholder="6+ characters"
+                type={password.value ? 'text' : 'password'}
+                InputLabelProps={{ shrink: true }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {/* Nút sinh mật khẩu */}
+                      <IconButton
+                        onClick={() => {
+                          const newPass = generatePassword();
+                          setValue('password', newPass, { shouldValidate: true });
+                          toast.success('Generate password is success!');
+                        }}
+                        edge="end"
+                        title="Generate strong password"
+                      >
+                        <Iconify icon="solar:key-bold" />
+                      </IconButton>
+
+                      {/* Nút show/hide */}
+                      <IconButton onClick={password.onToggle} edge="end">
+                        <Iconify
+                          icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
+                        />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <Field.Text name="employeeType" label={
+                <>
+                Employee type <span style={{color: "red"}}> * </span>
+                </>
+              } />
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>

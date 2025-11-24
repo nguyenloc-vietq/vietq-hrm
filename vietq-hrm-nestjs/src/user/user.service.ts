@@ -1,3 +1,4 @@
+import { hashPassword } from "src/auth/utils/hash.utils";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Body,
@@ -11,10 +12,15 @@ import { DatabaseService } from "src/database/database.service";
 import { query } from "winston";
 import { UpdateProfileDto, UpdateUserDto } from "./dto/update-user.dto";
 import { UpdateUserProfessionalDto } from "./dto/updateUserProfessional-user.dto";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { CodeGeneratorService } from "src/code-generator/code-generator.service";
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: DatabaseService) {}
+  constructor(
+    private readonly prisma: DatabaseService,
+    private codeGen: CodeGeneratorService,
+  ) {}
 
   async getProfile(@Query() query: any) {
     try {
@@ -160,6 +166,47 @@ export class UserService {
       return { ...editUserProfessional };
     } catch (error) {
       throw new HttpException(error.message, 500);
+    }
+  }
+
+  async createUser(user: CreateUserDto, @Req() req: any) {
+    try {
+      const userCode = await this.codeGen.generateCode(
+        this.prisma.user,
+        "USR",
+        {
+          field: "userCode",
+        },
+      );
+      const { password, ...userData } = user;
+      const hashPasswords = await hashPassword(password);
+      const newUser = await this.prisma.user.create({
+        data: {
+          email: userData.email,
+          fullName: userData.fullName,
+          phone: userData.phone,
+          passwordHash: hashPasswords,
+          companyCode: req.user.companyCode,
+          userCode: userCode,
+        },
+      });
+
+      const userProfessional = await this.prisma.userProfessional.create({
+        data: {
+          companyCode: req.user.companyCode,
+          userCode: userCode,
+          position: userData.position,
+          employeeType: userData.employeeType,
+        },
+      });
+      const { passwordHash, ...payload } = newUser;
+      const result = {
+        ...payload,
+        ...userProfessional,
+      };
+      return result;
+    } catch (error) {
+      throw new HttpException(error.message, 201);
     }
   }
 }

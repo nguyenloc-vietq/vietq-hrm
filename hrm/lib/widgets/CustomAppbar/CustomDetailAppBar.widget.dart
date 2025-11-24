@@ -26,7 +26,7 @@ class CustomDetailAppBar extends StatelessWidget implements PreferredSizeWidget 
       centerTitle: true,
       leading: IconButton(
         icon: Icon(Icons.arrow_back_ios_new_outlined, color: isDarkMode ? Colors.white : Colors.black),
-         onPressed: () => Navigator.pop(context),
+         onPressed: () => context.pop(),
       ),
       title: Text(
         title,

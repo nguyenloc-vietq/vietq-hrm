@@ -13,6 +13,7 @@ class PaletteColorPicker extends StatelessWidget {
     Color(0xFFE9A5F1),
     Color(0xFFFF8080),
     Color(0xFF5D688A),
+    Color(0xFF5FC38F),
     Color(0xFFFFB38E),
   ];
 

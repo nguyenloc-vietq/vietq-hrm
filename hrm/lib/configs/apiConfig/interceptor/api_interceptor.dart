@@ -5,6 +5,7 @@ import 'package:vietq_hrm/configs/apiConfig/interceptor/api_exceptions.dart';
 import 'package:vietq_hrm/configs/apiConfig/interceptor/dio_client.dart';
 import 'package:vietq_hrm/configs/sharedPreference/SharedPreferences.config.dart';
 import 'package:vietq_hrm/routers/routes.config.dart';
+import 'package:vietq_hrm/services/navigation_services.dart';
 
 class ApiInterceptor extends Interceptor {
   final dio = Dio(BaseOptions(baseUrl: dotenv.env['API_ENDPOINT'] as String));
@@ -104,7 +105,7 @@ class ApiInterceptor extends Interceptor {
     print('Message: ${err.response}');
     if(err.response?.statusCode == 401) {
       SharedPreferencesConfig.deleteAll();
-      appRouter.go('/login');
+      NavigationService.go('/login');
     }
     final handledError = handleDioError(err);
     // print('Handled Error: $handledError.message');

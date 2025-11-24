@@ -48,7 +48,6 @@ class _NotificationWidgetState extends State<NotificationWidget> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<NotificationBloc, NotificationState>(
@@ -78,7 +77,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                   child: ConstrainedBox(
                     constraints: BoxConstraints(minHeight: constraints.maxHeight),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20).r,
                       width: double.infinity,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -119,16 +118,19 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                 const FetchNotificationEvent(),
               );
             },
-            child: ListView.separated(
-              controller: _scrollController,
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: state.notifications.length+ (state.hasReachedMax ? 0 : 1),
-              separatorBuilder: (context, index) {
-                return Divider(color: Colors.grey.shade200, height: 1);
-              },
-              itemBuilder: (context, index) {
-                return NotificationItems(notification: state.notifications[0]);
-              },
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20).r,
+              child: ListView.separated(
+                controller: _scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: state.notifications.length+ (state.hasReachedMax ? 0 : 1),
+                separatorBuilder: (context, index) {
+                  return Divider(color: Colors.grey.shade200, height: 1);
+                },
+                itemBuilder: (context, index) {
+                  return NotificationItems(notification: state.notifications[0], isShowIcon: true,);
+                },
+              ),
             ),
           );
         }
@@ -186,13 +188,14 @@ class _NotificationWidgetState extends State<NotificationWidget> {
 
 class NotificationItems extends StatelessWidget {
   final NotificationModel notification;
-  const NotificationItems({super.key, required this.notification});
+  final bool isShowIcon;
+  const NotificationItems({super.key, required this.notification, required this.isShowIcon});
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16).r,
+      // padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16).r,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.zero,
@@ -205,9 +208,9 @@ class NotificationItems extends StatelessWidget {
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 20.h,
+          spacing: isShowIcon ? 20.h : 0,
           children: [
-            Container(
+            isShowIcon ? Container(
               padding: EdgeInsets.all(15).r,
               width: 50.w,
               height: 50.h,
@@ -223,10 +226,11 @@ class NotificationItems extends StatelessWidget {
                   color: Theme.of(context).primaryColor,
                 ),
               ),
-            ),
+            ) : SizedBox(width: 0,),
             Expanded(
               child: Column(
                 spacing: 5.h,
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(

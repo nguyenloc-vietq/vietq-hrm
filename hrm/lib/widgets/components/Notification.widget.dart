@@ -17,12 +17,8 @@ class NotificationHomeWidget extends StatefulWidget {
 class _NotificationHomeWidgetState extends State<NotificationHomeWidget> {
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme
-        .of(context)
-        .textTheme;
-    final isDarkMode = Theme
-        .of(context)
-        .brightness == Brightness.dark;
+    final textTheme = Theme.of(context).textTheme;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 12.h,
@@ -44,10 +40,7 @@ class _NotificationHomeWidgetState extends State<NotificationHomeWidget> {
               child: Text(
                 "View All",
                 style: textTheme.bodyMedium?.copyWith(
-                  color: Theme
-                      .of(context)
-                      .colorScheme
-                      .primary,
+                  color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -56,51 +49,77 @@ class _NotificationHomeWidgetState extends State<NotificationHomeWidget> {
         ),
 
         BlocBuilder<NotificationBloc, NotificationState>(
-            builder: (context, state) {
-              if (state is NotificationLoading) {
-                return Skeletonizer(
-                  enabled: true,
-                  effect: PulseEffect(),
+          builder: (context, state) {
+            if (state is NotificationLoading) {
+              return Skeletonizer(
+                enabled: true,
+                effect: PulseEffect(),
+                child: Container(
+                  width: double.infinity,
+                  height: 100.h,
+                  decoration: BoxDecoration(
+                    color: isDarkMode
+                        ? Colors.grey.shade900
+                        : Colors.grey.shade100,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ).r,
+                  ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        height: 100.h,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade100,
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(30),
-                            topRight: Radius.circular(30),
-                          ).r,
-                        ),
-                      )
+                      Text("this is content notification"),
+                      Text("time"),
                     ],
                   ),
-                );
-              }
-              if (state is NotificationLoaded) {
-                return Column(
-                  spacing: 12.h,
-                  children: [
-                    ...state.notifications.take(5).map((e) =>
-                        NotificationItems(notification: e)),
-                    ...state.notifications.take(5).map((e) =>
-                        NotificationItems(notification: e)),
-                    ...state.notifications.take(5).map((e) =>
-                        NotificationItems(notification: e)),
-                    ...state.notifications.take(5).map((e) =>
-                        NotificationItems(notification: e)),
-                    SizedBox(height: 100.h,)
-                  ],
-                );
-              }
-              return Center(child: Text("No Notification"),);
+                ),
+              );
             }
-        )
+            if (state is NotificationLoaded) {
+              return Column(
+                spacing: 12.h,
+                children: [
+                  ...state.notifications
+                      .take(5)
+                      .map(
+                        (e) => NotificationItems(
+                          notification: e,
+                          isShowIcon: true,
+                        ),
+                      ),
+                  ...state.notifications
+                      .take(5)
+                      .map(
+                        (e) => NotificationItems(
+                          notification: e,
+                          isShowIcon: true,
+                        ),
+                      ),
+                  ...state.notifications
+                      .take(5)
+                      .map(
+                        (e) => NotificationItems(
+                          notification: e,
+                          isShowIcon: true,
+                        ),
+                      ),
+                  ...state.notifications
+                      .take(5)
+                      .map(
+                        (e) => NotificationItems(
+                          notification: e,
+                          isShowIcon: true,
+                        ),
+                      ),
+                  SizedBox(height: 100.h),
+                ],
+              );
+            }
+            return Center(child: Text("No Notification"));
+          },
+        ),
       ],
     );
   }
 }
-
-
-

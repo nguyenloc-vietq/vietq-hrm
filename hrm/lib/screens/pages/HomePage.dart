@@ -4,6 +4,7 @@ import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:vietq_hrm/blocs/attendance/attendance_bloc.dart';
@@ -158,53 +159,56 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        body: Column(
-          spacing: 20.h,
-          children: [
-            // Container(
-            //   padding: const EdgeInsets.symmetric(horizontal: 16).r,
-            //   height: 100.h,
-            //   child: CalendarSlideWidget(),
-            // ),
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade100,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                  ).r,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    top: 20,
-                    left: 20,
-                    right: 20,
-                    bottom: 10,
-                  ).r,
-                  child: RefreshIndicator(
-                    onRefresh: () async {
-                      context.read<UserBloc>().add(LoadUserEvent());
-                      context.read<NotificationBloc>().add(FetchNotificationEvent(isRefresh: false));
-                      context.read<AttendanceBloc>().add(LoadAttendanceEvent(today: DateTime.now().toString()));
-                      context.read<CalendarBloc>().add(LoadCalendarEvent(isRefresh: true, today: DateTime.now().toString()));
-                    },
-                    child: SingleChildScrollView(
-                      physics: AlwaysScrollableScrollPhysics(),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        spacing: 20,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        // children: [TodayAttendance(), YourActivity()],
-                        children: [TodayInfoWidget() ,YourActivity(), SalaryInfoWidget(), NotificationHomeWidget()],
+        body: Padding(
+          padding: const EdgeInsets.only(top: 16).r,
+          child: Column(
+            spacing: 20.h,
+            children: [
+              // Container(
+              //   padding: const EdgeInsets.symmetric(horizontal: 16).r,
+              //   height: 100.h,
+              //   child: CalendarSlideWidget(),
+              // ),
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade100,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ).r,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: 20,
+                      left: 20,
+                      right: 20,
+                      bottom: 10,
+                    ).r,
+                    child: RefreshIndicator(
+                      onRefresh: () async {
+                        context.read<UserBloc>().add(LoadUserEvent());
+                        context.read<NotificationBloc>().add(FetchNotificationEvent(isRefresh: false));
+                        context.read<AttendanceBloc>().add(LoadAttendanceEvent(today: DateTime.now().toString()));
+                        context.read<CalendarBloc>().add(LoadCalendarEvent(isRefresh: true, today: DateTime.now().toString()));
+                      },
+                      child: SingleChildScrollView(
+                        physics: AlwaysScrollableScrollPhysics(),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          spacing: 20,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          // children: [TodayAttendance(), YourActivity()],
+                          children: [TodayInfoWidget() ,YourActivity(), SalaryInfoWidget(), NotificationHomeWidget()],
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

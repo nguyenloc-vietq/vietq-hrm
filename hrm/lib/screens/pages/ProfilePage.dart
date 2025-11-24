@@ -54,8 +54,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           onPressed: () {
                             SharedPreferencesConfig.delete('users');
                             SharedPreferencesConfig.delete('themeColor');
-                            BlocManager.closeAllBlocs();
-                            context.go('/');
+                            // BlocManager.closeAllBlocs(context);
+                            context.go('/login');
                           },
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.zero,

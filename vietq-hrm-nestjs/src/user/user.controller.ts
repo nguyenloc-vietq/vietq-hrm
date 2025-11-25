@@ -50,7 +50,14 @@ export class UserController {
 
   @Put("user-update")
   async update(
-    @Body(ValidationPipe) user: UpdateUserDto,
+    @Body(
+      new ValidationPipe({
+        whitelist: true, // loại bỏ các field không có trong DTO
+        forbidNonWhitelisted: true, // tùy chọn: ném lỗi nếu có field lạ
+        transform: true, // chuyển đổi body sang instance DTO
+      }),
+    )
+    user: UpdateUserDto,
   ): Promise<ResponseDataSuccess<object>> {
     return new ResponseDataSuccess(
       await this.userService.update(user),
@@ -61,7 +68,14 @@ export class UserController {
 
   @Put("update")
   async updateProfile(
-    @Body(ValidationPipe) user: UpdateProfileDto,
+    @Body(
+      new ValidationPipe({
+        whitelist: true, // loại bỏ các field không có trong DTO
+        forbidNonWhitelisted: true, // tùy chọn: ném lỗi nếu có field lạ
+        transform: true, // chuyển đổi body sang instance DTO
+      }),
+    )
+    user: UpdateProfileDto,
     @Req() req: any,
   ): Promise<ResponseDataSuccess<object>> {
     return new ResponseDataSuccess(

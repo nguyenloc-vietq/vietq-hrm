@@ -1,3 +1,4 @@
+
 # ========= STAGE 1: Builder =========
 FROM node:20-alpine AS builder
 
@@ -17,7 +18,7 @@ RUN npm ci
 COPY . .
 
 # Generate Prisma Client (cho platform alpine)
-RUN npx prisma generate --binary-target="linux-musl"
+RUN npx prisma generate
 
 # Build NestJS
 RUN npm run build
@@ -41,6 +42,8 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
 # Chuyển quyền sở hữu
+RUN mkdir -p /app/src/uploads && chown -R nestjs:nodejs /app/src/uploads
+
 RUN chown -R nestjs:nodejs /app
 USER nestjs
 
@@ -52,4 +55,10 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget -qO- http://localhost:3592/health || exit 1
 
 # Start app
-CMD ["node", "dist/main.js"]
+CMD ["node", "dist/src/main.js"]
+# root@ip-172-31-8-134:/home/ubuntu# 
+
+#docker run -v /host/path/uploads:/app/src/uploads -p 3592:3592 deploy-hr-api
+#access premission
+#sudo chown -R 1001:65533 ../src/uploads
+#sudo chmod -R 775 ../src/uploads

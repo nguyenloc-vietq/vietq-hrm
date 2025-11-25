@@ -1,9 +1,9 @@
+import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
+import { MailerModule } from "@nestjs-modules/mailer";
 // src/email/email.module.ts
 import { Module } from "@nestjs/common";
-import { MailerModule } from "@nestjs-modules/mailer";
-import { join } from "path";
 import { SmtpService } from "./smtp.service";
-import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
+import { join } from "path";
 
 @Module({
   imports: [
@@ -21,7 +21,7 @@ import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handleba
         from: '"No Reply" <no-reply@example.com>',
       },
       template: {
-        dir: join(process.cwd(), "src/smtp/templates"),
+        dir: join(__dirname, "templates"),
         adapter: new HandlebarsAdapter(), // bạn có thể dùng handlebars adapter
         options: { strict: true },
       },

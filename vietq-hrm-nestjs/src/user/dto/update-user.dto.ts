@@ -6,6 +6,8 @@ import {
   IsString,
 } from "class-validator";
 
+import { Expose } from "class-transformer";
+
 export class UpdateUserDto {
   @IsString()
   @IsNotEmpty()
@@ -23,10 +25,13 @@ export class UpdateUserDto {
 export class UpdateProfileDto {
   @IsEmail()
   email: string;
+
   @IsString()
   phone: string;
+
   @IsString()
   fullName: string;
+
   @IsString()
   address: string;
 }

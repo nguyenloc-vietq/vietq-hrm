@@ -1,4 +1,4 @@
-version: "3.3"
+version: "3.9"
 
 services:
   hr-api:
@@ -7,7 +7,9 @@ services:
       dockerfile: deploy/Dockerfile
     container_name: hr-api
     ports:
-      - "3592:3592"
+      - "3592:3592"         
     env_file:
-      - ../.env
+      - ../.env              
+    volumes:
+      - ../src/uploads:/app/src/uploads   
     restart: always

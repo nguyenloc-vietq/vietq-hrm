@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:vietq_hrm/blocs/blocManager/bloc_manager.dart';
+import 'package:vietq_hrm/blocs/forgot/forgot_bloc.dart';
 import 'package:vietq_hrm/blocs/theme/theme_bloc.dart';
 import 'package:vietq_hrm/configs/sharedPreference/SharedPreferences.config.dart';
 import 'package:vietq_hrm/routers/routes.config.dart';
@@ -48,7 +49,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (context) => ThemeBloc())],
+      providers: [
+        BlocProvider(create: (context) => ThemeBloc()),
+        BlocProvider(create: (context) => ForgotBloc())
+      ],
       child: ScreenUtilInit(
         designSize: const Size(428, 926),
         minTextAdapt: true,

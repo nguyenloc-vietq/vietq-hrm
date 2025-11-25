@@ -1,10 +1,14 @@
-// import "dotenv/config";
+import "dotenv/config";
 
-// import { defineConfig, env } from "prisma/config";
+import { defineConfig } from "prisma/config";
 
-// export default defineConfig({
-//   datasource: {
-//     url: env("DATABASE_URL"),
-//     // shadowDatabaseUrl: env("SHADOW_DATABASE_URL"),
-//   },
-// });
+// prisma.config.ts
+
+export default defineConfig({
+  // Config cho datasource (thay thế url cũ)
+  datasource: {
+    url: process.env.DATABASE_URL ?? "", // Dùng .env như trước
+  },
+  // Các options khác nếu cần (log, preview features, v.v.)
+  //   log: ["query", "info", "warn", "error"],
+});

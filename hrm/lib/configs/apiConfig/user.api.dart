@@ -47,4 +47,16 @@ class UserApi {
       throw handled;
     }
   }
+  Future<void> changePassword(String oldPasss, String password) async {
+    try{
+      await dio.post('/user/change-password', data: {
+        'oldPassword': oldPasss,
+        'newPassword': password,
+      });
+    }on DioException catch (e) {
+      final handled = handleDioError(e);
+      print(' Gọi API thất bại: ${handled}');
+      throw handled;
+    }
+}
 }

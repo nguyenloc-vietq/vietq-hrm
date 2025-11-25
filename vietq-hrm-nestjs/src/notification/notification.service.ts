@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpException, Injectable } from "@nestjs/common";
+
+import { CodeGeneratorService } from "../code-generator/code-generator.service";
+import { CreateNotificationDto } from "./dto/create-notification.dto";
 import { DatabaseService } from "../database/database.service";
 import { DevicesRegisterNotificationDto } from "./dto/devicesRegister-notification.dto";
-import dayjs from "dayjs";
-import { CreateNotificationDto } from "./dto/create-notification.dto";
-import { CodeGeneratorService } from "../code-generator/code-generator.service";
-import { UpdateNotificationDto } from "./dto/update-notification.dto";
 import { FirebaseService } from "../firebase/firebase.service";
+import { UpdateNotificationDto } from "./dto/update-notification.dto";
+import dayjs from "dayjs";
 
 @Injectable()
 export class NotificationService {
@@ -97,13 +98,26 @@ export class NotificationService {
           userCode: userCode,
         },
         include: {
-          notification: true,
+          notification: {
+            select: {
+              notificationCode: true,
+              title: true,
+              targetType: true,
+              typeSystem: true,
+              scheduleTime: true,
+              isSent: true,
+              openSent: true,
+              isActive: true,
+              createdAt: true,
+              updatedAt: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
         },
       });
-      const result = Array.from({ length: 10 }, (_, index) => ({
-        ...listNotification[index],
-      }));
-      return result;
+      return [...listNotification];
     } catch (error) {
       throw new HttpException(error.message, 500);
     }

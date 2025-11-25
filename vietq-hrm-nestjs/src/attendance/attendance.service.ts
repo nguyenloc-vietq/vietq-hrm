@@ -222,6 +222,9 @@ export class AttendanceService {
                   : endOfMonth.toDate(),
               },
             },
+            orderBy: {
+              workDay: "desc",
+            },
           },
         },
       });

@@ -226,6 +226,54 @@ class _WorkScheduleListState extends State<WorkScheduleList> with AutomaticKeepA
           }
           if (state is CalendarLoaded) {
             print("#==========> this state ${state.schedules}");
+            if(state.schedules.length == 0) {
+              return RefreshIndicator(
+                onRefresh: () async {
+                  context.read<CalendarBloc>().add(
+                    const LoadCalendarEvent(isRefresh: true),
+                  );
+                },
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 20).r,
+                          width: double.infinity,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 70.w,
+                                height: 70.h,
+                                padding: EdgeInsets.all(15).r,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100).r,
+                                  color: Theme.of(context).primaryColor.withAlpha(600),
+                                ),
+                                child: SizedBox(
+                                  width: 70.w,
+                                  height: 70.h,
+                                  child: SvgPicture.asset(
+                                    'assets/icons/calendar.svg',
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 10.h,),
+                              Text("Calendar is empty", style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.center,),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            }
             return RefreshIndicator(
               onRefresh: () async {
                 context.read<CalendarBloc>().add(

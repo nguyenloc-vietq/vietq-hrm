@@ -24,6 +24,7 @@ import { diskStorage } from "multer";
 import { Request } from "express";
 import { UpdateUserProfessionalDto } from "./dto/updateUserProfessional-user.dto";
 import { CreateUserDto } from "./dto/create-user.dto";
+import { ChangePasswordDto } from "./dto/changePassword-user.dto";
 
 @Controller("user")
 export class UserController {
@@ -139,6 +140,18 @@ export class UserController {
       await this.userService.createUser(createUser, req),
       200,
       "create user success",
+    );
+  }
+
+  @Post("change-password")
+  async changePassword(
+    @Body(ValidationPipe) newPassword: ChangePasswordDto,
+    @Req() req: any,
+  ): Promise<ResponseDataSuccess<object>> {
+    return new ResponseDataSuccess(
+      await this.userService.changePassword(newPassword, req),
+      200,
+      "change password success",
     );
   }
 }

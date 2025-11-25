@@ -234,9 +234,7 @@ Widget _buildSwipeUI(AttendanceLoaded state, BuildContext context) {
     return Container();
   }else {
     return SwipeToCheckIn(
-      background: isCheckIn
-          ? (isCheckOut ? Theme.of(context).colorScheme.primary : Colors.red)
-          : Theme.of(context).colorScheme.primary,
+      background: Theme.of(context).colorScheme.primary,
       title: isCheckIn
           ? (isCheckOut ? "Swipe to Check In" : "Swipe to Check Out")
           : "Swipe to Check In",

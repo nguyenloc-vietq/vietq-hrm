@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:vietq_hrm/blocs/notifications/notifications_bloc.dart';
@@ -23,87 +24,130 @@ class _NotificationHomeWidgetState extends State<NotificationHomeWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 12.h,
       children: [
-        Row(
-          // crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text('Notification', style: textTheme.headlineMedium),
-            Spacer(),
-            TextButton(
-              style: TextButton.styleFrom(
-                minimumSize: Size.zero,
-                padding: EdgeInsets.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              onPressed: () {
-                context.go('/notification');
-              },
-              child: Text(
-                "View All",
-                style: textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-
         BlocBuilder<NotificationBloc, NotificationState>(
           builder: (context, state) {
             if (state is NotificationLoading) {
-              return Skeletonizer(
-                enabled: true,
-                effect: PulseEffect(),
-                child: Container(
-                  width: double.infinity,
-                  height: 100.h,
-                  decoration: BoxDecoration(
-                    color: isDarkMode
-                        ? Colors.grey.shade900
-                        : Colors.grey.shade100,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ).r,
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Skeletonizer(
+                    enabled: true,
+                    effect: PulseEffect(),
+                    child: Row(
+                      // crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text('Notification', style: textTheme.headlineMedium),
+                        Spacer(),
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            minimumSize: Size.zero,
+                            padding: EdgeInsets.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          onPressed: () {
+                            context.go('/notification');
+                          },
+                          child: Text(
+                            "View All",
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("this is content notification"),
-                      Text("time"),
-                    ],
+                  Skeletonizer(
+                    enabled: true,
+                    effect: PulseEffect(),
+                    child: Container(
+                      width: double.infinity,
+                      height: 100.h,
+                      decoration: BoxDecoration(
+                        color: isDarkMode
+                            ? Colors.grey.shade900
+                            : Colors.grey.shade100,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
+                        ).r,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("this is content notification"),
+                          Text("time"),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                ],
               );
             }
             if (state is NotificationLoaded) {
-              return Column(
+              final notifications = state.notifications;
+
+              if (notifications.isEmpty) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text('Notification', style: textTheme.headlineMedium),
+                        const Spacer(),
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            minimumSize: Size.zero,
+                            padding: EdgeInsets.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          onPressed: () {
+                            context.go('/notification');
+                          },
+                          child: Text(
+                            "View All",
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    const Center(child: Text("No Notification")),
+                  ],
+                );
+              }
+
+
+            return Column(
                 spacing: 12.h,
                 children: [
-                  ...state.notifications
-                      .take(5)
-                      .map(
-                        (e) => NotificationItems(
-                          notification: e,
-                          isShowIcon: true,
+                  Row(
+                    children: [
+                      Text('Notification', style: textTheme.headlineMedium),
+                      const Spacer(),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          minimumSize: Size.zero,
+                          padding: EdgeInsets.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        onPressed: () {
+                          context.go('/notification');
+                        },
+                        child: Text(
+                          "View All",
+                          style: textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                  ...state.notifications
-                      .take(5)
-                      .map(
-                        (e) => NotificationItems(
-                          notification: e,
-                          isShowIcon: true,
-                        ),
-                      ),
-                  ...state.notifications
-                      .take(5)
-                      .map(
-                        (e) => NotificationItems(
-                          notification: e,
-                          isShowIcon: true,
-                        ),
-                      ),
+                    ],
+                  ),
                   ...state.notifications
                       .take(5)
                       .map(
@@ -116,7 +160,31 @@ class _NotificationHomeWidgetState extends State<NotificationHomeWidget> {
                 ],
               );
             }
-            return Center(child: Text("No Notification"));
+            return Row(
+              // crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text('Notification', style: textTheme.headlineMedium),
+                Spacer(),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    minimumSize: Size.zero,
+                    padding: EdgeInsets.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  onPressed: () {
+                    context.go('/notification');
+                  },
+                  child: Text(
+                    "View All",
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            );
+
           },
         ),
       ],

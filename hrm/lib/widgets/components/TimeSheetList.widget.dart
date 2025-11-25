@@ -230,6 +230,59 @@ class _TimeSheetState extends State<TimeSheet>
         }
         if (state is CalendarLoaded) {
           print("#==========> NEW TIME SHEETS ${state.timeSheets?.attendanceRecs}");
+
+          if(state.timeSheets!.attendanceRecs!.isEmpty) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                context.read<CalendarBloc>().add(
+                  const LoadCalendarEvent(isRefresh: true),
+                );
+              },
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        width: double.infinity,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 70,
+                              height: 70,
+                              padding: EdgeInsets.all(15),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                color: Theme.of(context).primaryColor.withAlpha(600),
+                              ),
+                              child: SizedBox(
+                                width: 70,
+                                height: 70,
+                                child: SvgPicture.asset(
+                                  'assets/icons/calendar.svg',
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              "Time sheet is empty",
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          }
           return RefreshIndicator(
             onRefresh: () async {
               context.read<CalendarBloc>().add(

@@ -9,7 +9,6 @@ import 'package:vietq_hrm/blocs/notifications/notifications_bloc.dart';
 import 'package:vietq_hrm/models/notification.models.dart';
 import 'package:vietq_hrm/utils/converHtmlToText.dart';
 
-
 class NotificationWidget extends StatefulWidget {
   const NotificationWidget({super.key});
 
@@ -42,9 +41,9 @@ class _NotificationWidgetState extends State<NotificationWidget> {
         !state.isLoadingMore &&
         position.pixels >= position.maxScrollExtent - 200) {
       print("#==========> Load");
-      context
-          .read<NotificationBloc>()
-          .add(const FetchNotificationEvent(isRefresh: true));
+      context.read<NotificationBloc>().add(
+        const FetchNotificationEvent(isRefresh: true),
+      );
     }
   }
 
@@ -53,14 +52,15 @@ class _NotificationWidgetState extends State<NotificationWidget> {
     return BlocBuilder<NotificationBloc, NotificationState>(
       builder: (context, state) {
         if (state is NotificationLoading) {
-          return Center(child: SizedBox(
+          return Center(
+            child: SizedBox(
               width: 20,
               height: 20,
               child: CircularProgressIndicator(
                 color: Theme.of(context).primaryColor,
                 strokeWidth: 3,
-              ))
-
+              ),
+            ),
           );
         }
         if (state is NotificationError) {
@@ -75,9 +75,14 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                 return SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20).r,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 20,
+                      ).r,
                       width: double.infinity,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -89,7 +94,9 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                             padding: EdgeInsets.all(15),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(100),
-                            color: Theme.of(context).primaryColor.withAlpha(600),
+                              color: Theme.of(
+                                context,
+                              ).primaryColor.withAlpha(600),
                             ),
                             child: SizedBox(
                               width: 70,
@@ -100,8 +107,12 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 10,),
-                          Text("Fetch Notification is error, please refresh notification", style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.center,),
+                          const SizedBox(height: 10),
+                          Text(
+                            "Fetch Notification is error, please refresh notification",
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            textAlign: TextAlign.center,
+                          ),
                         ],
                       ),
                     ),
@@ -112,6 +123,62 @@ class _NotificationWidgetState extends State<NotificationWidget> {
           );
         }
         if (state is NotificationLoaded) {
+          if (state.notifications.length == 0) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                context.read<NotificationBloc>().add(
+                  const FetchNotificationEvent(isRefresh: true),
+                );
+              },
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20).r,
+                        width: double.infinity,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 70.w,
+                              height: 70.h,
+                              padding: EdgeInsets.all(15).r,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100).r,
+                                color: Theme.of(
+                                  context,
+                                ).primaryColor.withAlpha(600),
+                              ),
+                              child: SizedBox(
+                                width: 70.w,
+                                height: 70.w,
+                                child: SvgPicture.asset(
+                                  'assets/icons/notifications.svg',
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 10.h),
+                            Text(
+                              "Notification is empty",
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          }
           return RefreshIndicator(
             onRefresh: () async {
               context.read<NotificationBloc>().add(
@@ -123,12 +190,16 @@ class _NotificationWidgetState extends State<NotificationWidget> {
               child: ListView.separated(
                 controller: _scrollController,
                 physics: const AlwaysScrollableScrollPhysics(),
-                itemCount: state.notifications.length+ (state.hasReachedMax ? 0 : 1),
+                itemCount:
+                    state.notifications.length + (state.hasReachedMax ? 0 : 1),
                 separatorBuilder: (context, index) {
                   return Divider(color: Colors.grey.shade200, height: 1);
                 },
                 itemBuilder: (context, index) {
-                  return NotificationItems(notification: state.notifications[0], isShowIcon: true,);
+                  return NotificationItems(
+                    notification: state.notifications[0],
+                    isShowIcon: true,
+                  );
                 },
               ),
             ),
@@ -159,7 +230,9 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                           padding: EdgeInsets.all(15).r,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(100).r,
-                            color: Theme.of(context).primaryColor.withAlpha(600),
+                            color: Theme.of(
+                              context,
+                            ).primaryColor.withAlpha(600),
                           ),
                           child: SizedBox(
                             width: 70.w,
@@ -170,8 +243,12 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                             ),
                           ),
                         ),
-                        SizedBox(height: 10.h,),
-                        Text("Notification is empty", style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.center,),
+                        SizedBox(height: 10.h),
+                        Text(
+                          "Notification is empty",
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          textAlign: TextAlign.center,
+                        ),
                       ],
                     ),
                   ),
@@ -180,7 +257,6 @@ class _NotificationWidgetState extends State<NotificationWidget> {
             },
           ),
         );
-
       },
     );
   }
@@ -189,7 +265,12 @@ class _NotificationWidgetState extends State<NotificationWidget> {
 class NotificationItems extends StatelessWidget {
   final NotificationModel notification;
   final bool isShowIcon;
-  const NotificationItems({super.key, required this.notification, required this.isShowIcon});
+
+  const NotificationItems({
+    super.key,
+    required this.notification,
+    required this.isShowIcon,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -204,29 +285,34 @@ class NotificationItems extends StatelessWidget {
           shadowColor: Colors.transparent,
         ),
         onPressed: () {
-          context.push('/notification/${notification.notificationCode}', extra: "Notification");
+          context.push(
+            '/notification/${notification.notificationCode}',
+            extra: "Notification",
+          );
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: isShowIcon ? 20.h : 0,
           children: [
-            isShowIcon ? Container(
-              padding: EdgeInsets.all(15).r,
-              width: 50.w,
-              height: 50.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Theme.of(context).primaryColor.withAlpha(600),
-              ),
-              child: SizedBox(
-                width: 20.w,
-                height: 20.h,
-                child: SvgPicture.asset(
-                  'assets/icons/notification-icon.svg',
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
-            ) : SizedBox(width: 0,),
+            isShowIcon
+                ? Container(
+                    padding: EdgeInsets.all(15).r,
+                    width: 50.w,
+                    height: 50.h,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Theme.of(context).primaryColor.withAlpha(600),
+                    ),
+                    child: SizedBox(
+                      width: 20.w,
+                      height: 20.h,
+                      child: SvgPicture.asset(
+                        'assets/icons/notification-icon.svg',
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  )
+                : SizedBox(width: 0),
             Expanded(
               child: Column(
                 spacing: 5.h,
@@ -246,7 +332,13 @@ class NotificationItems extends StatelessWidget {
                   //   overflow: TextOverflow.ellipsis,
                   // ),
                   Text(
-                    DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.parse(notification.updatedAt as String).toLocal()).toString(),
+                    DateFormat('yyyy-MM-dd HH:mm:ss')
+                        .format(
+                          DateTime.parse(
+                            notification.updatedAt as String,
+                          ).toLocal(),
+                        )
+                        .toString(),
                     style: textTheme.bodySmall,
                     overflow: TextOverflow.ellipsis,
                   ),

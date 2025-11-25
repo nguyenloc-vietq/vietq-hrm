@@ -125,6 +125,9 @@ export class ScheduleService {
             },
           },
         },
+        orderBy: {
+          workOn: "desc",
+        },
       });
       const result = schedules.map((item) => ({
         ...item,

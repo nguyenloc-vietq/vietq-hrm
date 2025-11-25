@@ -31,81 +31,89 @@ class _YourActivityState extends State<YourActivity> {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 12.h,
           children: [
+            if (state is AttendanceLoading)...[
 
-            Text('Your Activity', style: textTheme.headlineMedium),
-            if (state is AttendanceLoading)
               Skeletonizer(
                 enabled: true,
                 effect: PulseEffect(),
-                child: Container(
-                  height: 70.h,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    spacing: 15.w,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Skeleton.replace(
-                        child: Container(
-                          width: 40.w,
-                          height: 40.h,
-                          padding: EdgeInsets.all(5).r,
-                          decoration: BoxDecoration(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.primary.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(10).r,
-                          ),
-                          child: SvgPicture.asset(
-                            'assets/icons/login.svg',
-                            width: 5.w,
-                            height: 5.h,
-                            colorFilter: ColorFilter.mode(
-                              Theme.of(context).colorScheme.primary,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                        ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 10,
+                  children: [
+                    Text('Your Activity', style: textTheme.headlineMedium),
+                    Container(
+                      height: 70.h,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
+                        spacing: 15.w,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Text(
-                            'Check In',
-                            style: textTheme.headlineSmall,
-                          ),
-                          Text(
-                            "ske",
-                            style: textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey,
+                          Skeleton.replace(
+                            child: Container(
+                              width: 40.w,
+                              height: 40.h,
+                              padding: EdgeInsets.all(5).r,
+                              decoration: BoxDecoration(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primary.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(10).r,
+                              ),
+                              child: SvgPicture.asset(
+                                'assets/icons/login.svg',
+                                width: 5.w,
+                                height: 5.h,
+                                colorFilter: ColorFilter.mode(
+                                  Theme.of(context).colorScheme.primary,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
                             ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Check In',
+                                style: textTheme.headlineSmall,
+                              ),
+                              Text(
+                                "ske",
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Spacer(),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "ske",
+                                style: textTheme.headlineSmall,
+                              ),
+                              Text(
+                                'On Office',
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                      Spacer(),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "ske",
-                            style: textTheme.headlineSmall,
-                          ),
-                          Text(
-                            'On Office',
-                            style: textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               )
+            ]
+
             else if (state is AttendanceError)
               Center(
                 child: Text(
@@ -116,6 +124,7 @@ class _YourActivityState extends State<YourActivity> {
             else if (state is AttendanceLoaded) ...[
               if (state.timeSheets?.attendanceRecs?.length != 0) ...[
                 if (state.timeSheets?.attendanceRecs?.first.timeIn != null) ...[
+                  Text('Your Activity', style: textTheme.headlineMedium),
                   Wrap(
                     spacing: 16.r,
                     runSpacing: 16.r,

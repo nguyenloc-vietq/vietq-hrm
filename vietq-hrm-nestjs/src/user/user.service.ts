@@ -1,4 +1,4 @@
-import { hashPassword } from "src/auth/utils/hash.utils";
+import { comparePassword, hashPassword } from "src/auth/utils/hash.utils";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Body,
@@ -14,6 +14,7 @@ import { UpdateProfileDto, UpdateUserDto } from "./dto/update-user.dto";
 import { UpdateUserProfessionalDto } from "./dto/updateUserProfessional-user.dto";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { CodeGeneratorService } from "src/code-generator/code-generator.service";
+import { ChangePasswordDto } from "./dto/changePassword-user.dto";
 
 @Injectable()
 export class UserService {
@@ -207,6 +208,36 @@ export class UserService {
       return result;
     } catch (error) {
       throw new HttpException(error.message, 201);
+    }
+  }
+
+  async changePassword(dataChangePassword: ChangePasswordDto, req: any) {
+    try {
+      const { oldPassword, newPassword } = dataChangePassword;
+      const user = await this.prisma.user.findUnique({
+        where: {
+          userCode: req.user.userCode,
+        },
+      });
+      if (!user) throw new HttpException("User not exits", 200);
+      const checkPassword = await comparePassword(
+        oldPassword,
+        user.passwordHash,
+      );
+      if (!checkPassword)
+        throw new HttpException("Old password is incorrect", 200);
+      const hashPasswords = await hashPassword(newPassword);
+      const changePassword = await this.prisma.user.update({
+        where: {
+          userCode: req.user.userCode,
+        },
+        data: {
+          passwordHash: hashPasswords,
+        },
+      });
+      return {};
+    } catch (error) {
+      throw new HttpException(error.message, 500);
     }
   }
 }

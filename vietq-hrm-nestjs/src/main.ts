@@ -1,11 +1,13 @@
-import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./app.module";
-import { NestExpressApplication } from "@nestjs/platform-express";
-import { MyLogger } from "./logger/my.logger";
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { AllExceptionsFilter } from "./exception/http-exception.filter";
-import { join } from "path";
 import * as express from "express";
+
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+
+import { AllExceptionsFilter } from "./exception/http-exception.filter";
+import { AppModule } from "./app.module";
+import { MyLogger } from "./logger/my.logger";
+import { NestExpressApplication } from "@nestjs/platform-express";
+import { NestFactory } from "@nestjs/core";
+import { join } from "path";
 // import { MyLoggerDev } from './logger/my.logger.dev';
 
 async function bootstrap() {

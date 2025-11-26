@@ -114,3 +114,5 @@ npx prisma init --datasource-provider mysql
 ## crate routes api
 
 nest g source nameapi --no-spec
+
+## Fix password mysql server 

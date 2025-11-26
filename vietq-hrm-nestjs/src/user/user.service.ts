@@ -15,6 +15,8 @@ import { UpdateUserProfessionalDto } from "./dto/updateUserProfessional-user.dto
 import { CreateUserDto } from "./dto/create-user.dto";
 import { CodeGeneratorService } from "src/code-generator/code-generator.service";
 import { ChangePasswordDto } from "./dto/changePassword-user.dto";
+import * as fs from "fs";
+import { join } from "path";
 
 @Injectable()
 export class UserService {
@@ -103,6 +105,14 @@ export class UserService {
   async uploadAvatar(file: any, @Req() req: any) {
     try {
       const userCode = req.user.userCode;
+      const oldAvatar = await this.prisma.user.findUnique({
+        where: {
+          userCode: userCode,
+        },
+        select: {
+          avatar: true,
+        },
+      });
       const newDataUser = await this.prisma.user.update({
         where: {
           userCode: userCode,
@@ -111,6 +121,15 @@ export class UserService {
           avatar: file.filename,
         },
       });
+      //delete file
+      console.log(`[===============> ava | `, oldAvatar);
+      const filePath = join(
+        process.cwd(),
+        "src",
+        "uploads",
+        oldAvatar?.avatar ?? "",
+      );
+      await fs.promises.unlink(filePath);
       const result = {
         filePath: file.path,
         fileName: file.filename,

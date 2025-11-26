@@ -60,5 +60,5 @@ CMD ["node", "dist/src/main.js"]
 
 #docker run -v /host/path/uploads:/app/src/uploads -p 3592:3592 deploy-hr-api
 #access premission
-#sudo chown -R 1001:65533 ../src/uploads
-#sudo chmod -R 775 ../src/uploads
+# sudo chown -R 1001:65533 ../src/uploads
+# sudo chmod -R 775 ../src/uploads

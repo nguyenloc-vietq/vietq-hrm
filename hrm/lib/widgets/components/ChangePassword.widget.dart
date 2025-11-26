@@ -12,6 +12,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18),
       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -32,11 +33,15 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Change Password", style: textTheme.headlineSmall,),
+            Text("Change Password", style: textTheme.headlineSmall),
             Padding(
               padding: const EdgeInsets.only(right: 15),
-              child: Icon(Icons.arrow_forward_ios, size: 20),
-            )
+              child: Icon(
+                Icons.arrow_forward_ios,
+                size: 20,
+                color: isDarkMode ? Colors.white : Colors.black,
+              ),
+            ),
           ],
         ),
       ),

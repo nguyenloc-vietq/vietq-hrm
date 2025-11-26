@@ -9,6 +9,7 @@ import 'package:vietq_hrm/configs/sharedPreference/SharedPreferences.config.dart
 import 'package:vietq_hrm/main.dart';
 import 'package:vietq_hrm/routers/router.config.dart';
 import 'package:vietq_hrm/routers/routes.config.dart';
+import 'package:vietq_hrm/widgets/BottomNavigation/GradientIcon.widget.dart';
 import 'package:vietq_hrm/widgets/components/InfoUser.widget.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -99,7 +100,8 @@ class _ProfilePageState extends State<ProfilePage> {
                               overlayColor: Colors.transparent,
                               backgroundColor: Colors.transparent,
                               shadowColor: Colors.transparent,
-                            ),                          child: Padding(
+                            ),
+                          child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 10).r,
                             child: Row(
                               children: [
@@ -112,7 +114,15 @@ class _ProfilePageState extends State<ProfilePage> {
                                   width: 50.w,
                                   height: 50.h,
                                   child: Padding(padding: EdgeInsets.all(10).r,
-                                    child: ListDetailProfileRouter[index].icon,
+                                    child: GradientIcon(
+                                      icon:  ListDetailProfileRouter[index].icon as Widget,
+                                      size: 24.sp,
+                                      gradient: LinearGradient(
+                                        colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.primary],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                      ),
+                                    )
                                   ),
                                 ),
                                 SizedBox(width: 20.w,),

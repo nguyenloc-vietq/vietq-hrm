@@ -1,5 +1,7 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, Head, HttpCode, HttpStatus } from "@nestjs/common";
+
 import { AppService } from "./app.service";
+import { PermitAll } from "./common/custom-decorator";
 
 @Controller()
 export class AppController {
@@ -8,5 +10,21 @@ export class AppController {
   @Get()
   getHello(): string {
     return this.appService.getHello();
+  }
+
+  @Get("health")
+  @PermitAll()
+  getHealth() {
+    return {
+      status: "OK",
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  @Head("health")
+  @PermitAll()
+  @HttpCode(HttpStatus.OK)
+  getHealthHead() {
+    return "OK";
   }
 }

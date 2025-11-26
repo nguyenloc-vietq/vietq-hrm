@@ -21,6 +21,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   final _formKey = GlobalKey<FormState>();
 
   bool _isPasswordVisible = false;
+  bool _isNewPasswordVisible = false;
   bool _isConfirmVisible = false;
 
   final _oldPasswordController = TextEditingController();
@@ -34,19 +35,32 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
     setState(() => _isSubmitting = true);
 
-    try{
-      await UserApi().changePassword(_oldPasswordController.text, _passwordController.text);
+    try {
+      await UserApi().changePassword(
+        _oldPasswordController.text,
+        _passwordController.text,
+      );
       //toast success
       CherryToast.success(
+        toastPosition: Position.bottom,
+        description: Text(
+          "Password changed successfully",
+          style: TextStyle(color: Colors.black)
+        ),
         animationType: AnimationType.fromTop,
-        title: const Text("Success"),
-        description: const Text("Password changed successfully"),
+        animationDuration: Duration(milliseconds: 200),
+        autoDismiss: true,
       ).show(context);
-    }catch(error){
+    } catch (error) {
       CherryToast.error(
+        toastPosition: Position.bottom,
+        description: Text(
+          error.toString(),
+          style: TextStyle(color: Colors.black),
+        ),
         animationType: AnimationType.fromTop,
-        title: const Text("Error"),
-        description: const Text("Old password is incorrect"),
+        animationDuration: Duration(milliseconds: 200),
+        autoDismiss: true,
       ).show(context);
     }
 
@@ -60,7 +74,11 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     final lift = keyboardHeight > 0 ? 110.0 : 0.0;
     final textTheme = Theme.of(context).textTheme;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
+      backgroundColor: isDarkMode
+          ? Theme.of(context).appBarTheme.backgroundColor
+          : Colors.white,
       resizeToAvoidBottomInset: false,
       body: Form(
         key: _formKey,
@@ -73,18 +91,41 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 controller: _oldPasswordController,
                 obscureText: !_isPasswordVisible,
                 decoration: InputDecoration(
+                  // hintText: 'Old password',
                   labelText: 'Old password',
                   suffixIcon: IconButton(
                     icon: SvgPicture.asset(
+                      color: isDarkMode ? Colors.white : Colors.black,
                       _isPasswordVisible
                           ? 'assets/icons/eye.svg'
                           : 'assets/icons/eye_off.svg',
                     ),
-                    onPressed: () =>
-                        setState(() => _isPasswordVisible = !_isPasswordVisible),
+                    onPressed: () => setState(
+                      () => _isPasswordVisible = !_isPasswordVisible,
+                    ),
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20).r,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20).r,
+                    borderSide: BorderSide(
+                      color: isDarkMode ? Colors.grey : Colors.black,
+                    ),
+                  ),
+                  floatingLabelStyle: MaterialStateTextStyle.resolveWith((
+                    Set<MaterialState> states,
+                  ) {
+                    if (states.contains(MaterialState.focused)) {
+                      return TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
+                      );
+                    }
+                    return TextStyle(color: Colors.grey);
+                  }),
+                  labelStyle: TextStyle(
+                    color: isDarkMode ? Colors.grey : Colors.black,
                   ),
                 ),
                 validator: (value) {
@@ -100,28 +141,52 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               /// New password
               TextFormField(
                 controller: _passwordController,
-                obscureText: !_isPasswordVisible,
+                obscureText: !_isNewPasswordVisible,
                 decoration: InputDecoration(
                   labelText: 'New password',
                   suffixIcon: IconButton(
                     icon: SvgPicture.asset(
-                      _isPasswordVisible
+                      color: isDarkMode ? Colors.white : Colors.black,
+
+                      _isNewPasswordVisible
                           ? 'assets/icons/eye.svg'
                           : 'assets/icons/eye_off.svg',
                     ),
-                    onPressed: () =>
-                        setState(() => _isPasswordVisible = !_isPasswordVisible),
+                    onPressed: () => setState(
+                      () => _isNewPasswordVisible = !_isNewPasswordVisible,
+                    ),
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20).r,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20).r,
+                    borderSide: BorderSide(
+                      color: isDarkMode ? Colors.grey : Colors.black,
+                    ),
+                  ),
+                  floatingLabelStyle: MaterialStateTextStyle.resolveWith((
+                    Set<MaterialState> states,
+                  ) {
+                    if (states.contains(MaterialState.focused)) {
+                      return TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
+                      );
+                    }
+                    return TextStyle(color: Colors.grey);
+                  }),
+                  labelStyle: TextStyle(
+                    color: isDarkMode ? Colors.grey : Colors.black,
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your new password';
                   }
-                  if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$')
-                      .hasMatch(value)) {
+                  if (!RegExp(
+                    r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$',
+                  ).hasMatch(value)) {
                     return 'Password must be at least 6 characters,\ninclude upper, lower, number and symbol';
                   }
                   return null;
@@ -138,6 +203,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   labelText: 'Confirm password',
                   suffixIcon: IconButton(
                     icon: SvgPicture.asset(
+                      color: isDarkMode ? Colors.white : Colors.black,
                       _isConfirmVisible
                           ? 'assets/icons/eye.svg'
                           : 'assets/icons/eye_off.svg',
@@ -147,6 +213,26 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20).r,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20).r,
+                    borderSide: BorderSide(
+                      color: isDarkMode ? Colors.grey : Colors.black,
+                    ),
+                  ),
+                  floatingLabelStyle: MaterialStateTextStyle.resolveWith((
+                    Set<MaterialState> states,
+                  ) {
+                    if (states.contains(MaterialState.focused)) {
+                      return TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
+                      );
+                    }
+                    return TextStyle(color: Colors.grey);
+                  }),
+                  labelStyle: TextStyle(
+                    color: isDarkMode ? Colors.grey : Colors.black,
                   ),
                 ),
                 validator: (value) {
@@ -194,7 +280,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         )
                       : Text(
                           'Change password',
-                          style: TextStyle(fontSize: 18.sp, color: Colors.white),
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            color: Colors.white,
+                          ),
                         ),
                 ),
               ),

@@ -44,6 +44,7 @@ android {
 }
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
 flutter {

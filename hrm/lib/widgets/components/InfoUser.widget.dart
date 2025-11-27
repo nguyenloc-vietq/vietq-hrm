@@ -1,14 +1,12 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:vietq_hrm/blocs/user/user_bloc.dart';
-import 'package:vietq_hrm/configs/sharedPreference/SharedPreferences.config.dart';
 import 'package:vietq_hrm/widgets/components/AvatarPicker.widget.dart';
 
 class InfoUserWidget extends StatefulWidget {
@@ -19,6 +17,9 @@ class InfoUserWidget extends StatefulWidget {
 }
 
 class _InfoUserWidgetState extends State<InfoUserWidget> {
+  XFile? _pickedFile;
+  CroppedFile? _croppedFile;
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -122,15 +123,54 @@ class _InfoUserWidgetState extends State<InfoUserWidget> {
                 AvatarPicker(
                   avatarUrl: avatarUrl,
                   onImageSelected: (image) async {
-                    FormData formData = FormData.fromMap({
-                      "avatar": await MultipartFile.fromFile(
-                        image.path,
-                        filename: "avatar.png",
-                      ),
-                    });
-                    context.read<UserBloc>().add(
-                      UpdateAvatarEvent(data: formData),
+
+                    final croppedFile = await ImageCropper().cropImage(
+                      sourcePath: image.path, // image là File hoặc XFile đều có .path
+                      compressFormat: ImageCompressFormat.jpg,
+                      compressQuality: 80,
+                      aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+
+                      uiSettings: [
+
+                        AndroidUiSettings(
+                          toolbarColor: Colors.black87,
+                          toolbarWidgetColor: Colors.white,
+                          dimmedLayerColor: Colors.black87,
+                          statusBarLight: false,
+                          // navBarLight: true,
+                          showCropGrid: true,
+                          // toolbarColor: Colors.white,
+                          hideBottomControls: true,
+                          toolbarTitle: 'Crop Avatar' ,
+                        ),
+                        IOSUiSettings(
+                          title: 'Crop Avatar',
+                          resetAspectRatioEnabled: false,
+                          aspectRatioLockEnabled: true,
+                          hidesNavigationBar: true,
+                          showCancelConfirmationDialog: true,
+                          aspectRatioPickerButtonHidden: true,
+                          rotateClockwiseButtonHidden: true,
+                          rotateButtonsHidden: true,
+                          resetButtonHidden: true,
+                        ),
+                      ],
                     );
+                    print("#==========> ${croppedFile}");
+
+                    if (croppedFile != null) {
+                      _croppedFile = croppedFile;
+                      FormData formData = FormData.fromMap({
+                        "avatar": await MultipartFile.fromFile(
+                          croppedFile.path,
+                          filename: "avatar_cropped.jpg",
+                        ),
+                      });
+
+                      context.read<UserBloc>().add(UpdateAvatarEvent(data: formData));
+                      return true;
+                    }
+                    return false;
                   },
                 ),
 

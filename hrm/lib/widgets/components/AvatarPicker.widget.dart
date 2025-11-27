@@ -6,7 +6,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AvatarPicker extends StatefulWidget {
   final String? avatarUrl;
-  final Function(File) onImageSelected;
+  final Future<bool> Function(XFile file)? onImageSelected;
+
 
   const AvatarPicker({super.key, this.avatarUrl, required this.onImageSelected});
 
@@ -22,12 +23,13 @@ class _AvatarPickerState extends State<AvatarPicker> {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
-
       // callback để upload lên server
-      widget.onImageSelected(_imageFile!);
+     bool isSetAvatar =  await widget.onImageSelected!(pickedFile);
+     if (isSetAvatar) {
+       setState(() {
+         _imageFile = File(pickedFile.path);
+       });
+     }
     }
   }
 

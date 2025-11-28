@@ -40,6 +40,7 @@ class _HomePageState extends State<HomePage> {
     context.read<UserBloc>().add(LoadUserEvent());
     NotificationService().requestNotificationPermission();
     NotificationService().getToken();
+    NotificationService().subscribeToGroup("user-topic");
     NotificationService().firebaseInit(context);
     NotificationService().setupInteractions(context);
   }

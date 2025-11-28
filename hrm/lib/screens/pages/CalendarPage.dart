@@ -38,7 +38,8 @@ class _CalendarPageState extends State<CalendarPage>
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: isDarkMode ? Theme.of(context).appBarTheme.backgroundColor : Colors.white,
-      appBar: CustomAppBar(title: 'Calendar'),
+      appBar: CustomAppBar(title: 'Calendar', actions: [
+      ]),
       body: Column(
         children: [
           // TabBar

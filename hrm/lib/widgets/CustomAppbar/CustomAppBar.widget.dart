@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+class AppBarAction {
+  final String icon;
+  final VoidCallback action;
 
+  AppBarAction({required this.icon, required this.action});
+}
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-  final List<dynamic>? actions;
+  final List<AppBarAction>? actions;
 
   const CustomAppBar({
     super.key,
@@ -30,13 +35,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(title, style: textTheme.headlineMedium),
-            if (actions != null)
+            if (actions?.length != 0)
               Container(
                  child: Wrap(
                     spacing: 4.w,
                     children: actions!.map((action) => IconButton(
-                      icon: SvgPicture.asset(action['icon']),
-                      onPressed: action['action'],
+                      icon: SvgPicture.asset(action.icon, color: isDarkMode ? Colors.white : Colors.black,),
+                      onPressed: action.action,
                     )).toList(),
                   )
               ),

@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:restart_app/restart_app.dart';
-import 'package:vietq_hrm/blocs/blocManager/bloc_manager.dart';
 import 'package:vietq_hrm/configs/apiConfig/auth.api.dart';
 import 'package:vietq_hrm/configs/sharedPreference/SharedPreferences.config.dart';
-import 'package:vietq_hrm/main.dart';
 import 'package:vietq_hrm/routers/router.config.dart';
-import 'package:vietq_hrm/routers/routes.config.dart';
 import 'package:vietq_hrm/widgets/BottomNavigation/GradientIcon.widget.dart';
 import 'package:vietq_hrm/widgets/components/InfoUser.widget.dart';
 

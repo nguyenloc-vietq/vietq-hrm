@@ -6,11 +6,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:vietq_hrm/configs/apiConfig/notification.api.dart';
 import 'package:vietq_hrm/configs/sharedPreference/SharedPreferences.config.dart';
 import 'package:vietq_hrm/main.dart';
+import 'package:vietq_hrm/services/navigation_services.dart';
 
 
 @pragma('vm:entry-point')
@@ -77,8 +79,20 @@ class NotificationService {
 
   }
 
+  Future<void> subscribeToGroup(String groupId) async {
+    await _firebaseMessaging.subscribeToTopic(groupId);
+    print('Subscribed to topic: $groupId');
+  }
+
+  Future<void> unsubscribeFromGroup(String groupId) async {
+    await _firebaseMessaging.unsubscribeFromTopic(groupId);
+    print('Unsubscribed from topic: $groupId');
+  }
+
+
   Future<void> deleteToken() async {
     await _firebaseMessaging.deleteToken();
+    await _firebaseMessaging.unsubscribeFromTopic("user-topic");
     SharedPreferencesConfig.allowNotification = false;
   }
 
@@ -186,9 +200,10 @@ class NotificationService {
 
   Future<void> handleMessage(BuildContext context,
       RemoteMessage message) async {
+    Map<String, dynamic> data = message.data;
     //navigate to link notification
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const MyHomePage(title: 'hello')));
+    print("this data +++++++++++++++++, $data");
+    NavigationService.push('/notification/${data['notificationid']}');
   }
 
   Future iosForgroundMessage() async {

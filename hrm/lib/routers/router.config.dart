@@ -14,6 +14,7 @@ import 'package:vietq_hrm/screens/pages/HomePage.dart';
 import 'package:vietq_hrm/screens/pages/LoginPage.dart';
 import 'package:vietq_hrm/screens/pages/NotificationPage.dart';
 import 'package:vietq_hrm/screens/pages/ProfilePage.dart';
+import 'package:vietq_hrm/screens/pages/RegisterForm.dart';
 import 'package:vietq_hrm/screens/pages/RegisterPage.dart';
 import 'package:vietq_hrm/screens/pages/ResetPasswordPage.dart';
 import 'package:vietq_hrm/screens/pages/ValidateOtpPage.dart';
@@ -139,6 +140,11 @@ List<RouterObject> ListPublicRouter = [
 ];
 
 List<RouterObject> ListDetailsRouter = [
+  RouterObject(
+    name: 'Register Form',
+    route: '/register/register-form',
+    page: RegisterForm(),
+  ),
   RouterObject(
     name: 'Details Notification',
     icon: SvgPicture.asset(

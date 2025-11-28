@@ -22,12 +22,6 @@ class _NotificationPageState extends State<NotificationPage> {
       appBar: CustomAppBar(
         title: 'Notification',
         actions: [
-          {
-            'icon': 'assets/icons/setting.svg',
-            'action': () {
-              print('hello');
-            },
-          },
         ],
       ),
       body: NotificationWidget(),

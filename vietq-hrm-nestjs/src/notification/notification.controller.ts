@@ -20,6 +20,7 @@ import { ResponseDataSuccess } from "../global/globalClass";
 import { DevicesRegisterNotificationDto } from "./dto/devicesRegister-notification.dto";
 import { CreateNotificationDto } from "./dto/create-notification.dto";
 import { UpdateNotificationDto } from "./dto/update-notification.dto";
+import { PermitAll } from "src/common/custom-decorator";
 
 @Controller("notification")
 export class NotificationController {
@@ -168,6 +169,19 @@ export class NotificationController {
   ): Promise<ResponseDataSuccess<object>> {
     return new ResponseDataSuccess(
       await this.notificationService.sendNotification(data),
+      200,
+      "Send notification is successfully!",
+    );
+  }
+
+  @Get("test")
+  @PermitAll()
+  async test(): Promise<ResponseDataSuccess<object>> {
+    return new ResponseDataSuccess(
+      {
+        name: "Jane Doe",
+        email: "jane@example.com",
+      },
       200,
       "Send notification is successfully!",
     );

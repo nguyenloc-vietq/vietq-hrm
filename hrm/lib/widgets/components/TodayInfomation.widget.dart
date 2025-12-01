@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:vietq_hrm/blocs/calendars/calendar_bloc.dart';
+import 'package:vietq_hrm/configs/apiConfig/schedule.api.dart';
 import 'package:vietq_hrm/widgets/customWidgets/HalfCircleProgress.widget.dart';
 
 class TodayInfoWidget extends StatefulWidget {
@@ -17,6 +18,20 @@ class TodayInfoWidget extends StatefulWidget {
 }
 
 class _TodayInfoWidgetState extends State<TodayInfoWidget> {
+  Map<String, dynamic> dataProgress = {};
+  @override
+  void initState() {
+    super.initState();
+    getProgressWorking();
+  }
+
+  Future<void> getProgressWorking() async {
+    final scheduleApi = ScheduleApi();
+    final progress = await scheduleApi.getProgressWorking();
+    setState(() {
+      dataProgress = progress;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -186,7 +201,7 @@ class _TodayInfoWidgetState extends State<TodayInfoWidget> {
                               children: [
                                 Center(
                                   child: HalfCircleProgress(
-                                    progress: 4/26,
+                                    progress: int.parse(dataProgress['percent']) / 100,
                                     progressColor: Theme.of(context).colorScheme.primary,
                                     backgroundColor: Colors.grey.shade300,
                                     size: 80.sp,
@@ -194,7 +209,7 @@ class _TodayInfoWidgetState extends State<TodayInfoWidget> {
                                 ),
                                 Center(
                                   child: Text(
-                                    "04 / 26 days ",
+                                    "${dataProgress['totalAttden'].toString()} / ${dataProgress['totalDays'].toString()} days" ,
                                     style: textTheme.bodyMedium,
                                   ),
                                 ),

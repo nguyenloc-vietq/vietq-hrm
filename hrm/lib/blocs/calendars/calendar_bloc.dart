@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:vietq_hrm/configs/apiConfig/schedule.api.dart';
 import 'package:vietq_hrm/models/schedule.module.dart';
 import 'package:vietq_hrm/models/timeSheet.models.dart';
+import 'package:vietq_hrm/utils/parseTime.dart';
 
 part 'calendar_event.dart';
 
@@ -31,7 +32,7 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
   Future<void> _onLoadCalendar(LoadCalendarEvent event,
       Emitter<CalendarState> emit,) async {
     // Chỉ emit loading khi là lần đầu hoặc refresh
-    if (event.isRefresh || _currentPage == 1) {
+    if (event.isRefresh ) {
       emit(CalendarLoading());
     }
 
@@ -52,7 +53,10 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
           _fetchSchedulesToday(event.today!),
         ],
         _fetchSchedules(),
-        _fetchTimeSheets(),
+        _fetchTimeSheets(
+          event.startMonth ?? getStartOfMonth(DateTime.now()).toIso8601String().toString(),
+          event.endMonth ?? getEndOfMonth(DateTime.now()).toIso8601String().toString(),
+        ),
       ]);
 
 
@@ -103,7 +107,10 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
     try {
       await Future.wait([
         _fetchSchedules(),
-        _fetchTimeSheets(),
+        _fetchTimeSheets(
+          DateTime.now().toString(),
+          DateTime.now().toString(),
+        ),
       ]);
 
       emit(CalendarLoaded(
@@ -146,9 +153,11 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
     }
   }
 
-  Future<void> _fetchTimeSheets() async {
+  Future<void> _fetchTimeSheets( String? startMonth, String? endMonth ) async {
     try {
       final newTimeSheets = await _scheduleApi.fetchTimeSheet(
+        startMonth: startMonth,
+        endMonth: endMonth,
         // page: _currentPage,
         // pageSize: _pageSize,
       );

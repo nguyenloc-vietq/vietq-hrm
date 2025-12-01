@@ -18,6 +18,8 @@ import 'package:vietq_hrm/screens/pages/RegisterForm.dart';
 import 'package:vietq_hrm/screens/pages/RegisterPage.dart';
 import 'package:vietq_hrm/screens/pages/ResetPasswordPage.dart';
 import 'package:vietq_hrm/screens/pages/ValidateOtpPage.dart';
+import 'package:vietq_hrm/screens/pages/payrollPage.dart';
+import 'package:vietq_hrm/widgets/components/PayrollDetails.widget.dart';
 
 class RouterObject {
   final String name;
@@ -144,6 +146,16 @@ List<RouterObject> ListDetailsRouter = [
     name: 'Register Form',
     route: '/register/register-form',
     page: RegisterForm(),
+  ),
+  RouterObject(
+    name: 'Payroll Page',
+    route: '/payroll',
+    page: Payrollpage(),
+  ),
+  RouterObject(
+    name: 'Payroll details Page',
+    route: '/payroll-details/:id',
+    page: PayrollDetailWidget(),
   ),
   RouterObject(
     name: 'Details Notification',

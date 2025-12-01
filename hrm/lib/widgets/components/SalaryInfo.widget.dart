@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:vietq_hrm/blocs/notifications/notifications_bloc.dart';
@@ -146,7 +147,9 @@ class SalaryInfoWidget extends StatelessWidget {
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
 
-                    onPressed: () {},
+                    onPressed: () {
+                      context.push("/payroll", extra: "Payroll");
+                    },
                     child: Text(
                       "View All",
                       style: textTheme.bodyMedium?.copyWith(
@@ -195,19 +198,24 @@ class SalaryInfoWidget extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Payroll 10/2025', style: textTheme.headlineSmall),
-                          Text(
-                            DateFormat(
-                              "MMMM d, yyyy",
-                            ).format(DateTime.parse("2025-11-10").toLocal()),
-                            style: textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey,
+                      GestureDetector(
+                        onTap: () {
+                          context.push("/payroll-details/1dadasd", extra: "Payroll Details");
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Payroll 10/2025', style: textTheme.headlineSmall),
+                            Text(
+                              DateFormat(
+                                "MMMM d, yyyy",
+                              ).format(DateTime.parse("2025-11-10").toLocal()),
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: Colors.grey,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                       Spacer(),
                       SizedBox(

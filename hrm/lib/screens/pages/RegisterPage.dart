@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vietq_hrm/services/navigation_services.dart';
 import 'package:vietq_hrm/widgets/CustomAppbar/CustomAppBar.widget.dart';
+import 'package:vietq_hrm/widgets/components/CardLeave.widget.dart';
+import 'package:vietq_hrm/widgets/components/RegistCardLeave.widget.dart';
+import 'package:vietq_hrm/widgets/components/TeamLeaveCard.widget.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -14,25 +16,27 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-
+  late ScrollController _scrollController;
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+    }
+  }
 
-  List<dynamic> leaveTypes = [
-    {"title": "Annual \nLeave", "balance": "12", "color": "0xFF266CCB"},
-    {"title": "Leave \nApproved", "balance": "12", "color": "0xFF94CB2C"},
-    {"title": "Leave \nPending", "balance": "12", "color": "0xFF2CB2A7"},
-    {"title": "Leave \nRejected", "balance": "12", "color": "0xFFFC6861"},
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -55,173 +59,95 @@ class _RegisterPageState extends State<RegisterPage>
           ? Theme.of(context).appBarTheme.backgroundColor
           : Colors.white,
       body: RefreshIndicator(
-        onRefresh: () async{
-
-        },
+        onRefresh: () async {},
         child: NestedScrollView(
-          headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            // Phần 4 ô tổng quan + TabBar sẽ cuộn lên cùng nội dung
-            SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  // 1. 4 ô tổng quan
-                  Container(
-                    height: 310.h,
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: GridView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                            childAspectRatio: 1.3,
-                          ),
-                      itemCount: leaveTypes.length,
-                      itemBuilder: (context, index) {
-                        final item = leaveTypes[index];
-                        final color = Color(int.parse(item['color']));
-                        return Container(
-                          padding: EdgeInsets.all(20.r),
-                          decoration: BoxDecoration(
-                            color: color.withOpacity(0.1),
-                            border: Border.all(color: color),
-                            borderRadius: BorderRadius.circular(20.r),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                item['title'],
-                                style: textTheme.titleLarge?.copyWith(
-                                  color: isDarkMode ? Colors.white : Colors.black,
-                                ),
-                              ),
-                              Text(
-                                item['balance'],
-                                style: textTheme.headlineLarge?.copyWith(
-                                  color: color,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-
-                  SizedBox(height: 20.h),
-
-                  // 2. TabBar (cũng cuộn theo)
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20.w),
-                    height: 50.h,
-                    decoration: BoxDecoration(
-                      color: isDarkMode
-                          ? Colors.grey.withOpacity(0.2)
-                          : const Color(0xFFF4F5F9),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: TabBar(
-                      controller: _tabController,
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      indicator: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                      labelColor: Colors.white,
-                      unselectedLabelColor: isDarkMode
-                          ? Colors.white70
-                          : Colors.black87,
-                      dividerColor: Colors.transparent,
-                      tabs: const [
-                        Tab(text: "Personal"),
-                        Tab(text: "Professional"),
-                        Tab(text: "Team Leave"),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: 20.h),
-                ],
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return [
+              SliverToBoxAdapter(
+                child: RegistCardLeaveWidget(),
               ),
-            ),
-          ],
-          // Nội dung các tab – scroll chung với phần trên
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                // Tab 1: Personal
-                // Thay toàn bộ cái Column dài loằng ngoằng kia bằng đoạn này:
-                Column(
-                  children: [
-                    _buildLeaveCard(
-                      textTheme,
-                      isDarkMode,
-                      Theme.of(context).appBarTheme,
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _SliverAppBarDelegate(
+                  Container(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Theme.of(context).appBarTheme.backgroundColor
+                        : Colors.white,
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+                      height: 48.h,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFFA1A1A1).withAlpha(600)
+                            : const Color(0xFFF4F5F9),
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: TabBar(
+                        controller: _tabController,
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        indicator: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                        dividerColor: Colors.transparent,
+                        labelColor: Colors.white,
+                        unselectedLabelColor: Colors.black,
+                        tabs: const [
+                          Tab(text: "Leave"),
+                          Tab(text: "Late"),
+                          Tab(text: "Team Leave"),
+                        ],
+                      ),
                     ),
-                  ],
+                  ),
                 ),
-
-                // // Tab 2: Professional
-                Column(
-                  children: [
-                    _buildLeaveCard(
-                      textTheme,
-                      isDarkMode,
-                      Theme.of(context).appBarTheme,
-                    ),
-                  ],
+              ),
+            ];
+          },
+          body: TabBarView(
+            controller: _tabController,
+            children: [
+              // Tab 1: Leave
+              RefreshIndicator(
+                onRefresh: () async {
+                  print("test");
+                },
+                child: ListView.builder(
+                  padding: EdgeInsets.all(20.w),
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: 15,
+                  itemBuilder: (ctx, i) => CardLeaveWidget(),
                 ),
-                // // Tab 3: Documents
-                Column(
-                  children: [
-                    _teamLeaveCard(
-                              textTheme,
-                              isDarkMode,
-                              Theme.of(context).appBarTheme,
-                            ),_teamLeaveCard(
-                              textTheme,
-                              isDarkMode,
-                              Theme.of(context).appBarTheme,
-                            ),_teamLeaveCard(
-                              textTheme,
-                              isDarkMode,
-                              Theme.of(context).appBarTheme,
-                            ),_teamLeaveCard(
-                              textTheme,
-                              isDarkMode,
-                              Theme.of(context).appBarTheme,
-                            ),_teamLeaveCard(
-                              textTheme,
-                              isDarkMode,
-                              Theme.of(context).appBarTheme,
-                            ),_teamLeaveCard(
-                              textTheme,
-                              isDarkMode,
-                              Theme.of(context).appBarTheme,
-                            ),_teamLeaveCard(
-                              textTheme,
-                              isDarkMode,
-                              Theme.of(context).appBarTheme,
-                            ),_teamLeaveCard(
-                              textTheme,
-                              isDarkMode,
-                              Theme.of(context).appBarTheme,
-                            ),_teamLeaveCard(
-                              textTheme,
-                              isDarkMode,
-                              Theme.of(context).appBarTheme,
-                            ),
-                  ],
-                )
+              ),
 
-              ],
-            ),
+              // Tab 2: Late
+              RefreshIndicator(
+                onRefresh: () async {
+                  print("test");
+                },
+                child: ListView.builder(
+                  padding: EdgeInsets.all(20.w),
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: 15,
+                  itemBuilder: (ctx, i) => CardLeaveWidget()
+                ),
+              ),
+
+              // Tab 3: Team Leave
+              RefreshIndicator.adaptive(
+                onRefresh: () async {
+                  print("test");
+                },
+                child: ListView.builder(
+                  padding: EdgeInsets.all(20.w),
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: 10,
+                  itemBuilder: (ctx, i) => TeamLeaveWidget()
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -229,214 +155,25 @@ class _RegisterPageState extends State<RegisterPage>
   }
 }
 
-Widget _buildLeaveCard(TextTheme textTheme, bool isDarkMode, appBarTheme) {
-  return Container(
-    width: double.infinity,
-    margin: EdgeInsets.only(bottom: 10.h),
-    padding: EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      color: isDarkMode ? appBarTheme.foregroundColor : Colors.white,
-      borderRadius: BorderRadius.circular(20).r,
-      border: Border.all(color: Colors.grey.withAlpha(30)),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.1),
-          offset: const Offset(0, 5),
-          blurRadius: 5,
-        ),
-      ],
-    ),
-    child: Column(
-      spacing: 10,
-      children: [
-        Row(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 10,
-              children: [
-                Text("Date", style: textTheme.bodyMedium),
-                Text(
-                  "10/10/2025 - 12/10/2025",
-                  overflow: TextOverflow.ellipsis,
-                  style: textTheme.headlineSmall,
-                ),
-              ],
-            ),
-            Spacer(),
-            Container(
-              padding: const EdgeInsets.all(10.0),
-              decoration: BoxDecoration(
-                color: Color(0xFF94CB2C).withAlpha(50),
-                borderRadius: BorderRadius.circular(12).r,
-              ),
-              child: Center(
-                child: Text(
-                  "Approved",
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: Color(0xFF94CB2C),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        Divider(color: Colors.grey.withAlpha(50), thickness: 1),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 10,
-              children: [
-                Text("Apply Days", style: textTheme.bodyMedium),
-                Text(
-                  "2 Days",
-                  overflow: TextOverflow.ellipsis,
-                  style: textTheme.headlineSmall,
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 10,
-              children: [
-                Text("Leave Balance", style: textTheme.bodyMedium),
-                Text(
-                  "19",
-                  overflow: TextOverflow.ellipsis,
-                  style: textTheme.headlineSmall,
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 10,
-              children: [
-                Text("Approved By", style: textTheme.bodyMedium),
-                Text(
-                  "Duy Huu",
-                  overflow: TextOverflow.ellipsis,
-                  style: textTheme.headlineSmall,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate(this._tabBar);
 
-Widget _teamLeaveCard(TextTheme textTheme, bool isDarkMode, appBarTheme) {
-  return Container(
-    width: double.infinity,
-    margin: EdgeInsets.only(bottom: 10.h),
-    padding: EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      color: isDarkMode ? appBarTheme.foregroundColor : Colors.white,
-      borderRadius: BorderRadius.circular(20).r,
-      border: Border.all(color: Colors.grey.withAlpha(30)),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.1),
-          offset: const Offset(0, 5),
-          blurRadius: 5,
-        ),
-      ],
-    ),
-    child: Column(
-      spacing: 10,
-      children: [
-        Row(
-          children: [
-            CircleAvatar(
-              radius: 30,
-              child: Image.network("https://avatar.iran.liara.run/public/girl"),
-            ),
-            SizedBox(width: 10.w),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 5,
-              children: [
-                Text("Name", style: textTheme.bodyMedium),
-                Text(
-                  "10/10/2025 - 12/10/2025",
-                  overflow: TextOverflow.ellipsis,
-                  style: textTheme.headlineSmall,
-                ),
-              ],
-            ),
-          ],
-        ),
-        Divider(color: Colors.grey.withAlpha(50), thickness: 1),
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          // crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 40).r,
-              // width: ,
-              decoration: BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.circular(12).r,
-              ),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  elevation: 0,
-                  overlayColor: Colors.transparent,
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                ),
-                onPressed: () {},
-                child: Row(
-                  spacing: 5.h,
-                  children: [
-                    Icon(Icons.close, color: Colors.white),
-                    Text(
-                      "Reject",
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 40).r,
-              decoration: BoxDecoration(
-                color: Color(0xFF2CB2A7),
-                borderRadius: BorderRadius.circular(12).r,
-              ),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  elevation: 0,
-                  overlayColor: Colors.transparent,
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                ),
-                onPressed: () {},
-                child: Row(
-                  spacing: 5.h,
-                  children: [
-                    Icon(Icons.check, color: Colors.white),
-                    Text(
-                      "Approve",
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
+  final Widget _tabBar;
+
+  @override
+  double get minExtent => 64.h;
+
+  @override
+  double get maxExtent => 64.h;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return _tabBar;
+  }
+
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return false;
+  }
 }

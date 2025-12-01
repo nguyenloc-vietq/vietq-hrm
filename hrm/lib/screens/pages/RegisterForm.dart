@@ -190,6 +190,12 @@ class _RegisterFormState extends State<RegisterForm> {
           value: _selectedType,
           hint: Text("Select leave type", style: textTheme.bodyMedium),
           decoration: InputDecoration(
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: BorderSide(
+                color: Theme.of(context).primaryColor,
+              ),
+            ),
             filled: true,
             fillColor: Colors.transparent,
             border: OutlineInputBorder(
@@ -242,6 +248,12 @@ class _RegisterFormState extends State<RegisterForm> {
           maxLines: maxLines,
           keyboardType: keyboardType,
           decoration: InputDecoration(
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: BorderSide(
+                color: Theme.of(context).primaryColor,
+              ),
+            ),
             hintText: hint,
             hintStyle: TextStyle(
               color: Colors.grey,

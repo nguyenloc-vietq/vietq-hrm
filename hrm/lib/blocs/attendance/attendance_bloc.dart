@@ -23,9 +23,11 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
   Future<void> _onFetchTimeSheetByDay(LoadAttendanceEvent event, Emitter<AttendanceState> emit) async {
     emit(AttendanceLoading());
     try {
+      print("#==========> EVENT TIME ${event.today}");
       final timeSheet = await _scheduleApi.fetchTimeSheet(
         today: event.today,
       );
+      print("#==========> TIME SHEET ${timeSheet}");
       emit(AttendanceLoaded(timeSheets: timeSheet, today: event.today));
     } catch (e) {
       emit(AttendanceError(message: e.toString()));

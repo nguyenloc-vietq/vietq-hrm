@@ -38,16 +38,20 @@ class ScheduleApi {
     }
   }
 
-  Future<TimeSheetModels> fetchTimeSheet({String? today}) async {
-    if(today != null){
+  Future<TimeSheetModels> fetchTimeSheet({String? today, String? startMonth, String? endMonth}) async {
+    if(today != null ){
       final response = await dio.get('/attendance/time-sheet', queryParameters: {
         'today': today,
+
       });
       final data = response.data['data'];
       return TimeSheetModels.fromJson(data);
     }
     try {
-      final response = await dio.get('/attendance/time-sheet');
+      final response = await dio.get('/attendance/time-sheet', queryParameters: {
+        'startMonth': startMonth,
+        'endMonth': endMonth,
+      });
       final data = response.data['data'];
       return TimeSheetModels.fromJson(data);
     }on DioException catch (e) {
@@ -86,6 +90,18 @@ class ScheduleApi {
       await dio.get('/schedule/update-status-schedules');
       print("#==========> UPDATE STATUS SCHEDULES IS SUCCESS!:");
     } on DioException catch (e) {
+      print("#==========> ${e.message}");
+      final handle = handleDioError(e);
+      throw handle;
+    }
+  }
+
+  Future<Map<String, dynamic>> getProgressWorking() async {
+    try {
+      final response = await dio.get('/schedule/get-percent-schedules');
+      final data = response.data['data'];
+      return data;
+    }on DioException catch (e) {
       print("#==========> ${e.message}");
       final handle = handleDioError(e);
       throw handle;

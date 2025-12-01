@@ -60,7 +60,8 @@ export class AttendanceService {
         payrollCode: true,
       },
     });
-
+    console.log(`[===============> workon | `, workOn);
+    console.log(`[===============> datapayroll | `, dataPayroll);
     const scheduleToday = await this.prisma.employeeSchedule.findFirst({
       where: {
         workOn: {
@@ -98,6 +99,7 @@ export class AttendanceService {
       ...newAttendance,
     };
     // return { ...newAttendance };
+    // return {};
   }
   async checkOut(CheckOutAttendanceDto: CheckInAttendanceDto, @Req() req) {
     const workOn = new Date().toISOString();
@@ -158,25 +160,10 @@ export class AttendanceService {
     const { startMonth, endMonth } = req.query;
     const startOfMonth = dayjs().startOf("month");
     const endOfMonth = dayjs().endOf("month");
+    console.log(`[===============> START MONTH | `, startOfMonth);
+    console.log(`[===============> START MONTH | `, endOfMonth);
     const today = req.query.today;
     try {
-      // const dataTimeSheet = await this.prisma.payroll.findMany({
-      //   where: {
-      //     startDate: {
-      //       lte: endMonth ? endMonth : endOfMonth.toDate(),
-      //       gte: startMonth ? startMonth : startOfMonth.toDate(),
-      //     },
-      //     isActive: true,
-      //   },
-      //   include: {
-      //     company: {
-      //       select: {
-      //         companyName: true,
-      //       },
-      //     },
-      //     attendanceRecs: true,
-      //   },
-      // });
       const dataTimeSheet = await this.prisma.payroll.findMany({
         where: {
           startDate: {
@@ -213,13 +200,18 @@ export class AttendanceService {
             },
             where: {
               userCode: req.user.userCode,
+              // workDay: today ? dayjs(today).toDate() : dayjs().toDate(),
               workDay: {
                 gte: today
                   ? dayjs(today).startOf("day").toDate()
-                  : startOfMonth.toDate(),
+                  : startMonth
+                    ? dayjs(startMonth).toDate()
+                    : startOfMonth.toDate(),
                 lte: today
                   ? dayjs(today).endOf("day").toDate()
-                  : endOfMonth.toDate(),
+                  : startMonth
+                    ? dayjs(endMonth).toDate()
+                    : endOfMonth.toDate(),
               },
             },
             orderBy: {
@@ -228,6 +220,10 @@ export class AttendanceService {
           },
         },
       });
+      console.log(
+        `[===============> hdhdhhdh | `,
+        dayjs(startMonth).endOf("day").toDate(),
+      );
       return { ...dataTimeSheet[0] };
     } catch (error) {
       throw new HttpException("Get time sheet failed", 500);

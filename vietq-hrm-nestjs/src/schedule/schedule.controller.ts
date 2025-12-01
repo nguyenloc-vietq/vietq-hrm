@@ -99,4 +99,14 @@ export class ScheduleController {
       "update status schedules success",
     );
   }
+  @Get("get-percent-schedules")
+  async getPercentSchedules(
+    @Req() req: Request,
+  ): Promise<ResponseDataSuccess<any>> {
+    return new ResponseDataSuccess(
+      await this.scheduleService.getPercentSchedules(req),
+      200,
+      "get percent schedules success",
+    );
+  }
 }

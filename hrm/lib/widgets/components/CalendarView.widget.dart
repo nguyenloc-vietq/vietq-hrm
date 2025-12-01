@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:vietq_hrm/blocs/calendars/calendar_bloc.dart';
 import 'package:vietq_hrm/models/timeSheet.models.dart';
+import 'package:vietq_hrm/utils/parseTime.dart';
 
 class CalendarView extends StatefulWidget {
   const CalendarView({super.key});
@@ -25,10 +25,10 @@ class _CalendarViewState extends State<CalendarView> {
     super.initState();
     _selectedDay = _focusedDay;
   }
-
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    print("#==========> forcus day ${_focusedDay}");
     return BlocBuilder<CalendarBloc, CalendarState>(
       builder: (context, state) {
         print(state);
@@ -46,12 +46,24 @@ class _CalendarViewState extends State<CalendarView> {
                 slivers: [
                   SliverToBoxAdapter(
                     child: TableCalendar(
+                      onPageChanged: (focusedDay) {
+                        setState(() {
+                          _focusedDay = focusedDay; // cập nhật tháng hiện tại
+                        });
+                        print("#==========> ${_focusedDay}");
+                        context.read<CalendarBloc>().add(
+                          LoadCalendarEvent(isRefresh: true, startMonth: getStartOfMonth(_focusedDay).toIso8601String(), endMonth: getEndOfMonth(_focusedDay).toIso8601String()),
+                        );
+                      },
+
                       availableGestures: AvailableGestures.horizontalSwipe,
                       rowHeight: 80.h,
                       daysOfWeekHeight: 50.h,
-                      firstDay: DateTime(DateTime.now().year, 1, 1),
-                      lastDay: DateTime(DateTime.now().year, 12, 31),
-                      focusedDay: _focusedDay,
+                      firstDay: DateTime(_focusedDay.year, 1, 1),
+                      lastDay: DateTime(_focusedDay.year, 12, 31),
+                      focusedDay: state.timeSheets?.startDate != null
+                          ? DateTime.parse(state.timeSheets!.startDate!)
+                          : _focusedDay,
                       calendarFormat: _calendarFormat,
                       // locale: '',
                       daysOfWeekStyle: DaysOfWeekStyle(

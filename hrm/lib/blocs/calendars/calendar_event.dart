@@ -16,12 +16,14 @@ class LoadScheduleEvent extends CalendarEvent {
 }
 class LoadCalendarEvent extends CalendarEvent {
   final String? today;
+  final String? startMonth;
+  final String? endMonth;
   final bool isRefresh;
 
-  const LoadCalendarEvent({required this.isRefresh, this.today});
+  const LoadCalendarEvent({required this.isRefresh, this.today, this.endMonth, this.startMonth});
 
   @override
-  List<Object?> get props => [isRefresh, today];
+  List<Object?> get props => [isRefresh, today, startMonth, endMonth];
 }
 
 class LoadMoreCalendarEvent extends CalendarEvent {

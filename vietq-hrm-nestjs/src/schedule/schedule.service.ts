@@ -210,4 +210,52 @@ export class ScheduleService {
       throw new HttpException(error.message, 500);
     }
   }
+
+  async getPercentSchedules(req: any) {
+    try {
+      const userCode = req.user.userCode;
+      const today = dayjs();
+      const listSchedulesInMonth = await this.prisma.employeeSchedule.findMany({
+        where: {
+          userCode,
+          isActive: "Y",
+          workOn: {
+            gte: today.startOf("month").toDate(),
+            lte: today.endOf("month").toDate(),
+          },
+        },
+      });
+      const listAttdenRecords = await this.prisma.attendanceRecord.findMany({
+        where: {
+          userCode,
+          status: "PRESENT",
+          workDay: {
+            gte: today.startOf("month").toDate(),
+            lte: today.endOf("month").toDate(),
+          },
+        },
+      });
+      const timesList = listSchedulesInMonth.map((item) =>
+        dayjs(item.workOn).format("YYYY-MM-DD"),
+      );
+      console.log(`[===============> timelist 1 | `, timesList);
+      const ListAttdenRecordInSchedule = listAttdenRecords.filter((item) =>
+        timesList.includes(dayjs(item.workDay).format("YYYY-MM-DD")),
+      );
+      return {
+        percent:
+          ListAttdenRecordInSchedule.length > 0
+            ? (
+                (ListAttdenRecordInSchedule.length /
+                  listSchedulesInMonth.length) *
+                100
+              ).toPrecision(2)
+            : 0,
+        totalDays: listSchedulesInMonth.length,
+        totalAttden: ListAttdenRecordInSchedule.length,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
 }

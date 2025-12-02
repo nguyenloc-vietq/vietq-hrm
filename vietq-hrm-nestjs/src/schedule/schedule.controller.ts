@@ -30,10 +30,9 @@ export class ScheduleController {
       }),
     )
     dataSchedule: CreateScheduleDto,
-    @Req() req: Request,
   ): Promise<ResponseDataSuccess<object>> {
     return new ResponseDataSuccess(
-      await this.scheduleService.create(dataSchedule, req),
+      await this.scheduleService.create(dataSchedule),
       200,
       "",
     );

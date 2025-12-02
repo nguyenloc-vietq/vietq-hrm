@@ -14,9 +14,9 @@ export class ScheduleService {
     private codeGen: CodeGeneratorService,
   ) {}
 
-  async create(dataSchedule: CreateScheduleDto, @Req() req) {
+  async create(dataSchedule: CreateScheduleDto) {
     try {
-      const { userCode } = req.user;
+      const { userCode } = dataSchedule;
 
       const lastRecord = await this.prisma.employeeSchedule.findFirst({
         orderBy: { scheduleCode: "desc" },

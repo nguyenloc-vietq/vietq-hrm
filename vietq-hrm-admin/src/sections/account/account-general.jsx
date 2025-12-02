@@ -1,17 +1,17 @@
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import { fData } from 'src/utils/format-number';
+
+import { CONFIG } from 'src/config-global';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
@@ -21,42 +21,35 @@ import { useMockedUser } from 'src/auth/hooks';
 // ----------------------------------------------------------------------
 
 export const UpdateUserSchema = zod.object({
-  displayName: zod.string().min(1, { message: 'Name is required!' }),
+  fullName: zod.string().min(1, { message: 'Name is required!' }),
   email: zod
     .string()
     .min(1, { message: 'Email is required!' })
     .email({ message: 'Email must be a valid email address!' }),
-  photoURL: schemaHelper.file({
+  avatar: schemaHelper.file({
     message: { required_error: 'Avatar is required!' },
   }),
-  phoneNumber: schemaHelper.phoneNumber({ isValidPhoneNumber }),
-  country: schemaHelper.objectOrNull({
-    message: { required_error: 'Country is required!' },
+  // phoneNumber: schemaHelper.phoneNumber({ isValidPhoneNumber }),
+  companyName: schemaHelper.objectOrNull({
+    message: { required_error: 'Company name is required!' },
   }),
   address: zod.string().min(1, { message: 'Address is required!' }),
-  state: zod.string().min(1, { message: 'State is required!' }),
-  city: zod.string().min(1, { message: 'City is required!' }),
-  zipCode: zod.string().min(1, { message: 'Zip code is required!' }),
-  about: zod.string().min(1, { message: 'About is required!' }),
-  // Not required
-  isPublic: zod.boolean(),
+  position: zod.string().min(1, { message: 'State is required!' }),
+  employeeType: zod.string().min(1, { message: 'City is required!' }),
 });
 
 export function AccountGeneral() {
   const { user } = useMockedUser();
 
   const defaultValues = {
-    displayName: user?.displayName || '',
+    fullName: user?.fullName || '',
     email: user?.email || '',
-    photoURL: user?.photoURL || null,
-    phoneNumber: user?.phoneNumber || '',
-    country: user?.country || '',
+    avatar: `${CONFIG.site.imageUrl}${user?.avatar}` || '',
+    phoneNumber: "03726638903" || '',
+    companyName: user.company.companyName || '',
     address: user?.address || '',
-    state: user?.state || '',
-    city: user?.city || '',
-    zipCode: user?.zipCode || '',
-    about: user?.about || '',
-    isPublic: user?.isPublic || false,
+    position: user?.userProfessionals[0].position || '',
+    employeeType: user?.userProfessionals[0].employeeType || '',
   };
 
   const methods = useForm({
@@ -93,8 +86,9 @@ export function AccountGeneral() {
             }}
           >
             <Field.UploadAvatar
-              name="photoURL"
+              name="avatar"
               maxSize={3145728}
+              
               helperText={
                 <Typography
                   variant="caption"
@@ -111,17 +105,6 @@ export function AccountGeneral() {
                 </Typography>
               }
             />
-
-            <Field.Switch
-              name="isPublic"
-              labelPlacement="start"
-              label="Public profile"
-              sx={{ mt: 5 }}
-            />
-
-            <Button variant="soft" color="error" sx={{ mt: 3 }}>
-              Delete user
-            </Button>
           </Card>
         </Grid>
 
@@ -136,20 +119,19 @@ export function AccountGeneral() {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <Field.Text name="displayName" label="Name" />
-              <Field.Text name="email" label="Email address" />
-              <Field.Phone name="phoneNumber" label="Phone number" />
+              <Field.Text disabled name="phoneNumber" label="Phone number" />
+              <Field.Text disabled name="email" label="Email address" />
+              <Field.Text name="fullName" label="Name" />
               <Field.Text name="address" label="Address" />
 
-              <Field.CountrySelect name="country" label="Country" placeholder="Choose a country" />
+              <Field.Text name="companyName" label="Copany name" />
 
-              <Field.Text name="state" label="State/region" />
-              <Field.Text name="city" label="City" />
-              <Field.Text name="zipCode" label="Zip/code" />
+              <Field.Text name="position" label="Position" />
+              <Field.Text name="employeeType" label="Employee type" />
             </Box>
 
             <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
-              <Field.Text name="about" multiline rows={4} label="About" />
+              {/* <Field.Text name="about" multiline rows={4} label="About" /> */}
 
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                 Save changes

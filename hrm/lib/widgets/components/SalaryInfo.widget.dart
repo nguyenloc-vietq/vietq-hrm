@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:vietq_hrm/blocs/notifications/notifications_bloc.dart';
+import 'package:vietq_hrm/utils/downloadAndShareFile.dart';
+import 'package:vietq_hrm/utils/openPdf.dart';
 
 class SalaryInfoWidget extends StatelessWidget {
   const SalaryInfoWidget({super.key});
@@ -199,8 +201,8 @@ class SalaryInfoWidget extends StatelessWidget {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () {
-                          context.push("/payroll-details/1dadasd", extra: "Payroll Details");
+                        onTap: () async {
+                         await openPdf("https://www.orimi.com/pdf-test.pdf", context);
                         },
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,7 +234,12 @@ class SalaryInfoWidget extends StatelessWidget {
                             ),
                             backgroundColor: Theme.of(context).colorScheme.primary,
                           ),
-                          onPressed: () {},
+                          onPressed: () async {
+                            await downloadAndShareFile(
+                            "https://www.orimi.com/pdf-test.pdf",
+                            "payroll.pdf", context
+                            );
+                          },
                           child: Icon(
                             Icons.download,
                             size: 30.w,

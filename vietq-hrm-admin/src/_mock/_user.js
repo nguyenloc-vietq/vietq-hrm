@@ -3,10 +3,8 @@ import { _mock } from './_mock';
 // ----------------------------------------------------------------------
 
 export const USER_STATUS_OPTIONS = [
-  { value: 'active', label: 'Active' },
-  { value: 'pending', label: 'Pending' },
-  { value: 'banned', label: 'Banned' },
-  { value: 'rejected', label: 'Rejected' },
+  { value: 'Y', label: 'Active' },
+  { value: 'N', label: 'Banned' },
 ];
 
 export const _userAbout = {
@@ -124,20 +122,85 @@ export const _userPlans = [
   { subscription: 'premium', price: 9.99, primary: false },
 ];
 
-export const _userList = [...Array(20)].map((_, index) => ({
-  id: _mock.id(index),
-  zipCode: '85807',
-  state: 'Virginia',
-  city: 'Rancho Cordova',
-  role: _mock.role(index),
-  email: _mock.email(index),
-  address: '908 Jack Locks',
-  name: _mock.fullName(index),
-  isVerified: _mock.boolean(index),
-  company: _mock.companyNames(index),
-  country: _mock.countryNames(index),
-  avatarUrl: _mock.image.avatar(index),
-  phoneNumber: _mock.phoneNumber(index),
-  status:
-    (index % 2 && 'pending') || (index % 3 && 'banned') || (index % 4 && 'rejected') || 'active',
-}));
+export const _userList = [
+        {
+            "id": 14,
+            "companyCode": "CPA000001",
+            "userCode": "USR000002",
+            "email": "ngo.hoang.giang@viet-q.com",
+            "phone": "+84334644324",
+            "fullName": "Ngo Hoang Giang",
+            "address": null,
+            "avatar": "avatar/avatar-1764147500177-306563168.png",
+            "isActive": "Y",
+            "createdAt": "2025-11-24T08:40:53.216Z",
+            "updatedAt": "2025-11-26T08:58:20.189Z",
+            "professionals": {
+                "0": {
+                    "position": "Software Engineer",
+                    "employeeType": "Full Time",
+                    "companyCode": "CPA000001"
+                }
+            }
+        },
+        {
+            "id": 16,
+            "companyCode": "CPA000001",
+            "userCode": "USR000003",
+            "email": "tran.vu@viet-q.com",
+            "phone": "+84769763217",
+            "fullName": "Tran The Vu",
+            "address": null,
+            "avatar": "avatar/avatar-1764148097849-522213556.png",
+            "isActive": "Y",
+            "createdAt": "2025-11-24T08:42:43.941Z",
+            "updatedAt": "2025-11-26T09:08:17.861Z",
+            "professionals": {
+                "0": {
+                    "position": "Software Engineer",
+                    "employeeType": "Full Time",
+                    "companyCode": "CPA000001"
+                }
+            }
+        },
+        {
+            "id": 17,
+            "companyCode": "CPA000001",
+            "userCode": "USR000004",
+            "email": "designvq@viet-q.com",
+            "phone": "+84969946775",
+            "fullName": "Ngan Nguyen",
+            "address": null,
+            "avatar": "avatar/avatar-1764147679370-406323486.png",
+            "isActive": "Y",
+            "createdAt": "2025-11-24T08:46:11.911Z",
+            "updatedAt": "2025-11-26T09:01:19.373Z",
+            "professionals": {
+                "0": {
+                    "position": "UI/UX - Graphic Designer",
+                    "employeeType": "Full Time",
+                    "companyCode": "CPA000001"
+                }
+            }
+        },
+        {
+            "id": 18,
+            "companyCode": "CPA000001",
+            "userCode": "USR000005",
+            "email": "duy.huu@viet-q.com",
+            "phone": "+84776902759",
+            "fullName": "Tran Duy Huu",
+            "address": null,
+            "avatar": null,
+            "isActive": "Y",
+            "createdAt": "2025-11-24T08:48:09.335Z",
+            "updatedAt": "2025-11-24T08:48:09.335Z",
+            "professionals": {
+                "0": {
+                    "position": "Head Of Office",
+                    "employeeType": "Full Time",
+                    "companyCode": "CPA000001"
+                }
+            }
+        }
+    ]

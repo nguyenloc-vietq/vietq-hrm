@@ -10,6 +10,7 @@ export const CONFIG = {
     serverUrl: import.meta.env.VITE_SERVER_URL ?? '',
     assetURL: import.meta.env.VITE_ASSET_URL ?? '',
     basePath: import.meta.env.VITE_BASE_PATH ?? '',
+    imageUrl: `${import.meta.env.VITE_IMAGE_URL}api/file/` ?? '',
     version: packageJson.version,
   },
   /**

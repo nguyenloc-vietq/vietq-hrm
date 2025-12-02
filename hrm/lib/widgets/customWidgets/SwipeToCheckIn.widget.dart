@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:slide_to_act/slide_to_act.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +23,7 @@ class SwipeToCheckIn extends StatelessWidget {
       child: SlideAction(
         innerColor: Colors.white,
         outerColor: background,
-        sliderButtonIcon: Icon(IconData(0xf7e4, fontFamily: CupertinoIcons.iconFont, fontPackage: CupertinoIcons.iconFontPackage), color: background),
+        sliderButtonIcon: SvgPicture.asset('assets/icons/smile.svg', color: background),
         text: title,
         textStyle: TextStyle(
           color: Colors.white,

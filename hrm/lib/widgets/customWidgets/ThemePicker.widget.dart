@@ -22,7 +22,7 @@ class PaletteColorPicker extends StatelessWidget {
     final themeBloc = context.read<ThemeBloc>();
 
     return Padding(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.symmetric(horizontal: 18),
       child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.zero,

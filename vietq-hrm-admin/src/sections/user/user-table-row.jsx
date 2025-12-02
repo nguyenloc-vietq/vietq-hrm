@@ -1,17 +1,18 @@
-import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
+import { Skeleton } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
-import MenuList from '@mui/material/MenuList';
-import MenuItem from '@mui/material/MenuItem';
-import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
+import MenuItem from '@mui/material/MenuItem';
+import MenuList from '@mui/material/MenuList';
+import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 
 import { useBoolean } from 'src/hooks/use-boolean';
+
+import { CONFIG } from 'src/config-global';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
@@ -38,32 +39,27 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
 
         <TableCell>
           <Stack spacing={2} direction="row" alignItems="center">
-            <Avatar alt={row.name} src={row.avatarUrl} />
-
-            <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
-              <Link color="inherit" onClick={onEditRow} sx={{ cursor: 'pointer' }}>
-                {row.name}
-              </Link>
-              <Box component="span" sx={{ color: 'text.disabled' }}>
-                {row.email}
-              </Box>
-            </Stack>
+            <Avatar alt={row.fullName} src={CONFIG.site.imageUrl + row.avatar} />
           </Stack>
         </TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.phoneNumber}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.email}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.fullName}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.phone}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.company}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.userCode}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.role}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.companyCode}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.userProfessionals[0].position}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.userProfessionals[0].employeeType}</TableCell>
 
         <TableCell>
           <Label
             variant="soft"
             color={
-              (row.status === 'active' && 'success') ||
-              (row.status === 'pending' && 'warning') ||
-              (row.status === 'banned' && 'error') ||
+              (row.isActive === 'Y' && 'success') ||
+              // (row.isActive === 'pending' && 'warning') ||
+              (row.isActive === 'N' && 'error') ||
               'default'
             }
           >
@@ -134,4 +130,19 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
       />
     </>
   );
+}
+
+
+export function TableSkeleton({length = 5}) {
+  return [...Array(5)].map((_, index) => (
+    <TableRow key={index}>
+      {
+        [...Array(length)].map((__, i) => (
+          <TableCell key={i}>
+            <Skeleton />
+          </TableCell>
+        ))
+      }
+    </TableRow>
+  ));
 }

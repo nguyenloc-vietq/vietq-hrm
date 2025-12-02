@@ -168,4 +168,13 @@ export class UserController {
       "change password success",
     );
   }
+
+  @Get("list-user")
+  async listUser(@Req() req): Promise<ResponseDataSuccess<object>> {
+    return new ResponseDataSuccess(
+      await this.userService.listUser(req),
+      200,
+      "get list user success",
+    );
+  }
 }

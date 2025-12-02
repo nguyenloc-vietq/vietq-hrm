@@ -163,6 +163,7 @@ export const endpoints = {
   user: {
     profile: '/api/user/profile',
     createUser: '/api/user/create-user',
+    getListUser: '/api/user/list-user',
   },
   auth: {
     profile: '/api/auth/me',

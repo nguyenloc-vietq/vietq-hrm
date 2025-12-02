@@ -1,4 +1,3 @@
-import { _mock } from 'src/_mock';
 
 // To get the user from the <AuthContext/>, you can use
 
@@ -14,20 +13,28 @@ import { _mock } from 'src/_mock';
 
 export function useMockedUser() {
   const user = {
-    id: '8864c717-587d-472a-929a-8e5f298024da-0',
-    displayName: 'Jaydon Frankie',
-    email: 'demo@minimals.cc',
-    photoURL: _mock.image.avatar(24),
-    phoneNumber: _mock.phoneNumber(1),
-    country: _mock.countryNames(1),
-    address: '90210 Broadway Blvd',
-    state: 'California',
-    city: 'San Francisco',
-    zipCode: '94116',
-    about: 'Praesent turpis. Phasellus viverra nulla ut metus varius laoreet. Phasellus tempus.',
-    role: 'admin',
-    isPublic: true,
-  };
+        "id": 1,
+        "companyCode": "CPA000001",
+        "userCode": "USR000001",
+        "email": "nguyenloc@viet-q.com",
+        "phone": "0372663903",
+        "fullName": "Ho Nguyen Loc",
+        "address": "ddd",
+        "avatar": "avatar/avatar-1764490351875-614181745.jpg",
+        "isActive": "Y",
+        "createdAt": "2025-11-06T16:20:31.018Z",
+        "updatedAt": "2025-11-30T08:12:31.877Z",
+        "company": {
+            "address": null,
+            "companyName": "VietQ Tech Solution"
+        },
+        "userProfessionals": [
+            {
+                "position": "Software Engineer",
+                "employeeType": "Full time"
+            }
+        ]
+    };
 
   return { user };
 }

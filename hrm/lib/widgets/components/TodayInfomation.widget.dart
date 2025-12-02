@@ -201,7 +201,7 @@ class _TodayInfoWidgetState extends State<TodayInfoWidget> {
                               children: [
                                 Center(
                                   child: HalfCircleProgress(
-                                    progress: int.parse(dataProgress['percent']) / 100,
+                                    progress: double.parse(dataProgress['percent'].toString()) / 100,
                                     progressColor: Theme.of(context).colorScheme.primary,
                                     backgroundColor: Colors.grey.shade300,
                                     size: 80.sp,

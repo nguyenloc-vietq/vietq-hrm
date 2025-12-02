@@ -17,6 +17,7 @@ import { CodeGeneratorService } from "src/code-generator/code-generator.service"
 import { ChangePasswordDto } from "./dto/changePassword-user.dto";
 import * as fs from "fs";
 import { join } from "path";
+import { not } from "rxjs/internal/util/not";
 
 @Injectable()
 export class UserService {
@@ -255,6 +256,32 @@ export class UserService {
         },
       });
       return {};
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
+  async listUser(@Req() req: any) {
+    try {
+      const listUser = await this.prisma.user.findMany({
+        where: {
+          NOT: { userCode: req.user.userCode },
+        },
+        include: {
+          userProfessionals: {
+            select: {
+              position: true,
+              employeeType: true,
+              companyCode: true,
+            },
+          },
+        },
+      });
+      const payload = listUser.map((user) => {
+        const { passwordHash, ...payload } = user;
+        return { ...payload };
+      });
+      return payload;
     } catch (error) {
       throw new HttpException(error.message, 500);
     }

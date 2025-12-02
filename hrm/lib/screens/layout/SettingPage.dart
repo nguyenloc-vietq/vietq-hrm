@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:vietq_hrm/configs/sharedPreference/SharedPreferences.config.dart';
 import 'package:vietq_hrm/services/push_notification/notification.service.dart';
 import 'package:vietq_hrm/widgets/components/ChangePassword.widget.dart';
+import 'package:vietq_hrm/widgets/components/clearCache.widget.dart';
 import 'package:vietq_hrm/widgets/customWidgets/ThemePicker.widget.dart';
 
 class SettingPage extends StatefulWidget {
@@ -57,7 +58,8 @@ class _SettingPageState extends State<SettingPage> {
               onChanged: _onChanged,
             ),
             ChangePasswordWidget(),
-            PaletteColorPicker()
+            PaletteColorPicker(),
+            CacheInfoWidget(),
           ],
         ),
       ),

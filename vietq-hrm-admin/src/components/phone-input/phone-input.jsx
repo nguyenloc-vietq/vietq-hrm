@@ -12,7 +12,6 @@ import { CountryListPopover } from './list';
 export const PhoneInput = forwardRef(
   ({ value, onChange, placeholder, country: inputCountryCode, disableSelect, ...other }, ref) => {
     const defaultCountryCode = getCountryCode(value, inputCountryCode);
-
     const [selectedCountry, setSelectedCountry] = useState(defaultCountryCode);
 
     return (
@@ -20,10 +19,11 @@ export const PhoneInput = forwardRef(
         ref={ref}
         country={selectedCountry}
         inputComponent={CustomInput}
-        value={value}
+        value={value ?? 'fsdfdsf'}
         onChange={onChange}
-        placeholder={placeholder ?? 'Enter phone number'}
+        placeholder={placeholder ?? value}
         InputProps={
+          
           disableSelect
             ? undefined
             : {
@@ -45,4 +45,9 @@ export const PhoneInput = forwardRef(
 
 // ----------------------------------------------------------------------
 
-const CustomInput = forwardRef(({ ...props }, ref) => <TextField inputRef={ref} {...props} />);
+const CustomInput = forwardRef(({ ...props }, ref) => {
+  console.log(`[===============> props | `, props);
+  return <TextField inputRef={ref}  {...props} />
+}
+
+);

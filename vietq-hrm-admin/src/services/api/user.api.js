@@ -4,7 +4,6 @@ class UserApi {
     static async createUser(body) {
         try {
             const res = await axiosInstance.post("/api/user/create-user", body);
-            console.log(`[===============> Res Api Create user | `, res.data);
             return res.data;
         } catch (error) {
             console.log("Respone Api User | ", error );
@@ -15,7 +14,6 @@ class UserApi {
     static async getListUser() {
         try {
             const res = await axiosInstance.get(endpoints.user.getListUser);
-            console.log(`[===============> Res Api Create user | `, res.data);
             return res.data;
         } catch (error) {
             console.log("Respone Api User | ", error );
@@ -26,7 +24,26 @@ class UserApi {
     static async getProfile() {
         try {
             const res = await axiosInstance.get(endpoints.user.profile);
-            console.log(`[===============> Res Api Create user | `, res.data);
+            return res.data;
+        } catch (error) {
+            console.log("Respone Api User | ", error );
+            throw error;
+        }
+    }
+
+    static async updateProfile(body) {
+        try {
+            const res = await axiosInstance.put(endpoints.user.updateProfile, body);
+            return res.data;
+        } catch (error) {
+            console.log("Respone Api User | ", error );
+            throw error;
+        }
+    }
+
+    static async updateAvatar(body) {
+        try {
+            const res = await axiosInstance.post(endpoints.user.updateAvatar, body, { headers: { "Content-Type": "multipart/form-data" } });
             return res.data;
         } catch (error) {
             console.log("Respone Api User | ", error );

@@ -119,7 +119,7 @@ export class UserService {
           userCode: userCode,
         },
         data: {
-          avatar: file.filename,
+          avatar: file.fieldname + "/" + file.filename,
         },
       });
       //delete file
@@ -130,7 +130,9 @@ export class UserService {
         "uploads",
         oldAvatar?.avatar ?? "",
       );
-      await fs.promises.unlink(filePath);
+      if (fs.existsSync(filePath)) {
+        await fs.promises.unlink(filePath);
+      }
       const result = {
         filePath: file.path,
         fileName: file.filename,

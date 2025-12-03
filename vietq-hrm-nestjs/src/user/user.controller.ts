@@ -19,13 +19,13 @@ import { ResponseDataSuccess } from "src/global/globalClass";
 import { query } from "winston";
 import { UpdateProfileDto, UpdateUserDto } from "./dto/update-user.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { extname } from "path";
+import { extname, join } from "path";
 import { diskStorage } from "multer";
 import { Request } from "express";
 import { UpdateUserProfessionalDto } from "./dto/updateUserProfessional-user.dto";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { ChangePasswordDto } from "./dto/changePassword-user.dto";
-
+import * as fs from "fs";
 @Controller("user")
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -89,16 +89,26 @@ export class UserController {
   @UseInterceptors(
     FileInterceptor("avatar", {
       storage: diskStorage({
-        destination: "./src/uploads", // đường dẫn lưu file (local)
+        destination: (req, file, callback) => {
+          // Đường dẫn gốc lưu file
+          const uploadRoot = "./src/uploads";
+          const folderName = "avatar";
+          const uploadPath = join(uploadRoot, folderName);
+
+          // Nếu thư mục chưa tồn tại thì tạo mới
+          if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+          }
+
+          callback(null, uploadPath);
+        }, // đường dẫn lưu file (local)
         filename: (req: Request, file: any, callback) => {
           // Tạo tên file duy nhất
           const uniqueSuffix =
             Date.now() + "-" + Math.round(Math.random() * 1e9);
           const ext = extname(file.originalname);
-          callback(
-            null,
-            `${file.fieldname}/${file.fieldname}-${uniqueSuffix}${ext}`,
-          );
+          console.log(`[===============> file | `, file.fieldname);
+          callback(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
         },
       }),
     }),

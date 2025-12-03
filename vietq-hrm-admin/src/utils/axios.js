@@ -164,6 +164,8 @@ export const endpoints = {
     profile: '/api/user/profile',
     createUser: '/api/user/create-user',
     getListUser: '/api/user/list-user',
+    updateAvatar: '/api/user/upload-avatar',
+    updateProfile: '/api/user/update',
   },
   auth: {
     profile: '/api/auth/me',

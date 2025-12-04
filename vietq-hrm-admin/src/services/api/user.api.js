@@ -51,6 +51,16 @@ class UserApi {
         }
     }
 
+    static async updateUser(body) {
+        try {
+            const res = await axiosInstance.put(endpoints.user.updateUser, body);
+            return res.data;
+        } catch (error) {
+            console.log("Respone Api User | ", error );
+            throw error;
+        }
+    }
+
 }
 
 export default UserApi;

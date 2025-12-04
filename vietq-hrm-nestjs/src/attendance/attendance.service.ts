@@ -4,6 +4,7 @@ import { UpdateAttendanceDto } from "./dto/update-attendance.dto";
 import { DatabaseService } from "src/database/database.service";
 import dayjs from "dayjs";
 import { CheckInAttendanceDto } from "./dto/checkin-attendance.dto";
+import getLateMinutes from "src/utils/converTime";
 
 @Injectable()
 export class AttendanceService {
@@ -49,19 +50,6 @@ export class AttendanceService {
     if (exitsCheckIn) {
       throw new HttpException("Already check in", 400);
     }
-
-    const dataPayroll = await this.prisma.payroll.findFirst({
-      where: {
-        startDate: { lte: workOn },
-        endDate: { gte: workOn },
-        isActive: true,
-      },
-      select: {
-        payrollCode: true,
-      },
-    });
-    console.log(`[===============> workon | `, workOn);
-    console.log(`[===============> datapayroll | `, dataPayroll);
     const scheduleToday = await this.prisma.employeeSchedule.findFirst({
       where: {
         workOn: {
@@ -80,9 +68,25 @@ export class AttendanceService {
     });
     console.log(scheduleToday);
 
-    const startTime = dayjs(
-      `${dayjs().format("YYYY-MM-DD")}T${scheduleToday?.shift.startTime}`,
+    const lateTime = getLateMinutes(
+      today,
+      "Asia/Ho_Chi_Minh",
+      scheduleToday?.shift.startTime,
     );
+
+    const dataPayroll = await this.prisma.payroll.findFirst({
+      where: {
+        startDate: { lte: workOn },
+        endDate: { gte: workOn },
+        isActive: true,
+      },
+      select: {
+        payrollCode: true,
+      },
+    });
+    console.log(`[===============> workon | `, workOn);
+    console.log(`[===============> datapayroll | `, dataPayroll);
+
     const newAttendance = await this.prisma.attendanceRecord.create({
       data: {
         userCode: req.user.userCode,
@@ -90,9 +94,7 @@ export class AttendanceService {
         workDay: today.toDate(),
         timeIn: today.toDate(),
         status: "ABSENT",
-        lateMinutes: today.isAfter(startTime)
-          ? Number(today.diff(startTime, "minute"))
-          : 0,
+        lateMinutes: lateTime,
       },
     });
     return {

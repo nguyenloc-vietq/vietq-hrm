@@ -23,7 +23,7 @@ import { UserQuickEditForm } from './user-quick-edit-form';
 
 // ----------------------------------------------------------------------
 
-export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
+export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow, onUpdateRow }) {
   const confirm = useBoolean();
 
   const popover = usePopover();
@@ -45,6 +45,7 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.email}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.fullName}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.address === '' || row.address === null ? "-" : row.address}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.phone}</TableCell>
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.userCode}</TableCell>
@@ -85,7 +86,7 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
         </TableCell>
       </TableRow>
 
-      <UserQuickEditForm currentUser={row} open={quickEdit.value} onClose={quickEdit.onFalse} />
+      <UserQuickEditForm currentUser={row} open={quickEdit.value} onClose={quickEdit.onFalse} onUpdateRow={onUpdateRow} />
 
       <CustomPopover
         open={popover.open}
@@ -105,7 +106,7 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
             Delete
           </MenuItem>
 
-          <MenuItem
+          {/* <MenuItem
             onClick={() => {
               onEditRow();
               popover.onClose();
@@ -113,7 +114,7 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
           >
             <Iconify icon="solar:pen-bold" />
             Edit
-          </MenuItem>
+          </MenuItem> */}
         </MenuList>
       </CustomPopover>
 

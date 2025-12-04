@@ -19,7 +19,10 @@ export class UpdateUserDto {
   phone: string;
   @IsString()
   fullName: string;
+  @IsString()
   isActive: string;
+  @IsString()
+  address: string;
 }
 
 export class UpdateProfileDto {

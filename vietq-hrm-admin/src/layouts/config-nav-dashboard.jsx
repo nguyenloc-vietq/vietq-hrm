@@ -1,8 +1,8 @@
+// import { Label } from 'src/components/label';
 import { paths } from 'src/routes/paths';
 
 import { CONFIG } from 'src/config-global';
 
-// import { Label } from 'src/components/label';
 // import { Iconify } from 'src/components/iconify';
 import { SvgColor } from 'src/components/svg-color';
 
@@ -74,6 +74,20 @@ export const navData = [
           { title: 'Create', path: paths.dashboard.user.new },
           // { title: 'Edit', path: paths.dashboard.user.demo.edit },
           { title: 'Account', path: paths.dashboard.user.account },
+        ],
+      },
+      {
+        title: 'Salary',
+        path: paths.dashboard.salary.root,
+        icon: ICONS.banking,
+        children: [
+          // { title: 'Profile', path: paths.dashboard.user.root },
+          // { title: 'Cards', path: paths.dashboard.user.cards },
+          { title: 'Payroll', path: paths.dashboard.salary.payroll },
+          { title: 'Config payroll', path: paths.dashboard.salary.config },
+          // { title: 'Edit', path: paths.dashboard.salary.demo.edit },
+          { title: 'Salary user', path: paths.dashboard.salary.user },
+          { title: 'Report', path: paths.dashboard.salary.report },
         ],
       },
       // {

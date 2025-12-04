@@ -101,6 +101,16 @@ export const dashboardRoutes = [
         ],
       },
       {
+        path: 'salary',
+        children:[
+          { element: <UserProfilePage />, index: true },
+          { path: 'user', element: <UserProfilePage /> },
+          { path: 'config', element: <UserCardsPage /> },
+          { path: 'payroll', element: <UserListPage /> },
+          { path: 'report', element: <UserCreatePage /> },
+         ]
+      },
+      {
         path: 'product',
         children: [
           { element: <ProductListPage />, index: true },

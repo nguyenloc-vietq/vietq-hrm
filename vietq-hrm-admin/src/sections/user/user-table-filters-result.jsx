@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import Chip from '@mui/material/Chip';
+import { Chip } from '@mui/material';
 
 import { chipProps, FiltersBlock, FiltersResult } from 'src/components/filters-result';
 
@@ -33,7 +33,7 @@ export function UserTableFiltersResult({ filters, onResetPage, totalResults, sx 
   }, [filters, onResetPage]);
 
   return (
-    <FiltersResult totalResults={totalResults} onReset={handleReset} sx={sx}>
+    <FiltersResult totalResults={totalResults} onReset={handleReset} sx={sx} isReset={filters.state.status !== 'all'}>
       <FiltersBlock label="Status:" isShow={filters.state.status !== 'all'}>
         <Chip
           {...chipProps}

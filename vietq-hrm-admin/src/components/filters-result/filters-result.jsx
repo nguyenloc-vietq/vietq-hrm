@@ -10,7 +10,7 @@ export const chipProps = {
   variant: 'soft',
 };
 
-export function FiltersResult({ totalResults, onReset, sx, children }) {
+export function FiltersResult({ totalResults, onReset, sx, children, isReset = true }) {
   return (
     <Box sx={sx}>
       <Box sx={{ mb: 1.5, typography: 'body2' }}>
@@ -23,13 +23,13 @@ export function FiltersResult({ totalResults, onReset, sx, children }) {
       <Box flexGrow={1} gap={1} display="flex" flexWrap="wrap" alignItems="center">
         {children}
 
-        <Button
+        {isReset &&<Button
           color="error"
           onClick={onReset}
           startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
         >
           Clear
-        </Button>
+        </Button>}
       </Box>
     </Box>
   );

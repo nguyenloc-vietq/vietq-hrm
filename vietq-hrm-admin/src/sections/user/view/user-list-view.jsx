@@ -52,6 +52,7 @@ const TABLE_HEAD = [
   {id: 'avatar', label: 'Avatar', width: 100 },
   { id: 'email', label: 'Email', width: 220 },
   { id: 'fullName', label: 'Name', width: 220},
+  {id: "address", label: "Address", width: 220},
   { id: 'phone', label: 'Phone number', width: 180 },
   { id: 'userCode', label: 'User Code', width: 220 },
   { id: 'companyCode', label: 'Company Code', width: 250 }, 
@@ -129,6 +130,20 @@ export function UserListView() {
       totalRowsFiltered: dataFiltered.length,
     });
   }, [dataFiltered.length, dataInPage.length, table, tableData]);
+
+
+  const onUpdateRow = useCallback((data) => {
+    const updateRow = tableData.map((row) => {
+      if (row.id === data.id) {
+        return {
+          ...row,
+          ...data,
+        };
+      }
+      return row;
+    });
+    setTableData(updateRow);
+  }, [tableData]);
 
   const handleEditRow = useCallback(
     (id) => {
@@ -271,6 +286,7 @@ export function UserListView() {
                         key={row.id}
                         row={row}
                         selected={table.selected.includes(row.id)}
+                        onUpdateRow={onUpdateRow}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.userCode)}
                         onEditRow={() => handleEditRow(row.userCode)}

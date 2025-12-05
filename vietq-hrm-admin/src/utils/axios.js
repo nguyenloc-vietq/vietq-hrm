@@ -160,6 +160,10 @@ export const endpoints = {
   chat: '/api/chat',
   kanban: '/api/kanban',
   calendar: '/api/calendar',
+  salary: {
+    getListSalary: '/api/salary/salary-list-user',
+    createSalary: '/api/salary/create',
+  },
   user: {
     profile: '/api/user/profile',
     createUser: '/api/user/create-user',

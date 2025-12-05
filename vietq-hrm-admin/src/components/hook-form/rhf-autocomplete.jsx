@@ -16,7 +16,9 @@ export function RHFAutocomplete({ name, label, helperText, hiddenLabel, placehol
         <Autocomplete
           {...field}
           id={`rhf-autocomplete-${name}`}
-          onChange={(event, newValue) => setValue(name, newValue, { shouldValidate: true })}
+          onChange={(event, newValue) => {
+            setValue(name, newValue, { shouldValidate: true })
+          }}
           renderInput={(params) => (
             <TextField
               {...params}

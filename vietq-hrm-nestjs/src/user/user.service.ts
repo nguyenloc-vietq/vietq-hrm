@@ -122,6 +122,7 @@ export class UserService {
           avatar: file.fieldname + "/" + file.filename,
         },
       });
+      const { passwordHash, ...payloadUser } = newDataUser;
       //delete file
       console.log(`[===============> ava | `, oldAvatar);
       const filePath = join(
@@ -137,7 +138,7 @@ export class UserService {
         filePath: file.path,
         fileName: file.filename,
         originalName: file.originalname,
-        dataUser: newDataUser,
+        dataUser: payloadUser,
       };
       return result;
     } catch (error) {

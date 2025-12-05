@@ -8,7 +8,12 @@
       {
         "include": "smtp/templates/**/*",
         "outDir": "dist/src"
+      },
+      {
+        "include": "../public/**/*",
+        "outDir": "dist/public"
       }
+
     ]
   },
   "generateOptions": {

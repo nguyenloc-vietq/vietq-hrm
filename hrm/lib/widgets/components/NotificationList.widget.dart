@@ -186,7 +186,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
               );
             },
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20).r,
+              padding: EdgeInsets.symmetric(horizontal: 20).r,
               child: ListView.separated(
                 controller: _scrollController,
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -197,7 +197,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                 },
                 itemBuilder: (context, index) {
                   return NotificationItems(
-                    notification: state.notifications[0],
+                    notification: state.notifications[index],
                     isShowIcon: true,
                   );
                 },
@@ -276,7 +276,7 @@ class NotificationItems extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Container(
-      // padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16).r,
+      margin: EdgeInsets.only(bottom: 20, top: 20).r,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.zero,
@@ -286,7 +286,7 @@ class NotificationItems extends StatelessWidget {
         ),
         onPressed: () {
           context.push(
-            '/notification/${notification.notificationCode}',
+            '/notification/${notification.notification?.notificationCode}',
             extra: "Notification",
           );
         },
@@ -335,7 +335,7 @@ class NotificationItems extends StatelessWidget {
                     DateFormat('yyyy-MM-dd HH:mm:ss')
                         .format(
                           DateTime.parse(
-                            notification.updatedAt as String,
+                            notification.notification?.createdAt as String,
                           ).toLocal(),
                         )
                         .toString(),

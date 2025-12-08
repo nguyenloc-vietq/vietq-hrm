@@ -1,4 +1,5 @@
 import { IsNumber, IsString } from "class-validator";
+
 import { NotificationTargetType } from "@prisma/client";
 
 export class CreateNotificationDto {
@@ -13,4 +14,6 @@ export class CreateNotificationDto {
   scheduleTime: Date;
   @IsNumber()
   openSent: number;
+  isSent: boolean;
+  listUserCode: string[];
 }

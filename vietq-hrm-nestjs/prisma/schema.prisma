@@ -7,46 +7,45 @@ datasource db {
 }
 
 model User {
-  id           Int          @id @default(autoincrement())
-  companyCode  String
-  userCode     String       @unique
-  email        String       @unique @db.VarChar(200)
-  phone        String
-  fullName     String
-  address      String?
-  avatar       String?
-  passwordHash String       @db.VarChar(100)
-  isActive     String       @default("Y") @db.VarChar(1)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  userRoles    UserRole[]
-  roles        RoleEntity[] @relation("UserRoles")
+  id                Int                @id @default(autoincrement())
+  companyCode       String
+  userCode          String             @unique
+  email             String             @unique @db.VarChar(200)
+  phone             String
+  fullName          String
+  address           String?
+  avatar            String?
+  passwordHash      String             @db.VarChar(100)
+  isActive          String             @default("Y") @db.VarChar(1)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  attendance        Attendance[]
+  attendanceRec     AttendanceRecord[]
+  schedules         EmployeeSchedule[]
+  salaries          Salary[]
+  salaryConfigs     SalaryConfig[]
+  company           Company            @relation(fields: [companyCode], references: [companyCode])
+  devices           UserDevice?
+  userNotifs        UserNotification[]
+  userProfessionals UserProfessional?
+  userRoles         UserRole[]
+  roles             RoleEntity[]       @relation("UserRoles")
 
-  company       Company            @relation(fields: [companyCode], references: [companyCode], onDelete: Restrict)
-  devices       UserDevice[]
-  attendance    Attendance[]
-  attendanceRec AttendanceRecord[]
-  salaries      Salary[]
-  salaryConfigs SalaryConfig[]
-  schedules     EmployeeSchedule[]
-  userNotifs    UserNotification[]
-  userProfessionals UserProfessional[]
   @@index([companyCode])
   @@map("tbl_user")
 }
 
 model UserProfessional {
-  id           Int          @id @default(autoincrement())
-  userCode     String       @unique
+  id           Int      @id @default(autoincrement())
+  userCode     String   @unique
   companyCode  String
   position     String
-  employeeType   String
-  isActive     String       @default("Y") @db.VarChar(1)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-
-  user         User         @relation(fields: [userCode], references: [userCode], onDelete: Cascade)
-  company      Company      @relation(fields: [companyCode], references: [companyCode], onDelete: Cascade)
+  employeeType String
+  isActive     String   @default("Y") @db.VarChar(1)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  company      Company  @relation(fields: [companyCode], references: [companyCode], onDelete: Cascade)
+  user         User     @relation(fields: [userCode], references: [userCode], onDelete: Cascade)
 
   @@index([userCode])
   @@index([companyCode])
@@ -89,6 +88,7 @@ model UserRole {
   user   User       @relation(fields: [userId], references: [id])
 
   @@id([userId, roleId])
+  @@index([roleId], map: "tbl_user_role_roleId_fkey")
   @@map("tbl_user_role")
 }
 
@@ -99,7 +99,305 @@ model RolePermission {
   role         RoleEntity @relation(fields: [roleId], references: [id])
 
   @@id([permissionId, roleId])
+  @@index([roleId], map: "tbl_role_permission_roleId_fkey")
   @@map("tbl_role_permission")
+}
+
+model Company {
+  id                Int                @id @default(autoincrement())
+  companyCode       String             @unique
+  companyName       String
+  ssid              String?
+  address           String?
+  isActive          Boolean            @default(true)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  payrolls          Payroll[]
+  PayrollConfig     PayrollConfig?
+  users             User[]
+  userProfessionals UserProfessional[]
+  salaries          Salary[]           @relation("CompanyToSalary")
+  salaryConfig      SalaryConfig[]     @relation("CompanyToSalaryConfig")
+
+  @@map("tbl_company_info")
+}
+
+model Shift {
+  id             Int                @id @default(autoincrement())
+  shiftCode      String             @unique
+  name           String
+  startTime      String
+  endTime        String
+  allowableDelay Int                @default(0)
+  isActive       String             @default("Y") @db.VarChar(1)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  schedules      EmployeeSchedule[]
+
+  @@map("tbl_shift")
+}
+
+model EmployeeSchedule {
+  id           Int            @id @default(autoincrement())
+  scheduleCode String         @unique
+  payrollCode  String?
+  userCode     String
+  shiftCode    String
+  status       ScheduleStatus @default(NEXT)
+  /// ERD ghi "workOn (json/nullable?)". Thực tế đa số là 1 ngày làm việc. Đổi sang DateTime; nếu bạn lưu nhiều ngày, chuyển sang bảng con.
+  workOn       DateTime?
+  isActive     String         @default("Y") @db.VarChar(1)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  payroll      Payroll?       @relation(fields: [payrollCode], references: [payrollCode])
+  shift        Shift          @relation(fields: [shiftCode], references: [shiftCode])
+  user         User           @relation(fields: [userCode], references: [userCode], onDelete: Cascade)
+
+  @@index([userCode])
+  @@index([shiftCode])
+  @@index([payrollCode])
+  @@map("tbl_employee_schedule")
+}
+
+model Attendance {
+  id            Int                @id @default(autoincrement())
+  userCode      String
+  payrollCode   String
+  /// tổng ngày công tính trong kỳ
+  totalWorkDay  Decimal            @db.Decimal(10, 2)
+  /// số giờ OT theo schedule
+  overtimeHours Decimal            @db.Decimal(10, 2)
+  /// số ngày nghỉ có lương/không lương (tuỳ nghiệp vụ)
+  leaveDays     Decimal?           @db.Decimal(10, 2)
+  /// nếu bạn muốn chốt theo "tháng", có thể lưu thêm month(int) hoặc period(date range)
+  month         Int?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  payroll       Payroll            @relation(fields: [payrollCode], references: [payrollCode])
+  user          User               @relation(fields: [userCode], references: [userCode], onDelete: Cascade)
+  records       AttendanceRecord[] @relation("AttendanceToAttendanceRecord")
+
+  @@index([userCode])
+  @@index([payrollCode])
+  @@map("tbl_attendance")
+}
+
+model AttendanceRecord {
+  id           Int              @id @default(autoincrement())
+  userCode     String
+  payrollCode  String
+  workDay      DateTime
+  timeIn       DateTime?
+  timeOut      DateTime?
+  status       AttendanceStatus
+  lateMinutes  Int              @default(0)
+  earlyMinutes Int              @default(0)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  payroll      Payroll          @relation(fields: [payrollCode], references: [payrollCode])
+  user         User             @relation(fields: [userCode], references: [userCode], onDelete: Cascade)
+  Attendance   Attendance[]     @relation("AttendanceToAttendanceRecord")
+
+  @@unique([userCode, payrollCode, workDay])
+  @@index([userCode, workDay])
+  @@index([payrollCode])
+  @@map("tbl_attendance_records")
+}
+
+model Payroll {
+  id             Int                @id @default(autoincrement())
+  payrollCode    String             @unique
+  payrollName    String             @unique
+  companyCode    String
+  startDate      DateTime
+  endDate        DateTime
+  paymentDate    DateTime?
+  isLocked       String             @default("Y") @db.VarChar(1)
+  isActive       Boolean            @default(true)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  attendances    Attendance[]
+  attendanceRecs AttendanceRecord[]
+  schedules      EmployeeSchedule[]
+  company        Company            @relation(fields: [companyCode], references: [companyCode])
+  salaries       Salary[]
+  PayrollConfig  PayrollConfig[]    @relation("PayrollToPayrollConfig")
+
+  @@index([companyCode])
+  @@map("tbl_payroll")
+}
+
+model SalaryConfig {
+  id            Int       @id @default(autoincrement())
+  /// cấu hình theo nhân viên
+  userCode      String
+  unitCode      String?   @unique
+  baseSalary    Decimal   @db.Decimal(14, 2)
+  overtimeRate  Decimal   @default(1.500) @db.Decimal(6, 3)
+  otNightRate   Decimal?  @db.Decimal(6, 3)
+  nightRate     Decimal?  @db.Decimal(6, 3)
+  lateRate      Decimal?  @db.Decimal(6, 3)
+  earlyRate     Decimal?  @db.Decimal(6, 3)
+  effectiveDate DateTime?
+  expireDate    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  user          User      @relation(fields: [userCode], references: [userCode], onDelete: Cascade)
+  Company       Company[] @relation("CompanyToSalaryConfig")
+
+  @@index([userCode])
+  @@map("tbl_salary_config")
+}
+
+model Salary {
+  id            Int       @id @default(autoincrement())
+  salaryCode    String    @unique
+  payrollCode   String
+  userCode      String
+  monthDate     DateTime?
+  baseSalary    Decimal   @db.Decimal(14, 2)
+  allowance     Decimal?  @db.Decimal(14, 2)
+  overtimeHours Decimal?  @db.Decimal(10, 2)
+  totalWorkDay  Decimal?  @db.Decimal(10, 2)
+  grossSalary   Decimal?  @db.Decimal(14, 2)
+  netSalary     Decimal?  @db.Decimal(14, 2)
+  tax           Decimal?  @db.Decimal(14, 2)
+  insurance     Decimal?  @db.Decimal(14, 2)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  payroll       Payroll   @relation(fields: [payrollCode], references: [payrollCode])
+  user          User      @relation(fields: [userCode], references: [userCode])
+  Company       Company[] @relation("CompanyToSalary")
+
+  @@index([userCode])
+  @@index([payrollCode])
+  @@map("tbl_salary")
+}
+
+model Notification {
+  id               Int                     @id @default(autoincrement())
+  notificationCode String                  @unique
+  notificationType String
+  title            String                  @db.LongText
+  body             String                  @db.LongText
+  targetType       NotificationTargetType
+  targetValue      String?
+  typeSystem       SystemNotificationType?
+  scheduleTime     DateTime?
+  openSent         Int?
+  isSent           Boolean                 @default(false)
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+  isActive         Boolean                 @default(true)
+  userNotifs       UserNotification[]
+
+  @@map("tbl_notification")
+}
+
+model TemplateNotification {
+  id             Int      @id @default(autoincrement())
+  templateCode   String   @unique
+  title          String
+  bodyTemplate   String
+  description    String?
+  variables      Json?
+  type           String
+  dataSourceName Json?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("tbl_template_notification")
+}
+
+model UserNotification {
+  id               Int          @id @default(autoincrement())
+  userCode         String
+  notificationCode String
+  isRead           Boolean      @default(false)
+  readAt           DateTime?
+  receivedAt       DateTime?
+  note             String?
+  isActive         Boolean      @default(true)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  notification     Notification @relation(fields: [notificationCode], references: [notificationCode], onDelete: Cascade)
+  user             User         @relation(fields: [userCode], references: [userCode], onDelete: Cascade)
+
+  @@unique([userCode, notificationCode])
+  @@index([userCode])
+  @@index([notificationCode])
+  @@map("tbl_user_notification")
+}
+
+model UserDevice {
+  id         Int            @id @default(autoincrement())
+  platform   DevicePlatform
+  userCode   String         @unique
+  deviceId   String
+  fcmToken   String?
+  appVersion String?
+  isActive   Boolean        @default(true)
+  lastActive DateTime?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  user       User           @relation(fields: [userCode], references: [userCode], onDelete: Cascade)
+
+  @@map("tbl_user_devices")
+}
+
+model DataSource {
+  id             Int              @id @default(autoincrement())
+  dataSourceCode String           @unique
+  tableName      String           @unique
+  isActive       Boolean          @default(true)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  items          DataSourceItem[]
+
+  @@map("tbl_data_source")
+}
+
+model DataSourceItem {
+  id             Int        @id @default(autoincrement())
+  dataSourceCode String
+  title          String
+  content        String
+  isActive       Boolean    @default(true)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  dataSource     DataSource @relation(fields: [dataSourceCode], references: [dataSourceCode], onDelete: Cascade)
+
+  @@index([dataSourceCode])
+  @@map("tbl_data_sourceItems")
+}
+
+model PayrollConfig {
+  id               Int       @id @default(autoincrement())
+  companyCode      String    @unique
+  totalDay         Int       @unique @default(24)
+  cycleType        String    @default("MONTHLY")
+  startDay         Int
+  endDay           Int
+  paymentDelayDays Int       @default(5)
+  isActive         Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  company          Company   @relation(fields: [companyCode], references: [companyCode])
+  payrolls         Payroll[] @relation("PayrollToPayrollConfig")
+
+  @@map("tbl_payroll_config")
+}
+
+model Payslip {
+  id  Int @id @default(autoincrement())
+  userCode String 
+  payrollCode String 
+  payslipFile String 
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  @@unique([userCode, payrollCode])
+  @@map("tbl_user_payslip")
 }
 
 enum Role {
@@ -107,14 +405,6 @@ enum Role {
   MANAGER
   STAFF
 }
-
-enum UserStatus {
-  ACTIVE
-  INACTIVE
-  DELETED
-}
-
-/// ===== Enums (suy luận từ ERD, chỉnh lại nếu cần) =====
 
 enum AttendanceStatus {
   LATE
@@ -147,339 +437,4 @@ enum SystemNotificationType {
 enum DevicePlatform {
   android
   ios
-}
-
-/// ===== Master / organization =====
-
-model Company {
-  id          Int      @id @default(autoincrement())
-  companyCode String   @unique
-  companyName String
-  ssid        String?
-  address     String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  users         User[]
-  salaryConfig  SalaryConfig[]
-  payrolls      Payroll[]
-  salaries      Salary[]
-  userProfessionals UserProfessional[]
-  PayrollConfig PayrollConfig[]
-
-  @@map("tbl_company_info")
-}
-
-// model User {
-//   id           Int       @id @default(autoincrement())
-//   role         UserRole
-//   companyId    Int
-//   userCode     String    @unique
-//   email        String?   @unique
-//   phone        String?
-//   fullName     String?
-//   avatar       String?
-//   passwordHash String
-//   isActive     Boolean   @default(true)
-//   createdAt    DateTime  @default(now())
-//   updatedAt    DateTime  @updatedAt
-//
-//   company       Company   @relation(fields: [companyId], references: [id], onDelete: Restrict)
-//   devices       UserDevice[]
-//   attendance    Attendance[]
-//   attendanceRec AttendanceRecord[]
-//   salaries      Salary[]
-//   salaryConfigs SalaryConfig[]
-//   schedules     EmployeeSchedule[]
-//   userNotifs    UserNotification[]
-//
-//   @@index([companyId])
-//   @@map("users")
-// }
-
-/// ===== Attendance & Scheduling =====
-
-model Shift {
-  id             Int      @id @default(autoincrement())
-  shiftCode      String   @unique
-  name           String
-  startTime      String
-  endTime        String
-  allowableDelay Int      @default(0)
-  isActive       String   @default("Y") @db.VarChar(1)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  schedules EmployeeSchedule[]
-
-  @@map("tbl_shift")
-}
-
-model EmployeeSchedule {
-  id           Int       @id @default(autoincrement())
-  scheduleCode String    @unique
-  payrollCode  String?
-  userCode     String
-  shiftCode    String
-  status       ScheduleStatus @default(NEXT)
-  /// ERD ghi "workOn (json/nullable?)". Thực tế đa số là 1 ngày làm việc. Đổi sang DateTime; nếu bạn lưu nhiều ngày, chuyển sang bảng con.
-  workOn       DateTime?
-  isActive     String    @default("Y") @db.VarChar(1)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-
-  user    User     @relation(fields: [userCode], references: [userCode], onDelete: Cascade)
-  shift   Shift    @relation(fields: [shiftCode], references: [shiftCode], onDelete: Restrict)
-  payroll Payroll? @relation(fields: [payrollCode], references: [payrollCode])
-
-  @@index([userCode])
-  @@index([shiftCode])
-  @@index([payrollCode])
-  @@map("tbl_employee_schedule")
-}
-
-model Attendance {
-  id            Int      @id @default(autoincrement())
-  userCode      String
-  payrollCode   String
-  /// tổng ngày công tính trong kỳ
-  totalWorkDay  Decimal  @db.Decimal(10, 2)
-  /// số giờ OT theo schedule
-  overtimeHours Decimal  @db.Decimal(10, 2)
-  /// số ngày nghỉ có lương/không lương (tuỳ nghiệp vụ)
-  leaveDays     Decimal? @db.Decimal(10, 2)
-  /// nếu bạn muốn chốt theo "tháng", có thể lưu thêm month(int) hoặc period(date range)
-  month         Int?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  user    User               @relation(fields: [userCode], references: [userCode], onDelete: Cascade)
-  payroll Payroll            @relation(fields: [payrollCode], references: [payrollCode], onDelete: Restrict)
-  records AttendanceRecord[]
-
-  @@index([userCode])
-  @@index([payrollCode])
-  @@map("tbl_attendance")
-}
-
-model AttendanceRecord {
-  id           Int              @id @default(autoincrement())
-  userCode     String
-  payrollCode  String
-  workDay      DateTime // ngày làm việc
-  timeIn       DateTime?
-  timeOut      DateTime?
-  status       AttendanceStatus
-  lateMinutes  Int              @default(0)
-  earlyMinutes Int              @default(0)
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
-
-  user       User         @relation(fields: [userCode], references: [userCode], onDelete: Cascade)
-  payroll    Payroll      @relation(fields: [payrollCode], references: [payrollCode], onDelete: Restrict)
-  Attendance Attendance[]
-
-  @@unique([userCode, payrollCode, workDay])
-  @@index([userCode, workDay])
-  @@index([payrollCode])
-  @@map("tbl_attendance_records")
-}
-
-/// ===== Payroll & Salary =====
-
-model Payroll {
-  id          Int       @id @default(autoincrement())
-  payrollCode String    @unique
-  payrollName String    @unique
-  companyCode String
-  startDate   DateTime
-  endDate     DateTime
-  paymentDate DateTime?
-  isLocked    String    @default("Y") @db.VarChar(1)
-  isActive    Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  company        Company            @relation(fields: [companyCode], references: [companyCode])
-  attendances    Attendance[]
-  attendanceRecs AttendanceRecord[]
-  salaries       Salary[]
-  schedules      EmployeeSchedule[]
-  PayrollConfig  PayrollConfig[]
-
-  @@index([companyCode])
-  @@map("tbl_payroll")
-}
-
-model SalaryConfig {
-  id            Int       @id @default(autoincrement())
-  /// cấu hình theo nhân viên
-  userCode      String
-  unitCode      String?   @unique
-  baseSalary    Decimal   @db.Decimal(14, 2)
-  overtimeRate  Decimal   @default(1.5) @db.Decimal(6, 3)
-  otNightRate   Decimal?  @db.Decimal(6, 3)
-  nightRate     Decimal?  @db.Decimal(6, 3)
-  lateRate      Decimal?  @db.Decimal(6, 3)
-  earlyRate     Decimal?  @db.Decimal(6, 3)
-  effectiveDate DateTime?
-  expireDate    DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  user    User      @relation(fields: [userCode], references: [userCode], onDelete: Cascade)
-  Company Company[]
-
-  @@index([userCode])
-  @@map("tbl_salary_config")
-}
-
-model Salary {
-  id            Int       @id @default(autoincrement())
-  salaryCode    String    @unique
-  payrollCode   String
-  userCode      String
-  monthDate     DateTime? // nếu có
-  baseSalary    Decimal   @db.Decimal(14, 2)
-  allowance     Decimal?  @db.Decimal(14, 2)
-  overtimeHours Decimal?  @db.Decimal(10, 2)
-  totalWorkDay  Decimal?  @db.Decimal(10, 2)
-  grossSalary   Decimal?  @db.Decimal(14, 2)
-  netSalary     Decimal?  @db.Decimal(14, 2)
-  tax           Decimal?  @db.Decimal(14, 2)
-  insurance     Decimal?  @db.Decimal(14, 2)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  user    User      @relation(fields: [userCode], references: [userCode], onDelete: Restrict)
-  payroll Payroll   @relation(fields: [payrollCode], references: [payrollCode], onDelete: Restrict)
-  Company Company[]
-
-  @@index([userCode])
-  @@index([payrollCode])
-  @@map("tbl_salary")
-}
-
-/// ===== Notification Center =====
-
-model Notification {
-  id               Int                     @id @default(autoincrement())
-  notificationCode String                  @unique
-  notificationType String // ví dụ "GENERAL", giữ dạng text vì ERD không rõ
-  title            String
-  body             String
-  targetType       NotificationTargetType
-  targetValue      String? // userCode/roleCode nếu SINGLE/ROLE
-  typeSystem       SystemNotificationType?
-  scheduleTime     DateTime?
-  openSent         Int? // số lần gửi
-  isSent           Boolean                 @default(false)
-  createdAt        DateTime                @default(now())
-  updatedAt        DateTime                @updatedAt
-  isActive         Boolean                 @default(true)
-  userNotifs       UserNotification[]
-
-  @@map("tbl_notification")
-}
-
-model TemplateNotification {
-  id             Int      @id @default(autoincrement())
-  templateCode   String   @unique
-  title          String
-  bodyTemplate   String
-  description    String?
-  variables      Json?
-  type           String // "SYSTEM","HR","SALARY",...
-  dataSourceName Json?
-  isActive       Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  @@map("tbl_template_notification")
-}
-
-model UserNotification {
-  id               Int       @id @default(autoincrement())
-  userCode         String
-  notificationCode String
-  isRead           Boolean   @default(false)
-  readAt           DateTime?
-  receivedAt       DateTime?
-  note             String?
-  isActive         Boolean   @default(true)
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-
-  user         User         @relation(fields: [userCode], references: [userCode], onDelete: Cascade)
-  notification Notification @relation(fields: [notificationCode], references: [notificationCode], onDelete: Cascade)
-
-  @@unique([userCode, notificationCode])
-  @@index([userCode])
-  @@index([notificationCode])
-  @@map("tbl_user_notification")
-}
-
-model UserDevice {
-  id         Int            @id @default(autoincrement())
-  platform   DevicePlatform
-  userCode   String         @unique
-  deviceId   String
-  fcmToken   String?
-  appVersion String?
-  isActive   Boolean        @default(true)
-  lastActive DateTime?
-  createdAt  DateTime       @default(now())
-  updatedAt  DateTime       @updatedAt
-  user       User           @relation(fields: [userCode], references: [userCode], onDelete: Cascade)
-
-  @@map("tbl_user_devices")
-}
-
-/// ===== Data Source Registry (cho template/report) =====
-
-model DataSource {
-  id             Int      @id @default(autoincrement())
-  dataSourceCode String   @unique
-  tableName      String   @unique
-  isActive       Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  items DataSourceItem[]
-
-  @@map("tbl_data_source")
-}
-
-model DataSourceItem {
-  id             Int      @id @default(autoincrement())
-  dataSourceCode String
-  title          String
-  content        String
-  isActive       Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  dataSource DataSource @relation(fields: [dataSourceCode], references: [dataSourceCode], onDelete: Cascade)
-
-  @@index([dataSourceCode])
-  @@map("tbl_data_sourceItems")
-}
-
-model PayrollConfig {
-  id               Int      @id @default(autoincrement())
-  companyCode      String   @unique
-  totalDay         Int      @unique @default(24)
-  cycleType        String   @default("MONTHLY") // "MONTHLY", "WEEKLY", "CUSTOM"
-  startDay         Int // Ngày bắt đầu kỳ lương (VD: 26)
-  endDay           Int // Ngày kết thúc kỳ lương (VD: 25)
-  paymentDelayDays Int      @default(5) // Số ngày sau khi kết thúc kỳ lương để trả lương
-  isActive         Boolean  @default(true)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  company  Company   @relation(fields: [companyCode], references: [companyCode])
-  payrolls Payroll[]
-
-  @@map("tbl_payroll_config")
 }

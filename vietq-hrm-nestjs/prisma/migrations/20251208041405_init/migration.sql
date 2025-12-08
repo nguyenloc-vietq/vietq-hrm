@@ -67,6 +67,7 @@ CREATE TABLE `tbl_user_role` (
     `userId` INTEGER NOT NULL,
     `roleId` INTEGER NOT NULL,
 
+    INDEX `tbl_user_role_roleId_fkey`(`roleId`),
     PRIMARY KEY (`userId`, `roleId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -75,6 +76,7 @@ CREATE TABLE `tbl_role_permission` (
     `permissionId` INTEGER NOT NULL,
     `roleId` INTEGER NOT NULL,
 
+    INDEX `tbl_role_permission_roleId_fkey`(`roleId`),
     PRIMARY KEY (`permissionId`, `roleId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -192,7 +194,7 @@ CREATE TABLE `tbl_salary_config` (
     `userCode` VARCHAR(191) NOT NULL,
     `unitCode` VARCHAR(191) NULL,
     `baseSalary` DECIMAL(14, 2) NOT NULL,
-    `overtimeRate` DECIMAL(6, 3) NOT NULL DEFAULT 1.5,
+    `overtimeRate` DECIMAL(6, 3) NOT NULL DEFAULT 1.500,
     `otNightRate` DECIMAL(6, 3) NULL,
     `nightRate` DECIMAL(6, 3) NULL,
     `lateRate` DECIMAL(6, 3) NULL,
@@ -236,8 +238,8 @@ CREATE TABLE `tbl_notification` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `notificationCode` VARCHAR(191) NOT NULL,
     `notificationType` VARCHAR(191) NOT NULL,
-    `title` VARCHAR(191) NOT NULL,
-    `body` VARCHAR(191) NOT NULL,
+    `title` LONGTEXT NOT NULL,
+    `body` LONGTEXT NOT NULL,
     `targetType` ENUM('SINGLE', 'ALL', 'STAFF') NOT NULL,
     `targetValue` VARCHAR(191) NULL,
     `typeSystem` ENUM('SHIFT_REMINDER', 'EVENT', 'SYSTEM_UPDATE', 'SHIFT_REMIND') NULL,
@@ -353,6 +355,19 @@ CREATE TABLE `tbl_payroll_config` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `tbl_payslip` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `userCode` VARCHAR(191) NOT NULL,
+    `payrollCode` VARCHAR(191) NOT NULL,
+    `payslipFile` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `tbl_payslip_userCode_payrollCode_key`(`userCode`, `payrollCode`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `_UserRoles` (
     `A` INTEGER NOT NULL,
     `B` INTEGER NOT NULL,
@@ -371,21 +386,21 @@ CREATE TABLE `_RolePermissions` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `_CompanyToSalaryConfig` (
-    `A` INTEGER NOT NULL,
-    `B` INTEGER NOT NULL,
-
-    UNIQUE INDEX `_CompanyToSalaryConfig_AB_unique`(`A`, `B`),
-    INDEX `_CompanyToSalaryConfig_B_index`(`B`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
 CREATE TABLE `_CompanyToSalary` (
     `A` INTEGER NOT NULL,
     `B` INTEGER NOT NULL,
 
     UNIQUE INDEX `_CompanyToSalary_AB_unique`(`A`, `B`),
     INDEX `_CompanyToSalary_B_index`(`B`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `_CompanyToSalaryConfig` (
+    `A` INTEGER NOT NULL,
+    `B` INTEGER NOT NULL,
+
+    UNIQUE INDEX `_CompanyToSalaryConfig_AB_unique`(`A`, `B`),
+    INDEX `_CompanyToSalaryConfig_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -410,10 +425,10 @@ CREATE TABLE `_PayrollToPayrollConfig` (
 ALTER TABLE `tbl_user` ADD CONSTRAINT `tbl_user_companyCode_fkey` FOREIGN KEY (`companyCode`) REFERENCES `tbl_company_info`(`companyCode`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `tbl_user_professional` ADD CONSTRAINT `tbl_user_professional_userCode_fkey` FOREIGN KEY (`userCode`) REFERENCES `tbl_user`(`userCode`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `tbl_user_professional` ADD CONSTRAINT `tbl_user_professional_companyCode_fkey` FOREIGN KEY (`companyCode`) REFERENCES `tbl_company_info`(`companyCode`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `tbl_user_professional` ADD CONSTRAINT `tbl_user_professional_companyCode_fkey` FOREIGN KEY (`companyCode`) REFERENCES `tbl_company_info`(`companyCode`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `tbl_user_professional` ADD CONSTRAINT `tbl_user_professional_userCode_fkey` FOREIGN KEY (`userCode`) REFERENCES `tbl_user`(`userCode`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `tbl_user_role` ADD CONSTRAINT `tbl_user_role_roleId_fkey` FOREIGN KEY (`roleId`) REFERENCES `tbl_role_entity`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -428,25 +443,25 @@ ALTER TABLE `tbl_role_permission` ADD CONSTRAINT `tbl_role_permission_permission
 ALTER TABLE `tbl_role_permission` ADD CONSTRAINT `tbl_role_permission_roleId_fkey` FOREIGN KEY (`roleId`) REFERENCES `tbl_role_entity`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `tbl_employee_schedule` ADD CONSTRAINT `tbl_employee_schedule_userCode_fkey` FOREIGN KEY (`userCode`) REFERENCES `tbl_user`(`userCode`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `tbl_employee_schedule` ADD CONSTRAINT `tbl_employee_schedule_payrollCode_fkey` FOREIGN KEY (`payrollCode`) REFERENCES `tbl_payroll`(`payrollCode`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `tbl_employee_schedule` ADD CONSTRAINT `tbl_employee_schedule_shiftCode_fkey` FOREIGN KEY (`shiftCode`) REFERENCES `tbl_shift`(`shiftCode`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `tbl_employee_schedule` ADD CONSTRAINT `tbl_employee_schedule_payrollCode_fkey` FOREIGN KEY (`payrollCode`) REFERENCES `tbl_payroll`(`payrollCode`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `tbl_attendance` ADD CONSTRAINT `tbl_attendance_userCode_fkey` FOREIGN KEY (`userCode`) REFERENCES `tbl_user`(`userCode`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `tbl_employee_schedule` ADD CONSTRAINT `tbl_employee_schedule_userCode_fkey` FOREIGN KEY (`userCode`) REFERENCES `tbl_user`(`userCode`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `tbl_attendance` ADD CONSTRAINT `tbl_attendance_payrollCode_fkey` FOREIGN KEY (`payrollCode`) REFERENCES `tbl_payroll`(`payrollCode`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `tbl_attendance_records` ADD CONSTRAINT `tbl_attendance_records_userCode_fkey` FOREIGN KEY (`userCode`) REFERENCES `tbl_user`(`userCode`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `tbl_attendance` ADD CONSTRAINT `tbl_attendance_userCode_fkey` FOREIGN KEY (`userCode`) REFERENCES `tbl_user`(`userCode`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `tbl_attendance_records` ADD CONSTRAINT `tbl_attendance_records_payrollCode_fkey` FOREIGN KEY (`payrollCode`) REFERENCES `tbl_payroll`(`payrollCode`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `tbl_attendance_records` ADD CONSTRAINT `tbl_attendance_records_userCode_fkey` FOREIGN KEY (`userCode`) REFERENCES `tbl_user`(`userCode`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `tbl_payroll` ADD CONSTRAINT `tbl_payroll_companyCode_fkey` FOREIGN KEY (`companyCode`) REFERENCES `tbl_company_info`(`companyCode`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -455,16 +470,16 @@ ALTER TABLE `tbl_payroll` ADD CONSTRAINT `tbl_payroll_companyCode_fkey` FOREIGN 
 ALTER TABLE `tbl_salary_config` ADD CONSTRAINT `tbl_salary_config_userCode_fkey` FOREIGN KEY (`userCode`) REFERENCES `tbl_user`(`userCode`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `tbl_salary` ADD CONSTRAINT `tbl_salary_userCode_fkey` FOREIGN KEY (`userCode`) REFERENCES `tbl_user`(`userCode`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE `tbl_salary` ADD CONSTRAINT `tbl_salary_payrollCode_fkey` FOREIGN KEY (`payrollCode`) REFERENCES `tbl_payroll`(`payrollCode`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `tbl_user_notification` ADD CONSTRAINT `tbl_user_notification_userCode_fkey` FOREIGN KEY (`userCode`) REFERENCES `tbl_user`(`userCode`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `tbl_salary` ADD CONSTRAINT `tbl_salary_userCode_fkey` FOREIGN KEY (`userCode`) REFERENCES `tbl_user`(`userCode`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `tbl_user_notification` ADD CONSTRAINT `tbl_user_notification_notificationCode_fkey` FOREIGN KEY (`notificationCode`) REFERENCES `tbl_notification`(`notificationCode`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `tbl_user_notification` ADD CONSTRAINT `tbl_user_notification_userCode_fkey` FOREIGN KEY (`userCode`) REFERENCES `tbl_user`(`userCode`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `tbl_user_devices` ADD CONSTRAINT `tbl_user_devices_userCode_fkey` FOREIGN KEY (`userCode`) REFERENCES `tbl_user`(`userCode`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -488,16 +503,16 @@ ALTER TABLE `_RolePermissions` ADD CONSTRAINT `_RolePermissions_A_fkey` FOREIGN 
 ALTER TABLE `_RolePermissions` ADD CONSTRAINT `_RolePermissions_B_fkey` FOREIGN KEY (`B`) REFERENCES `tbl_role_entity`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `_CompanyToSalaryConfig` ADD CONSTRAINT `_CompanyToSalaryConfig_A_fkey` FOREIGN KEY (`A`) REFERENCES `tbl_company_info`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `_CompanyToSalaryConfig` ADD CONSTRAINT `_CompanyToSalaryConfig_B_fkey` FOREIGN KEY (`B`) REFERENCES `tbl_salary_config`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE `_CompanyToSalary` ADD CONSTRAINT `_CompanyToSalary_A_fkey` FOREIGN KEY (`A`) REFERENCES `tbl_company_info`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `_CompanyToSalary` ADD CONSTRAINT `_CompanyToSalary_B_fkey` FOREIGN KEY (`B`) REFERENCES `tbl_salary`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `_CompanyToSalaryConfig` ADD CONSTRAINT `_CompanyToSalaryConfig_A_fkey` FOREIGN KEY (`A`) REFERENCES `tbl_company_info`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `_CompanyToSalaryConfig` ADD CONSTRAINT `_CompanyToSalaryConfig_B_fkey` FOREIGN KEY (`B`) REFERENCES `tbl_salary_config`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `_AttendanceToAttendanceRecord` ADD CONSTRAINT `_AttendanceToAttendanceRecord_A_fkey` FOREIGN KEY (`A`) REFERENCES `tbl_attendance`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

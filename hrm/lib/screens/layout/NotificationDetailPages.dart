@@ -62,7 +62,7 @@ class _NotificationDetailPagesState extends State<NotificationDetailPages> {
                 children: [
                   Text(dataNotification?.notification?.title ?? '', style: textTheme.headlineMedium,),
                   SizedBox(height: 10.h,),
-                  dataNotification != null ? Text('Last updated: ${DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.parse(dataNotification?.updatedAt as String).toLocal()).toString() }', style: textTheme.bodySmall,): SizedBox(height: 10,),
+                  dataNotification != null ? Text('Last updated: ${DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.parse(dataNotification?.notification?.updatedAt as String).toLocal()).toString() }', style: textTheme.bodySmall,): SizedBox(height: 10,),
                   SizedBox(height: 10.h,),
                   //this content notification html converst to code
                   Html(

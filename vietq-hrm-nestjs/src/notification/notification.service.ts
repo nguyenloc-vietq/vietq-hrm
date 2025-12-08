@@ -93,6 +93,26 @@ export class NotificationService {
 
   async listNotification(userCode: string) {
     try {
+      const listAllNotification = await this.prisma.notification.findMany({
+        where: {
+          targetType: "ALL",
+        },
+        select: {
+          notificationCode: true,
+          title: true,
+          targetType: true,
+          typeSystem: true,
+          scheduleTime: true,
+          isSent: true,
+          openSent: true,
+          isActive: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
       const listNotification = await this.prisma.userNotification.findMany({
         where: {
           userCode: userCode,
@@ -117,7 +137,12 @@ export class NotificationService {
           createdAt: "desc",
         },
       });
-      return [...listNotification];
+      const notiAll = listAllNotification.map((item) => ({
+        notification: item,
+      }));
+      const result = [...notiAll, ...listNotification];
+
+      return result;
     } catch (error) {
       throw new HttpException(error.message, 500);
     }
@@ -125,6 +150,17 @@ export class NotificationService {
 
   async detailNotification(userCode: string, notificationCode: string) {
     try {
+      const notiTypeAll = await this.prisma.notification.findFirst({
+        where: {
+          notificationCode: notificationCode,
+          targetType: "ALL",
+        },
+      });
+      if (notiTypeAll) {
+        return {
+          notification: notiTypeAll,
+        };
+      }
       const detailNotification = await this.prisma.userNotification.findFirst({
         where: {
           AND: {
@@ -205,12 +241,61 @@ export class NotificationService {
           field: "notificationCode",
         },
       );
+      const { listUserCode, ...dataNoti } = createNotification;
       const notification = await this.prisma.notification.create({
         data: {
           notificationCode: notificationCode,
-          ...createNotification,
+          ...dataNoti,
         },
       });
+      console.log(
+        `[===============> createNotification.scheduleTime | `,
+        createNotification.scheduleTime,
+      );
+      if (
+        createNotification.isSent === true &&
+        createNotification.scheduleTime === undefined
+      ) {
+        await this.prisma.userNotification.createMany({
+          data: listUserCode.map((item) => ({
+            userCode: item,
+            notificationCode: notificationCode,
+          })),
+        });
+        const listToken = await this.prisma.userDevice.findMany({
+          where: {
+            userCode: {
+              in: listUserCode,
+            },
+            isActive: true,
+          },
+          select: {
+            fcmToken: true,
+          },
+        });
+        if (listToken.length > 0) {
+          listToken.map(async (item) => {
+            await this.sendNotification({
+              token: item.fcmToken,
+              title: createNotification.title,
+              body: createNotification.body,
+              data: {
+                notificationid: notificationCode,
+              },
+            });
+          });
+        }
+      }
+      if (createNotification.targetType === "ALL") {
+        await this.firebaseService.sendNotificationToTopic({
+          topic: "user-topic",
+          title: createNotification.title,
+          body: createNotification.body,
+          data: {
+            notificationid: notificationCode,
+          },
+        });
+      }
       return notification;
     } catch (error) {
       throw new HttpException(error.message, 500);
@@ -281,6 +366,7 @@ export class NotificationService {
         body.token,
         body.title,
         body.body,
+        body.data,
       );
       return { response };
     } catch (error) {

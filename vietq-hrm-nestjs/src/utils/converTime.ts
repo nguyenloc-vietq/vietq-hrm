@@ -35,3 +35,29 @@ function getLateMinutes(checkinDayjs, userTimezone, startTime) {
 }
 
 export default getLateMinutes;
+
+export function countWeekendsInMonth(year, month) {
+  // month trong dayjs là zero-indexed (0 = tháng 1, 11 = tháng 12)
+  // Đảm bảo đầu vào month được điều chỉnh phù hợp nếu cần thiết (ví dụ: nếu bạn dùng 1-indexed)
+  const date = dayjs().year(year).month(month).startOf("month");
+  const daysInMonth = date.daysInMonth();
+  let saturdayCount = 0;
+  let sundayCount = 0;
+
+  for (let i = 0; i < daysInMonth; i++) {
+    const currentDay = date.add(i, "day");
+    const dayOfWeek = currentDay.day(); // day() trả về 0 (Chủ Nhật) đến 6 (Thứ Bảy)
+
+    if (dayOfWeek === 0) {
+      sundayCount++;
+    } else if (dayOfWeek === 6) {
+      saturdayCount++;
+    }
+  }
+
+  return {
+    saturday: saturdayCount,
+    sunday: sundayCount,
+    totalWeekends: saturdayCount + sundayCount,
+  };
+}

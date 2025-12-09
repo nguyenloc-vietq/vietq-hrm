@@ -13,7 +13,6 @@ const metadata = { title: `Product details | Dashboard - ${CONFIG.site.name}` };
 
 export default function Page() {
   const { id = '' } = useParams();
-
   const { product, productLoading, productError } = useGetProduct(id);
 
   return (

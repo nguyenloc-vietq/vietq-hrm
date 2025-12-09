@@ -66,11 +66,11 @@ const PermissionDeniedPage = lazy(() => import('src/pages/dashboard/permission')
 const ParamsPage = lazy(() => import('src/pages/dashboard/params'));
 const BlankPage = lazy(() => import('src/pages/dashboard/blank'));
 
-// salary 
+// salary
 const SalaryPayrollListView = lazy(() => import('src/pages/dashboard/salary/payroll'));
 const SalaryConfigVew = lazy(() => import('src/pages/dashboard/salary/salaryConfig'));
-
-
+const SalaryReportView = lazy(() => import('src/pages/dashboard/salary/report'));
+const PayrollConfigView = lazy(() => import('src/pages/dashboard/salary/payroll-config'));
 // ----------------------------------------------------------------------
 
 const layoutContent = (
@@ -107,13 +107,13 @@ export const dashboardRoutes = [
       },
       {
         path: 'salary',
-        children:[
+        children: [
           { element: <UserProfilePage />, index: true },
           { path: 'user', element: <SalaryConfigVew /> },
-          { path: 'config', element: <UserCardsPage /> },
+          { path: 'config', element: <PayrollConfigView /> },
           { path: 'payroll', element: <SalaryPayrollListView /> },
-          { path: 'report', element: <UserCreatePage /> },
-         ]
+          { path: 'report', element: <SalaryReportView /> },
+        ],
       },
       {
         path: 'product',

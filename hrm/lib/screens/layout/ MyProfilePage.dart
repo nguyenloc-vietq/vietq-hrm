@@ -120,12 +120,12 @@ class _MyProfilePageState extends State<MyProfilePage>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildInfoRow("Position", state.user.userProfessionals?.first.position ?? ''),
+                            _buildInfoRow("Position", state.user.userProfessionals?.position ?? ''),
                             _buildInfoRow(
                               "Company Email Address",
                               state.user.email ?? '',
                             ),
-                            _buildInfoRow("Employee Type", state.user.userProfessionals?.first.employeeType ?? ''),
+                            _buildInfoRow("Employee Type", state.user.userProfessionals?.employeeType ?? ''),
                             _buildInfoRow(
                               "Address Office",
                               state.user.company?.address ?? 'Address is not found',

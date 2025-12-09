@@ -58,16 +58,20 @@ class _HomePageState extends State<HomePage> {
           child: BlocBuilder<UserBloc, UserState>(
             builder: (context, state) {
               if (state is UserLoaded) {
+                print("#==========> chay vao dayyyy ${state.user}");
                 final avatarUrl = state.user.avatar ?? '';
                 final name = state.user.fullName ?? '';
-                final position = state.user.userProfessionals?.first != null
-                    ? state.user.userProfessionals?.first.position
+                final position = state.user.userProfessionals != null
+                    ? state.user.userProfessionals?.position
                     : '';
                 return HomePageAppBar(
                   avatar: "${dotenv.env['IMAGE_ENDPOINT']}$avatarUrl" ?? "",
                   name: name,
                   position: position ?? '',
                 );
+              }
+              if(state is UserError) {
+                print("#==========> error ${state.message}");
               }
               return Skeletonizer(
                 effect: PulseEffect(),

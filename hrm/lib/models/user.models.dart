@@ -11,7 +11,7 @@ class UserModels {
   String? createdAt;
   String? updatedAt;
   Company? company;
-  List<UserProfessionals>? userProfessionals;
+  UserProfessionals? userProfessionals;
 
   UserModels(
       {this.id,
@@ -42,12 +42,9 @@ class UserModels {
     updatedAt = json['updatedAt'];
     company =
     json['company'] != null ? new Company.fromJson(json['company']) : null;
-    if (json['userProfessionals'] != null) {
-      userProfessionals = <UserProfessionals>[];
-      json['userProfessionals'].forEach((v) {
-        userProfessionals!.add(new UserProfessionals.fromJson(v));
-      });
-    }
+    userProfessionals = json['userProfessionals'] != null
+        ? new UserProfessionals.fromJson(json['userProfessionals'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -67,15 +64,14 @@ class UserModels {
       data['company'] = this.company!.toJson();
     }
     if (this.userProfessionals != null) {
-      data['userProfessionals'] =
-          this.userProfessionals!.map((v) => v.toJson()).toList();
+      data['userProfessionals'] = this.userProfessionals!.toJson();
     }
     return data;
   }
 }
 
 class Company {
-  String? address;
+  Null? address;
   String? companyName;
 
   Company({this.address, this.companyName});

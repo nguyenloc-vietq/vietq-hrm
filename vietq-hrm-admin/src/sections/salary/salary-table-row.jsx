@@ -25,7 +25,7 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
   const popover = usePopover();
 
   const quickEdit = useBoolean();
-console.log(`[===============> ROW | `, row);
+  console.log(`[===============> ROW | `, row);
   return (
     <>
       <TableRow hover selected={selected} aria-checked={selected} tabIndex={-1}>
@@ -33,7 +33,7 @@ console.log(`[===============> ROW | `, row);
           <Checkbox id={row.id} checked={selected} onClick={onSelectRow} />
         </TableCell>
 
-         <TableCell>
+        <TableCell>
           <Stack spacing={2} direction="row" alignItems="center">
             <Avatar alt={row.user.fullName} src={CONFIG.site.imageUrl + row.user.avatar} />
           </Stack>
@@ -48,17 +48,9 @@ console.log(`[===============> ROW | `, row);
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.lateRate}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.earlyRate}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.effectiveDate}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.expireDate === '' || row.expireDate === null ? "-" : row.expireDate}</TableCell>
-        {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.user.address === '' || row.address === null ? "-" : row.address}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.user.phone}</TableCell>
-
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.userCode}</TableCell>
-
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.companyCode}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.userProfessionals[0].position}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.userProfessionals[0].employeeType}</TableCell> */}
-
-        
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>
+          {row.expireDate === '' || row.expireDate === null ? '-' : row.expireDate}
+        </TableCell>
 
         <TableCell>
           <Stack direction="row" alignItems="center">
@@ -125,17 +117,14 @@ console.log(`[===============> ROW | `, row);
   );
 }
 
-
-export function TableSkeleton({length = 5}) {
+export function TableSkeleton({ length = 5 }) {
   return [...Array(5)].map((_, index) => (
     <TableRow key={index}>
-      {
-        [...Array(length)].map((__, i) => (
-          <TableCell key={i}>
-            <Skeleton />
-          </TableCell>
-        ))
-      }
+      {[...Array(length)].map((__, i) => (
+        <TableCell key={i}>
+          <Skeleton />
+        </TableCell>
+      ))}
     </TableRow>
   ));
 }

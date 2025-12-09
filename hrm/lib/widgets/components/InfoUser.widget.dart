@@ -115,7 +115,7 @@ class _InfoUserWidgetState extends State<InfoUserWidget> {
         if (state is UserLoaded) {
           final fullName = state.user.fullName ?? '';
           final position =
-              state.user.userProfessionals?.first.position ?? 'No position';
+              state.user.userProfessionals?.position ?? 'No position';
           final avatarUrl = state.user.avatar ?? '';
           return Container(
             child: Column(

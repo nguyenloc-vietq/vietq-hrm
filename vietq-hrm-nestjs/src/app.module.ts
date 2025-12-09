@@ -22,6 +22,7 @@ import { ShiftModule } from "./shift/shift.module";
 import { TokenService } from "./token/token.service";
 import { UserModule } from "./user/user.module";
 import { SalaryModule } from './salary/salary.module';
+import { PayrollModule } from './payroll/payroll.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { SalaryModule } from './salary/salary.module';
     PermissionModule,
     NotificationModule,
     SalaryModule,
+    PayrollModule,
   ],
   controllers: [AppController],
   providers: [

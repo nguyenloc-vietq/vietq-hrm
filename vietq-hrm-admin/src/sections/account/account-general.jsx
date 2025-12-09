@@ -72,7 +72,7 @@ export function AccountGeneral() {
   console.log(`[===============> isD | `, isDirty);
   const isAvatarChange = typeof watch('avatar') === 'string';
   const onSubmit = handleSubmit(async (data) => {
-    if(document.activeElement instanceof HTMLElement){
+    if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
     try {
@@ -91,25 +91,25 @@ export function AccountGeneral() {
           address: data.address,
           email: data.email,
         });
-      //   reset({
-      //     fullName: newDataUser?.fullName || '',
-      //     email: newDataUser?.email || '',
-      //     // avatar: `${CONFIG.site.imageUrl}${newDataUser.avatar}`,
-      //     phoneNumber: newDataUser?.phone || '',
-      //     address: newDataUser?.address || '',
-      //   },
-      // {keepDirty: false});
-      
-      reset({
-        fullName: newDataUser?.fullName || '',
-        email: newDataUser?.email || '',
-        avatar: newDataUser?.avatar ? `${CONFIG.site.imageUrl}${newDataUser.avatar}` : '',
-        phoneNumber: newDataUser?.phone || '',
-        companyName: watch('companyName'),
-        address: newDataUser?.address || '',
-        position: watch('position'),
-        employeeType: watch('employeeType'),
-      });
+        //   reset({
+        //     fullName: newDataUser?.fullName || '',
+        //     email: newDataUser?.email || '',
+        //     // avatar: `${CONFIG.site.imageUrl}${newDataUser.avatar}`,
+        //     phoneNumber: newDataUser?.phone || '',
+        //     address: newDataUser?.address || '',
+        //   },
+        // {keepDirty: false});
+
+        reset({
+          fullName: newDataUser?.fullName || '',
+          email: newDataUser?.email || '',
+          avatar: newDataUser?.avatar ? `${CONFIG.site.imageUrl}${newDataUser.avatar}` : '',
+          phoneNumber: newDataUser?.phone || '',
+          companyName: watch('companyName'),
+          address: newDataUser?.address || '',
+          position: watch('position'),
+          employeeType: watch('employeeType'),
+        });
         console.log(`[===============> dataUpdate | `, newDataUser);
       }
       toast.success('Update success!');
@@ -131,8 +131,8 @@ export function AccountGeneral() {
         phoneNumber: profileUser?.phone || '',
         companyName: profileUser?.company?.companyName || '',
         address: profileUser?.address || '',
-        position: profileUser?.userProfessionals?.[0]?.position || '',
-        employeeType: profileUser?.userProfessionals?.[0]?.employeeType || '',
+        position: profileUser?.userProfessionals?.position || '',
+        employeeType: profileUser?.userProfessionals?.employeeType || '',
       });
       setUserData(profileUser);
     } catch (error) {

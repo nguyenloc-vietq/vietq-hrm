@@ -45,14 +45,16 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.email}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.fullName}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.address === '' || row.address === null ? "-" : row.address}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>
+          {row.address === '' || row.address === null ? '-' : row.address}
+        </TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.phone}</TableCell>
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.userCode}</TableCell>
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.companyCode}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.userProfessionals[0].position}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.userProfessionals[0].employeeType}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.userProfessionals.position}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.userProfessionals.employeeType}</TableCell>
 
         <TableCell>
           <Label
@@ -86,7 +88,12 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
         </TableCell>
       </TableRow>
 
-      <UserQuickEditForm currentUser={row} open={quickEdit.value} onClose={quickEdit.onFalse} onUpdateRow={onUpdateRow} />
+      <UserQuickEditForm
+        currentUser={row}
+        open={quickEdit.value}
+        onClose={quickEdit.onFalse}
+        onUpdateRow={onUpdateRow}
+      />
 
       <CustomPopover
         open={popover.open}
@@ -133,17 +140,14 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
   );
 }
 
-
-export function TableSkeleton({length = 5}) {
+export function TableSkeleton({ length = 5 }) {
   return [...Array(5)].map((_, index) => (
     <TableRow key={index}>
-      {
-        [...Array(length)].map((__, i) => (
-          <TableCell key={i}>
-            <Skeleton />
-          </TableCell>
-        ))
-      }
+      {[...Array(length)].map((__, i) => (
+        <TableCell key={i}>
+          <Skeleton />
+        </TableCell>
+      ))}
     </TableRow>
   ));
 }

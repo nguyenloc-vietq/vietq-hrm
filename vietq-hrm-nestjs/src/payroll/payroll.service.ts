@@ -1,0 +1,111 @@
+import { HttpException, Injectable } from "@nestjs/common";
+import { GetPayrollDto } from "./dto/getPayroll-payroll.dto";
+import dayjs from "dayjs";
+import { DatabaseService } from "src/database/database.service";
+import express from "express";
+import {
+  UpdatePayrollConfigDto,
+  UpdatePayrollDto,
+} from "./dto/update-payroll.dto";
+import { CreatePayrollDto } from "./dto/create-payroll.dto";
+import { CodeGeneratorService } from "src/code-generator/code-generator.service";
+
+@Injectable()
+export class PayrollService {
+  constructor(
+    private readonly prisma: DatabaseService,
+    private readonly codeGen: CodeGeneratorService,
+  ) {}
+
+  async getPayroll(req: express.Request): Promise<object> {
+    try {
+      const { year } = req.query;
+      const startOfYear =
+        dayjs(year as string).startOf("year") ?? dayjs().startOf("year");
+      const endOfYear =
+        dayjs(year as string).endOf("year") ?? dayjs().endOf("year");
+      return await this.prisma.payroll.findMany({
+        where: {
+          startDate: {
+            gte: startOfYear.toDate(),
+            lte: endOfYear.toDate(),
+          },
+        },
+      });
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
+  async updatePayroll(dataUpdate: UpdatePayrollDto) {
+    try {
+      const { payrollCode, ...data } = dataUpdate;
+      await this.prisma.payroll.update({
+        where: { payrollCode },
+        data: {
+          ...data,
+        },
+      });
+      return {};
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
+  async createPayroll(dataCreate: CreatePayrollDto, req) {
+    try {
+      const prefix = "PRC";
+      const { companyCode } = req.user;
+      const lastRecord = await this.prisma.payroll.findFirst({
+        orderBy: { payrollCode: "desc" },
+        select: { payrollCode: true },
+      });
+
+      const lastNumber = lastRecord?.payrollCode
+        ? parseInt(lastRecord.payrollCode.replace(prefix, ""), 10)
+        : 0;
+
+      //Tạo mảng code mới theo số lượng workOn
+      const payroll = await this.prisma.payroll.createMany({
+        data: dataCreate.listCreatePayroll.map((item, idx) => ({
+          payrollCode: `${prefix}${String(lastNumber + idx + 1).padStart(6, "0")}`,
+          payrollName: `Payroll ${dayjs(item.startDate).format("YYYY-MM-DD")}`,
+          companyCode,
+          ...item,
+        })),
+      });
+      return payroll;
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+  async getPayrollConfig(req) {
+    try {
+      const { companyCode } = req.user;
+      const config = await this.prisma.payrollConfig.findFirst({
+        where: { companyCode: companyCode },
+      });
+      return { ...config };
+    } catch (error) {
+      return new HttpException(error.message, 500);
+    }
+  }
+
+  async updatePayrollConfig(dataUpdate: UpdatePayrollConfigDto, req) {
+    try {
+      const { companyCode } = req.user;
+      await this.prisma.payrollConfig.update({
+        where: {
+          companyCode,
+        },
+        data: {
+          ...dataUpdate,
+        },
+      });
+
+      return {};
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+}

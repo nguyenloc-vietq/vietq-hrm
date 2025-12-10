@@ -30,7 +30,8 @@ model User {
   userProfessionals UserProfessional?
   userRoles         UserRole[]
   roles             RoleEntity[]       @relation("UserRoles")
-
+  registrationForm  RegistrationForm[]
+  registrationApprovals RegistrationApproval[]
   @@index([companyCode])
   @@map("tbl_user")
 }
@@ -391,13 +392,57 @@ model PayrollConfig {
 
 model Payslip {
   id  Int @id @default(autoincrement())
-  userCode String 
-  payrollCode String 
-  payslipFile String 
+  userCode String
+  payrollCode String
+  payslipFile String
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
   @@unique([userCode, payrollCode])
   @@map("tbl_user_payslip")
+}
+
+model RegistrationForm {
+  id Int @id @default(autoincrement())
+  userCode String @unique
+  registrationCode String @unique
+  startDate DateTime
+  endDate DateTime
+  reason String
+  type RegistrationType
+  timeIn DateTime?
+  timeOut DateTime?
+  status RegistrationStatus @default(PENDING)
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user User @relation(fields: [userCode], references: [userCode])
+  registrationApprovals RegistrationApproval[]
+  @@map("tbl_registration_form")
+}
+
+model RegistrationApproval {
+  id Int @id @default(autoincrement())
+  registrationCode String @unique
+  userApproverCode String @unique
+  prevStatus RegistrationStatus
+  newStatus RegistrationStatus
+  registrationForm RegistrationForm @relation(fields: [registrationCode], references: [registrationCode])
+  userApprover User @relation(fields: [userApproverCode], references: [userCode])
+  @@map("tbl_registration_approval")
+}
+enum RegistrationType{
+  SICK
+  ANNUAL
+  MEDICAL
+  MATERNITY
+  CHECKIN
+  CHECKOUT
+  LEAVE
+}
+enum RegistrationStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 enum Role {

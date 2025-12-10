@@ -23,6 +23,7 @@ import { TokenService } from "./token/token.service";
 import { UserModule } from "./user/user.module";
 import { SalaryModule } from './salary/salary.module';
 import { PayrollModule } from './payroll/payroll.module';
+import { RegistrationModule } from './registration/registration.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { PayrollModule } from './payroll/payroll.module';
     NotificationModule,
     SalaryModule,
     PayrollModule,
+    RegistrationModule,
   ],
   controllers: [AppController],
   providers: [

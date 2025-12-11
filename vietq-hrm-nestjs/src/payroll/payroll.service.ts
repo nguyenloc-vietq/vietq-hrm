@@ -108,4 +108,32 @@ export class PayrollService {
       throw new HttpException(error.message, 500);
     }
   }
+  async getListUserPayroll(req) {
+    try {
+      const { userCode } = req.user;
+      const listPayslips = await this.prisma.payslip.findMany({
+        where: {
+          userCode,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+      const result = await Promise.all(
+        listPayslips.map(async (p) => {
+          const payroll = await this.prisma.payroll.findUnique({
+            where: { payrollCode: p.payrollCode },
+          });
+          return {
+            ...p,
+            payroll,
+          };
+        }),
+      );
+
+      return result;
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
 }

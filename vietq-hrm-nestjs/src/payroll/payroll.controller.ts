@@ -98,4 +98,15 @@ export class PayrollController {
       "Update payroll is response data success",
     );
   }
+
+  @Get("list-payslips")
+  async getListUserPayroll(
+    @Req() req: any,
+  ): Promise<ResponseDataSuccess<object>> {
+    return new ResponseDataSuccess(
+      await this.payrollService.getListUserPayroll(req),
+      200,
+      "Get list user payroll is ResponseDataSuccess",
+    );
+  }
 }

@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vietq_hrm/blocs/payslip/payslip_bloc.dart';
 import 'package:vietq_hrm/blocs/user/user_bloc.dart';
 import 'package:vietq_hrm/blocs/notifications/notifications_bloc.dart';
 import 'package:vietq_hrm/blocs/calendars/calendar_bloc.dart';
 import 'package:vietq_hrm/blocs/attendance/attendance_bloc.dart';
+import 'package:vietq_hrm/configs/apiConfig/payroll.api.dart';
 import 'package:vietq_hrm/configs/apiConfig/user.api.dart';
 import 'package:vietq_hrm/configs/apiConfig/notification.api.dart';
 import 'package:vietq_hrm/configs/apiConfig/schedule.api.dart';
@@ -13,6 +15,9 @@ class BlocManager {
     return [
       BlocProvider<UserBloc>(
         create: (_) => UserBloc(UserApi()),
+      ),
+      BlocProvider<PayslipBloc>(
+        create: (_) => PayslipBloc(PayrollApi()),
       ),
       BlocProvider<NotificationBloc>(
         create: (_) => NotificationBloc(NotificationApi()),

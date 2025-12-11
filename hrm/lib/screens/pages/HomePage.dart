@@ -1,22 +1,19 @@
-import 'dart:convert';
 import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:vietq_hrm/blocs/attendance/attendance_bloc.dart';
 import 'package:vietq_hrm/blocs/calendars/calendar_bloc.dart';
 import 'package:vietq_hrm/blocs/notifications/notifications_bloc.dart';
+import 'package:vietq_hrm/blocs/payslip/payslip_bloc.dart';
 import 'package:vietq_hrm/blocs/user/user_bloc.dart';
 import 'package:vietq_hrm/services/push_notification/notification.service.dart';
 import 'package:vietq_hrm/widgets/CustomAppbar/HomePageAppBar.widget.dart';
-import 'package:vietq_hrm/widgets/components/CalendarSlide.widget.dart';
 import 'package:vietq_hrm/widgets/components/Notification.widget.dart';
 import 'package:vietq_hrm/widgets/components/SalaryInfo.widget.dart';
-import 'package:vietq_hrm/widgets/components/TodayAttendance.widget.dart';
 import 'package:vietq_hrm/widgets/components/TodayInfomation.widget.dart';
 import 'package:vietq_hrm/widgets/components/YourActivity.widget.dart';
 import 'package:vietq_hrm/widgets/customWidgets/CustomLoadingOverlay.dart';
@@ -197,6 +194,7 @@ class _HomePageState extends State<HomePage> {
                         context.read<NotificationBloc>().add(FetchNotificationEvent(isRefresh: false));
                         context.read<AttendanceBloc>().add(LoadAttendanceEvent(today: DateTime.now().toString()));
                         context.read<CalendarBloc>().add(LoadCalendarEvent(isRefresh: true, today: DateTime.now().toString()));
+                        context.read<PayslipBloc>().add(FetchPayslipEvent());
                       },
                       child: SingleChildScrollView(
                         physics: AlwaysScrollableScrollPhysics(),

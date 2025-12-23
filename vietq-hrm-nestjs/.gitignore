@@ -40,3 +40,5 @@ yarn-error.log*
 /uploads
 /tmp
 /generated/prisma
+# enable key
+vietq-hrm-nestjs/src/firebase/firebase-key.json

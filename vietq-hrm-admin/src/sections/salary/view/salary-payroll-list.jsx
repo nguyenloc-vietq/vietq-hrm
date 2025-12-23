@@ -187,8 +187,8 @@ export function SalaryPayrollListView() {
           action={
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <DatePicker
-                sx={{ mr: 1, width: 100, padding: 0 }}
                 views={['year']}
+                sx={{ mr: 1, width: 100, padding: 0 }}
                 name="year"
                 label="Year"
                 onChange={(year) => {

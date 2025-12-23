@@ -22,8 +22,9 @@ export function UserTableToolbar({ filters, options, onResetPage, isShowRole = t
 
   const handleFilterName = useCallback(
     (event) => {
+      console.log(event.target.value);
       onResetPage();
-      filters.setState({ name: event.target.value });
+      filters.setState({ fullName: event.target.value });
     },
     [filters, onResetPage]
   );
@@ -47,34 +48,36 @@ export function UserTableToolbar({ filters, options, onResetPage, isShowRole = t
         direction={{ xs: 'column', md: 'row' }}
         sx={{ p: 2.5, pr: { xs: 2.5, md: 1 } }}
       >
-        {isShowRole && <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
-          <InputLabel htmlFor="user-filter-role-select-label">Role</InputLabel>
-          <Select
-            multiple
-            value={filters.state.role}
-            onChange={handleFilterRole}
-            input={<OutlinedInput label="Role" />}
-            renderValue={(selected) => selected.map((value) => value).join(', ')}
-            inputProps={{ id: 'user-filter-role-select-label' }}
-            MenuProps={{ PaperProps: { sx: { maxHeight: 240 } } }}
-          >
-            {options.roles.map((option) => (
-              <MenuItem key={option} value={option}>
-                <Checkbox
-                  disableRipple
-                  size="small"
-                  checked={filters.state.role.includes(option)}
-                />
-                {option}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>}
+        {isShowRole && (
+          <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
+            <InputLabel htmlFor="user-filter-role-select-label">Role</InputLabel>
+            <Select
+              multiple
+              value={filters.state.role}
+              onChange={handleFilterRole}
+              input={<OutlinedInput label="Role" />}
+              renderValue={(selected) => selected.map((value) => value).join(', ')}
+              inputProps={{ id: 'user-filter-role-select-label' }}
+              MenuProps={{ PaperProps: { sx: { maxHeight: 240 } } }}
+            >
+              {options.roles.map((option) => (
+                <MenuItem key={option} value={option}>
+                  <Checkbox
+                    disableRipple
+                    size="small"
+                    checked={filters.state.role.includes(option)}
+                  />
+                  {option}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
 
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField
             fullWidth
-            value={filters.state.name}
+            value={filters.state.fullName}
             onChange={handleFilterName}
             placeholder="Search user name..."
             InputProps={{

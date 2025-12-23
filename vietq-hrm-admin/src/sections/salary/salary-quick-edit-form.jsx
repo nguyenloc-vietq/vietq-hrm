@@ -12,8 +12,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
-import { USER_STATUS_OPTIONS } from 'src/_mock';
 import UserApi from 'src/services/api/user.api';
+import { ACTIVE_STATUS_OPTION } from 'src/_mock';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
@@ -81,7 +81,7 @@ export function UserQuickEditForm({ currentUser, open, onClose, onUpdateRow }) {
       console.error(error);
     }
   });
-
+  console.log(ACTIVE_STATUS_OPTION);
   return (
     <Dialog
       fullWidth
@@ -91,11 +91,11 @@ export function UserQuickEditForm({ currentUser, open, onClose, onUpdateRow }) {
       PaperProps={{ sx: { maxWidth: 720 } }}
     >
       <Form methods={methods} onSubmit={onSubmit}>
-        <DialogTitle>Update user</DialogTitle>
+        <DialogTitle>Create salary base</DialogTitle>
 
         <DialogContent>
           <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
-            Update user information
+            Create salary base information
           </Alert>
 
           <Box
@@ -105,7 +105,7 @@ export function UserQuickEditForm({ currentUser, open, onClose, onUpdateRow }) {
             gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }}
           >
             <Field.Select name="isActive" label="Status">
-              {USER_STATUS_OPTIONS.map((status) => (
+              {ACTIVE_STATUS_OPTION.user.map((status) => (
                 <MenuItem key={status.value} value={status.value}>
                   {status.label}
                 </MenuItem>
@@ -116,7 +116,6 @@ export function UserQuickEditForm({ currentUser, open, onClose, onUpdateRow }) {
             <Field.Text name="fullName" label="Full name" />
             <Field.Text name="phoneNumber" label="Phone number" />
             <Field.Text name="address" label="Address" />
-          
           </Box>
         </DialogContent>
 

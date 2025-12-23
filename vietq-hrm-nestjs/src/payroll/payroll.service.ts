@@ -19,7 +19,7 @@ export class PayrollService {
 
   async getPayroll(req: express.Request): Promise<object> {
     try {
-      const { year } = req.query;
+      const { year, all } = req.query;
       const startOfYear =
         dayjs(year as string).startOf("year") ?? dayjs().startOf("year");
       const endOfYear =
@@ -27,9 +27,12 @@ export class PayrollService {
       return await this.prisma.payroll.findMany({
         where: {
           startDate: {
-            gte: startOfYear.toDate(),
-            lte: endOfYear.toDate(),
+            gte: all ? undefined : startOfYear.toDate(),
+            lte: all ? undefined : endOfYear.toDate(),
           },
+        },
+        orderBy: {
+          startDate: "desc",
         },
       });
     } catch (error) {

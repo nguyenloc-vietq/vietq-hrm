@@ -179,4 +179,8 @@ export const endpoints = {
     sendOtp: '/api/auth/login',
     validate: '/api/auth/login',
   },
+  payroll: {
+    getListPayroll: 'api/payroll/list-payroll',
+    createPayroll: '/api/payroll/create',
+  },
 };

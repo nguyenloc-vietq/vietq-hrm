@@ -21,16 +21,30 @@ import { Form, Field } from 'src/components/hook-form';
 // ----------------------------------------------------------------------
 
 export const SalaryCreateScheme = zod.object({
-  
   user: zod.object({
-    userCode: zod.string().min(1, "User code is required"),
+    userCode: zod.string().min(1, 'User code is required'),
   }),
   baseSalary: zod.number().min(1000, { message: 'Base salary must be at least 1000' }),
-  overtimeRate: zod.number().min(0, { message: 'Overtime rate must be at least 0' }).max(10, { message: 'Overtime rate must be at most 1' }),
-  otNightRate: zod.number().min(0, { message: 'Overtime rate must be at least 0' }).max(10, { message: 'Overtime rate must be at most 1' }),
-  nightRate: zod.number().min(0, { message: 'Overtime rate must be at least 0' }).max(10, { message: 'Overtime rate must be at most 1' }),
-  lateRate: zod.number().min(0, { message: 'Overtime rate must be at least 0' }).max(1, { message: 'Overtime rate must be at most 1' }),
-  earlyRate: zod.number().min(0, { message: 'Overtime rate must be at least 0' }).max(1, { message: 'Overtime rate must be at most 1' }),
+  overtimeRate: zod
+    .number()
+    .min(0, { message: 'Overtime rate must be at least 0' })
+    .max(10, { message: 'Overtime rate must be at most 1' }),
+  otNightRate: zod
+    .number()
+    .min(0, { message: 'Overtime rate must be at least 0' })
+    .max(10, { message: 'Overtime rate must be at most 1' }),
+  nightRate: zod
+    .number()
+    .min(0, { message: 'Overtime rate must be at least 0' })
+    .max(10, { message: 'Overtime rate must be at most 1' }),
+  lateRate: zod
+    .number()
+    .min(0, { message: 'Overtime rate must be at least 0' })
+    .max(1, { message: 'Overtime rate must be at most 1' }),
+  earlyRate: zod
+    .number()
+    .min(0, { message: 'Overtime rate must be at least 0' })
+    .max(1, { message: 'Overtime rate must be at most 1' }),
   effectiveDate: zod.string().optional(),
 });
 
@@ -64,6 +78,7 @@ export function SalaryCreateForm({ currentUser, open, onClose, onUpdateRow }) {
   // const options = currentUser.map((item) => ({
   //     value: item.userCode,
   //     label: item.fullName,
+  console.log('[==================> current user', currentUser);
   //   }))
   const onSubmit = handleSubmit(async (data) => {
     toast.loading('crate user...');
@@ -71,12 +86,11 @@ export function SalaryCreateForm({ currentUser, open, onClose, onUpdateRow }) {
       console.log(`[===============> show data | `, data);
       reset();
       onClose();
-      const {user, ...body} = data;
+      const { user, ...body } = data;
       const CreateSalary = await SalaryApi.createSalary({
         userCode: user.userCode,
-        ...body
+        ...body,
       });
-      console.log(`[===============> update user | `, CreateSalary);
       toast.dismiss();
       toast.success('Update success!');
       // onUpdateRow(CreateSalary);
@@ -95,11 +109,11 @@ export function SalaryCreateForm({ currentUser, open, onClose, onUpdateRow }) {
       PaperProps={{ sx: { maxWidth: 720 } }}
     >
       <Form methods={methods} onSubmit={onSubmit}>
-        <DialogTitle>Update user</DialogTitle>
+        <DialogTitle>Create Salary</DialogTitle>
 
         <DialogContent>
           <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
-            Update user information
+            Create base salary information
           </Alert>
 
           <Box
@@ -119,19 +133,19 @@ export function SalaryCreateForm({ currentUser, open, onClose, onUpdateRow }) {
               name="user"
               label="Select user"
               autoHighlight
-              options={currentUser.map((item) => item)}
+              options={currentUser.map((item) => item.user)}
               getOptionLabel={(option) => option.fullName ?? ''}
               isOptionEqualToValue={(option, value) => option.userCode === value.userCode}
-              renderOption={(props, option) => 
-                 (<li {...props} key={option.userCode}>
+              renderOption={(props, option) => (
+                <li {...props} key={option.userCode}>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span>{option.fullName}</span>
                     <small style={{ color: '#777' }}>
                       {option.userProfessionals?.[0]?.position || ''}
                     </small>
                   </div>
-                </li>)
-              }
+                </li>
+              )}
             />
 
             <Box sx={{ display: { xs: 'none', sm: 'block' } }} />

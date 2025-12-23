@@ -19,7 +19,7 @@ import { useSetState } from 'src/hooks/use-set-state';
 
 import { varAlpha } from 'src/theme/styles';
 import UserApi from 'src/services/api/user.api';
-import { _roles, USER_STATUS_OPTIONS } from 'src/_mock';
+import { _roles, ACTIVE_STATUS_OPTION } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Label } from 'src/components/label';
@@ -46,20 +46,20 @@ import { UserTableFiltersResult } from '../user-table-filters-result';
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
+const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ACTIVE_STATUS_OPTION];
 
 const TABLE_HEAD = [
-  {id: 'avatar', label: 'Avatar', width: 100 },
+  { id: 'avatar', label: 'Avatar', width: 100 },
   { id: 'email', label: 'Email', width: 220 },
-  { id: 'fullName', label: 'Name', width: 220},
-  {id: "address", label: "Address", width: 220},
+  { id: 'fullName', label: 'Name', width: 220 },
+  { id: 'address', label: 'Address', width: 220 },
   { id: 'phone', label: 'Phone number', width: 180 },
   { id: 'userCode', label: 'User Code', width: 220 },
-  { id: 'companyCode', label: 'Company Code', width: 250 }, 
+  { id: 'companyCode', label: 'Company Code', width: 250 },
   { id: 'position', label: 'Position', width: 180 },
   { id: 'employeeType', label: 'Employee Type', width: 180 },
   { id: 'isActive', label: 'status', width: 100 },
-  { id: 'action' ,label: 'action', width: 100},
+  { id: 'action', label: 'action', width: 100 },
 ];
 // ----------------------------------------------------------------------
 
@@ -73,10 +73,10 @@ export function UserListView() {
   const [tableData, setTableData] = useState([]);
   useEffect(() => {
     fetchListUser();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchListUser = async () =>  {
+  const fetchListUser = async () => {
     try {
       isLoading.onTrue();
       const listUser = await UserApi.getListUser();
@@ -84,11 +84,10 @@ export function UserListView() {
       setTableData(listUser);
     } catch (error) {
       console.log(error);
-    }
-    finally {
+    } finally {
       isLoading.onFalse();
     }
-  }
+  };
 
   const filters = useSetState({ name: '', role: [], status: 'all' });
 
@@ -131,19 +130,21 @@ export function UserListView() {
     });
   }, [dataFiltered.length, dataInPage.length, table, tableData]);
 
-
-  const onUpdateRow = useCallback((data) => {
-    const updateRow = tableData.map((row) => {
-      if (row.id === data.id) {
-        return {
-          ...row,
-          ...data,
-        };
-      }
-      return row;
-    });
-    setTableData(updateRow);
-  }, [tableData]);
+  const onUpdateRow = useCallback(
+    (data) => {
+      const updateRow = tableData.map((row) => {
+        if (row.id === data.id) {
+          return {
+            ...row,
+            ...data,
+          };
+        }
+        return row;
+      });
+      setTableData(updateRow);
+    },
+    [tableData]
+  );
 
   const handleEditRow = useCallback(
     (id) => {
@@ -155,7 +156,7 @@ export function UserListView() {
   const handleFilterStatus = useCallback(
     (event, newValue) => {
       table.onResetPage();
-      console.log(`[===============> filtter | `, filters );
+      console.log(`[===============> filtter | `, filters);
       filters.setState({ status: newValue });
     },
     [filters, table]
@@ -273,33 +274,35 @@ export function UserListView() {
                     )
                   }
                 />
-                {isLoading.value ? 
-                <TableSkeleton length={TABLE_HEAD.length + 1} />
-                :<TableBody>
-                  {dataFiltered
-                    .slice(
-                      table.page * table.rowsPerPage,
-                      table.page * table.rowsPerPage + table.rowsPerPage
-                    )
-                    .map((row) => (
-                      <UserTableRow
-                        key={row.id}
-                        row={row}
-                        selected={table.selected.includes(row.id)}
-                        onUpdateRow={onUpdateRow}
-                        onSelectRow={() => table.onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.userCode)}
-                        onEditRow={() => handleEditRow(row.userCode)}
-                      />
-                    ))}
+                {isLoading.value ? (
+                  <TableSkeleton length={TABLE_HEAD.length + 1} />
+                ) : (
+                  <TableBody>
+                    {dataFiltered
+                      .slice(
+                        table.page * table.rowsPerPage,
+                        table.page * table.rowsPerPage + table.rowsPerPage
+                      )
+                      .map((row) => (
+                        <UserTableRow
+                          key={row.id}
+                          row={row}
+                          selected={table.selected.includes(row.id)}
+                          onUpdateRow={onUpdateRow}
+                          onSelectRow={() => table.onSelectRow(row.id)}
+                          onDeleteRow={() => handleDeleteRow(row.userCode)}
+                          onEditRow={() => handleEditRow(row.userCode)}
+                        />
+                      ))}
 
-                  <TableEmptyRows
-                    height={table.dense ? 56 : 56 + 20}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
-                  />
+                    <TableEmptyRows
+                      height={table.dense ? 56 : 56 + 20}
+                      emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
+                    />
 
-                  <TableNoData notFound={notFound} />
-                </TableBody>}
+                    <TableNoData notFound={notFound} />
+                  </TableBody>
+                )}
               </Table>
             </Scrollbar>
           </Box>
@@ -362,7 +365,7 @@ function applyFilter({ inputData, comparator, filters }) {
   }
 
   if (status !== 'all') {
-    inputData = inputData.filter((user) => user.isActive=== status);
+    inputData = inputData.filter((user) => user.isActive === status);
   }
 
   if (role.length) {

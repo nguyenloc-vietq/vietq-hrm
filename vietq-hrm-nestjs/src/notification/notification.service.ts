@@ -253,6 +253,7 @@ export class NotificationService {
         createNotification.scheduleTime,
       );
       if (
+        createNotification.targetType !== "ALL" &&
         createNotification.isSent === true &&
         createNotification.scheduleTime === undefined
       ) {

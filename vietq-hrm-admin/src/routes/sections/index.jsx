@@ -19,7 +19,7 @@ export function Router() {
     {
       path: '/',
       //  * Skip home page
-       
+
       element: <Navigate to={CONFIG.auth.redirectPath} replace />,
       // element: (
       //   <Suspense fallback={<SplashScreen />}>

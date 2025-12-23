@@ -12,8 +12,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
-import { USER_STATUS_OPTIONS } from 'src/_mock';
 import UserApi from 'src/services/api/user.api';
+import { ACTIVE_STATUS_OPTION } from 'src/_mock';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
@@ -105,7 +105,7 @@ export function UserQuickEditForm({ currentUser, open, onClose, onUpdateRow }) {
             gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }}
           >
             <Field.Select name="isActive" label="Status">
-              {USER_STATUS_OPTIONS.map((status) => (
+              {ACTIVE_STATUS_OPTION.map((status) => (
                 <MenuItem key={status.value} value={status.value}>
                   {status.label}
                 </MenuItem>
@@ -116,7 +116,6 @@ export function UserQuickEditForm({ currentUser, open, onClose, onUpdateRow }) {
             <Field.Text name="fullName" label="Full name" />
             <Field.Text name="phoneNumber" label="Phone number" />
             <Field.Text name="address" label="Address" />
-          
           </Box>
         </DialogContent>
 

@@ -17,9 +17,8 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { useSetState } from 'src/hooks/use-set-state';
 
 import { varAlpha } from 'src/theme/styles';
-import UserApi from 'src/services/api/user.api';
 import SalaryApi from 'src/services/api/salary.api';
-import { _roles, USER_STATUS_OPTIONS } from 'src/_mock';
+import { _roles, ACTIVE_STATUS_OPTION } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Label } from 'src/components/label';
@@ -42,26 +41,26 @@ import {
 
 import { SalaryCreateForm } from '../salary-create-form';
 import { UserTableToolbar } from '../salary-table-toolbar';
-import { UserTableRow, TableSkeleton } from '../salary-table-row'
+import { UserTableRow, TableSkeleton } from '../salary-table-row';
 import { UserTableFiltersResult } from '../salary-table-filters-result';
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
+const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ACTIVE_STATUS_OPTION];
 
 const TABLE_HEAD = [
-  {id: "avatar", label: 'Avatar', width: 100},
-  {id: "fullName", label: 'Full Name', width: 100},
-  {id: "userCode", label: 'User Code', width: 100},
-  {id: "baseSalary", label: 'Base Salary', width: 100},
-  {id: "overtimeRate", label: 'Overtime Rate', width: 100},
-  {id: "otNightRate", label: 'Ot Night Rate', width: 100},
-  {id: "nightRate", label: 'Night Rate', width: 100},
-  {id: "lateRate", label: 'Late Rate', width: 100},
-  {id: "earlyRate", label: 'Early Rate', width: 100},
-  {id: "effectiveDate", label: 'Effective Date', width: 100},
-  {id: "expireDate", label: 'Expire Date', width: 100},
-  {id: "action", label: 'Action', width: 100},
+  { id: 'avatar', label: 'Avatar', width: 100 },
+  { id: 'fullName', label: 'Full Name', width: 100 },
+  { id: 'userCode', label: 'User Code', width: 100 },
+  { id: 'baseSalary', label: 'Base Salary', width: 100 },
+  { id: 'overtimeRate', label: 'Overtime Rate', width: 100 },
+  { id: 'otNightRate', label: 'Ot Night Rate', width: 100 },
+  { id: 'nightRate', label: 'Night Rate', width: 100 },
+  { id: 'lateRate', label: 'Late Rate', width: 100 },
+  { id: 'earlyRate', label: 'Early Rate', width: 100 },
+  { id: 'effectiveDate', label: 'Effective Date', width: 100 },
+  { id: 'expireDate', label: 'Expire Date', width: 100 },
+  { id: 'action', label: 'Action', width: 100 },
 ];
 // ----------------------------------------------------------------------
 
@@ -75,12 +74,10 @@ export function SalaryConfigVew() {
   const [listUser, setListUser] = useState([]);
   const [tableData, setTableData] = useState([]);
   useEffect(() => {
-    fetchListSalaryUser();
-    fetchListUser();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchListSalaryUser(); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchListSalaryUser = async () =>  {
+  const fetchListSalaryUser = async () => {
     try {
       isLoading.onTrue();
       const ListSalary = await SalaryApi.getListSalary();
@@ -88,24 +85,10 @@ export function SalaryConfigVew() {
       setTableData(ListSalary);
     } catch (error) {
       console.log(error);
-    }
-    finally {
+    } finally {
       isLoading.onFalse();
     }
-  }
-  const fetchListUser = async () =>  {
-    try {
-      isLoading.onTrue();
-      const ListUser = await UserApi.getListUser();
-      console.log(`[===============> List user | `, ListUser);
-      setListUser(ListUser);
-    } catch (error) {
-      console.log(error);
-    }
-    finally {
-      isLoading.onFalse();
-    }
-  }
+  };
 
   const filters = useSetState({ name: '', role: [], status: 'all' });
 
@@ -148,19 +131,21 @@ export function SalaryConfigVew() {
     });
   }, [dataFiltered.length, dataInPage.length, table, tableData]);
 
-
-  const onUpdateRow = useCallback((data) => {
-    const updateRow = tableData.map((row) => {
-      if (row.id === data.id) {
-        return {
-          ...row,
-          ...data,
-        };
-      }
-      return row;
-    });
-    setTableData(updateRow);
-  }, [tableData]);
+  const onUpdateRow = useCallback(
+    (data) => {
+      const updateRow = tableData.map((row) => {
+        if (row.id === data.id) {
+          return {
+            ...row,
+            ...data,
+          };
+        }
+        return row;
+      });
+      setTableData(updateRow);
+    },
+    [tableData]
+  );
 
   const handleEditRow = useCallback(
     (id) => {
@@ -172,7 +157,7 @@ export function SalaryConfigVew() {
   const handleFilterStatus = useCallback(
     (event, newValue) => {
       table.onResetPage();
-      console.log(`[===============> filtter | `, filters );
+      console.log(`[===============> filtter | `, filters);
       filters.setState({ status: newValue });
     },
     [filters, table]
@@ -285,37 +270,39 @@ export function SalaryConfigVew() {
                   onSelectAllRows={(checked) =>
                     table.onSelectAllRows(
                       checked,
-                      dataFiltered.map((row) => row.id)
+                      dataFiltered.map((row) => row.user)
                     )
                   }
                 />
-                {isLoading.value ? 
-                <TableSkeleton length={TABLE_HEAD.length + 1} />
-                :<TableBody>
-                  {dataFiltered
-                    .slice(
-                      table.page * table.rowsPerPage,
-                      table.page * table.rowsPerPage + table.rowsPerPage
-                    )
-                    .map((row) => (
-                      <UserTableRow
-                        key={row.id}
-                        row={row}
-                        selected={table.selected.includes(row.id)}
-                        onUpdateRow={onUpdateRow}
-                        onSelectRow={() => table.onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.userCode)}
-                        onEditRow={() => handleEditRow(row.userCode)}
-                      />
-                    ))}
+                {isLoading.value ? (
+                  <TableSkeleton length={TABLE_HEAD.length + 1} />
+                ) : (
+                  <TableBody>
+                    {dataFiltered
+                      .slice(
+                        table.page * table.rowsPerPage,
+                        table.page * table.rowsPerPage + table.rowsPerPage
+                      )
+                      .map((row) => (
+                        <UserTableRow
+                          key={row.user.userCode}
+                          row={row}
+                          selected={table.selected.includes(row.user.userCode)}
+                          onUpdateRow={onUpdateRow}
+                          onSelectRow={() => table.onSelectRow(row.user.userCode)}
+                          onDeleteRow={() => handleDeleteRow(row.user.userCode)}
+                          onEditRow={() => handleEditRow(row.user.userCode)}
+                        />
+                      ))}
 
-                  <TableEmptyRows
-                    height={table.dense ? 56 : 56 + 20}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
-                  />
+                    <TableEmptyRows
+                      height={table.dense ? 56 : 56 + 20}
+                      emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
+                    />
 
-                  <TableNoData notFound={notFound} />
-                </TableBody>}
+                    <TableNoData notFound={notFound} />
+                  </TableBody>
+                )}
               </Table>
             </Scrollbar>
           </Box>
@@ -332,7 +319,12 @@ export function SalaryConfigVew() {
         </Card>
       </DashboardContent>
 
-      <SalaryCreateForm currentUser={listUser} open={isCreate.value} onClose={isCreate.onFalse} onUpdateRow={onUpdateRow} />
+      <SalaryCreateForm
+        currentUser={dataFiltered}
+        open={isCreate.value}
+        onClose={isCreate.onFalse}
+        onUpdateRow={onUpdateRow}
+      />
 
       <ConfirmDialog
         open={confirm.value}
@@ -361,7 +353,7 @@ export function SalaryConfigVew() {
 }
 
 function applyFilter({ inputData, comparator, filters }) {
-  const { name, status, role } = filters;
+  const { fullName, status, role } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -373,14 +365,14 @@ function applyFilter({ inputData, comparator, filters }) {
 
   inputData = stabilizedThis.map((el) => el[0]);
 
-  if (name) {
+  if (fullName) {
     inputData = inputData.filter(
-      (user) => user.fullName.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (user) => user.user.fullName.toLowerCase().indexOf(fullName.toLowerCase()) !== -1
     );
   }
 
   if (status !== 'all') {
-    inputData = inputData.filter((user) => user.isActive=== status);
+    inputData = inputData.filter((user) => user.isActive === status);
   }
 
   if (role.length) {

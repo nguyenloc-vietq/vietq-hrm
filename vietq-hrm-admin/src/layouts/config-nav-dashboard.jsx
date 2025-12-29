@@ -37,6 +37,7 @@ const ICONS = {
   analytics: icon('ic-analytics'),
   dashboard: icon('ic-dashboard'),
   parameter: icon('ic-parameter'),
+  notification: icon('ic-notification'),
 };
 
 // ----------------------------------------------------------------------
@@ -89,6 +90,40 @@ export const navData = [
           { title: 'Salary user', path: paths.dashboard.salary.user },
           { title: 'Report', path: paths.dashboard.salary.report },
         ],
+      },
+      {
+        title: 'Attendance',
+        path: paths.dashboard.attendance.root,
+        icon: ICONS.calendar,
+        children: [{ title: 'Attendance Records', path: paths.dashboard.attendance.list }],
+      },
+      {
+        title: 'Notification',
+        path: paths.dashboard.notification.root,
+        icon: ICONS.notification,
+        children: [{ title: 'Notification List', path: paths.dashboard.notification.list }],
+      },
+
+      {
+        title: 'Schedule',
+        path: paths.dashboard.schedule.root,
+        icon: ICONS.job,
+        children: [
+          {
+            title: 'Create Schedule',
+            path: paths.dashboard.schedule.create,
+          },
+          {
+            title: 'Shift',
+            path: paths.dashboard.schedule.shift,
+          },
+        ],
+      },
+      {
+        title: 'Registration',
+        path: paths.dashboard.registration.root,
+        icon: ICONS.file,
+        // children: [{ title: 'Registration', path: paths.dashboard.registration.root }],
       },
       // {
       //   title: 'Product',

@@ -48,10 +48,17 @@ export class PayrollPdfService {
       const rec = attendance.find(
         (r) => dayjs(r.workDay).format("YYYY-MM-DD") === date,
       );
-
       if (rec) {
-        timeInRow.push(rec.timeIn ? dayjs(rec.timeIn).format("HH:mm") : "-");
-        timeOutRow.push(rec.timeOut ? dayjs(rec.timeOut).format("HH:mm") : "-");
+        timeInRow.push(
+          rec.timeIn
+            ? dayjs.utc(rec.timeIn).tz("Asia/Ho_Chi_Minh").format("HH:mm")
+            : "-",
+        );
+        timeOutRow.push(
+          rec.timeOut
+            ? dayjs.utc(rec.timeOut).tz("Asia/Ho_Chi_Minh").format("HH:mm")
+            : "-",
+        );
         lateRow.push(rec.lateMinutes > 0 ? rec.lateMinutes.toString() : "0");
       } else {
         timeInRow.push("-----");
@@ -59,7 +66,6 @@ export class PayrollPdfService {
         lateRow.push("-----");
       }
     }
-
     const docDefinition: any = {
       pageSize: "A4",
       pageMargins: [20, 20, 20, 20],

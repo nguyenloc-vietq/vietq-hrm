@@ -73,6 +73,23 @@ const SalaryReportView = lazy(() => import('src/pages/dashboard/salary/report'))
 const PayrollConfigView = lazy(() => import('src/pages/dashboard/salary/payroll-config'));
 // ----------------------------------------------------------------------
 
+// attendance
+const AttendanceListRecords = lazy(() => import('src/pages/dashboard/attendance/attendance-list'));
+// ----------------------------------------------------------------------
+
+// Registration
+const RegistrationMain = lazy(() => import('src/pages/dashboard/registration/registration-main'));
+// ----------------------------------------------------------------------
+
+// notification
+const NotificationList = lazy(() => import('src/pages/dashboard/notification/notification-list'));
+// ----------------------------------------------------------------------
+
+// schedule
+const ScheduleCreatePage = lazy(() => import('src/pages/dashboard/schedule/schedule-create'));
+const ScheduleShiftPage = lazy(() => import('src/pages/dashboard/schedule/schedule-shift'));
+// ----------------------------------------------------------------------
+
 const layoutContent = (
   <DashboardLayout>
     <Suspense fallback={<LoadingScreen />}>
@@ -113,6 +130,25 @@ export const dashboardRoutes = [
           { path: 'config', element: <PayrollConfigView /> },
           { path: 'payroll', element: <SalaryPayrollListView /> },
           { path: 'report', element: <SalaryReportView /> },
+        ],
+      },
+      {
+        path: 'attendance',
+        children: [{ path: 'list', element: <AttendanceListRecords /> }],
+      },
+      {
+        path: 'registration',
+        children: [{ element: <RegistrationMain />, index: true }],
+      },
+      {
+        path: 'notification',
+        children: [{ path: 'list', element: <NotificationList /> }],
+      },
+      {
+        path: 'schedule',
+        children: [
+          { path: 'create', element: <ScheduleCreatePage /> },
+          { path: 'shift', element: <ScheduleShiftPage /> },
         ],
       },
       {

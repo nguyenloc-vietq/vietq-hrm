@@ -20,7 +20,6 @@ import { CreatePayrollDto } from "./dto/create-payroll.dto";
 @Controller("payroll")
 export class PayrollController {
   constructor(private readonly payrollService: PayrollService) {}
-
   @Get("list-payroll")
   async getPayroll(
     @Req() req: express.Request,
@@ -107,6 +106,17 @@ export class PayrollController {
       await this.payrollService.getListUserPayroll(req),
       200,
       "Get list user payroll is ResponseDataSuccess",
+    );
+  }
+
+  @Get("admin-list-payslips")
+  async getAdminListPayslips(
+    @Req() req: any,
+  ): Promise<ResponseDataSuccess<object>> {
+    return new ResponseDataSuccess(
+      await this.payrollService.getAdminListPayslips(req),
+      200,
+      "Get admin list payslips is ResponseDataSuccess",
     );
   }
 }

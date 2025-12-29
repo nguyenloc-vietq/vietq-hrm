@@ -117,6 +117,23 @@ export const paths = {
       payroll: `${ROOTS.DASHBOARD}/salary/payroll`,
       report: `${ROOTS.DASHBOARD}/salary/report`,
     },
+    attendance: {
+      root: `${ROOTS.DASHBOARD}/attendance`,
+      list: `${ROOTS.DASHBOARD}/attendance/list`,
+    },
+    registration: {
+      root: `${ROOTS.DASHBOARD}/registration`,
+      list: `${ROOTS.DASHBOARD}/registration/list`,
+    },
+    notification: {
+      root: `${ROOTS.DASHBOARD}/notification`,
+      list: `${ROOTS.DASHBOARD}/notification/list`,
+    },
+    schedule: {
+      root: `${ROOTS.DASHBOARD}/schedule`,
+      create: `${ROOTS.DASHBOARD}/schedule/create`,
+      shift: `${ROOTS.DASHBOARD}/schedule/shift`,
+    },
     user: {
       root: `${ROOTS.DASHBOARD}/user`,
       new: `${ROOTS.DASHBOARD}/user/new`,

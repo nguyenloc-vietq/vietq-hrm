@@ -182,5 +182,6 @@ export const endpoints = {
   payroll: {
     getListPayroll: 'api/payroll/list-payroll',
     createPayroll: '/api/payroll/create',
+    getPayrollConfig: '/api/payroll/list-payslips',
   },
 };

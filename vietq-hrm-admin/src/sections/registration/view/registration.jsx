@@ -1,27 +1,26 @@
+import React from 'react';
+
+import { Box } from '@mui/material';
+
 import { paths } from 'src/routes/paths';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { PayrollConfigForm } from '../payroll-config-form';
-
-// ----------------------------------------------------------------------
-
-export function PayrollConfigView() {
+export function RegistrationMain() {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Payroll Config"
+        heading="Registration"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Payroll', href: paths.dashboard.salary.config },
-          { name: 'Payroll Config' },
+          { name: 'Registration', href: paths.dashboard.registration.root },
+          { name: 'Registration' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
-
-      <PayrollConfigForm />
+      <Box>Registration</Box>
     </DashboardContent>
   );
 }

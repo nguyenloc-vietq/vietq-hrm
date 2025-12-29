@@ -24,6 +24,26 @@ class PayrollApi {
       throw error;
     }
   }
+
+  static async getPayrollConfig() {
+    try {
+      const res = await axiosInstance.get(endpoints.payroll.getPayrollConfig);
+      return res.data;
+    } catch (error) {
+      console.log('Get payroll config is error | ', error);
+      throw error;
+    }
+  }
+
+  static async getListPayslip() {
+    try {
+      const res = await axiosInstance.get(endpoints.payroll.getListPayslip);
+      return res.data;
+    } catch (error) {
+      console.log('Get list payslip is error | ', error);
+      throw error;
+    }
+  }
 }
 
 export default PayrollApi;

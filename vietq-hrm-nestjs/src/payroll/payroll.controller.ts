@@ -109,14 +109,14 @@ export class PayrollController {
     );
   }
 
-  @Get("admin-list-payslips")
-  async getAdminListPayslips(
-    @Req() req: any,
-  ): Promise<ResponseDataSuccess<object>> {
-    return new ResponseDataSuccess(
-      await this.payrollService.getAdminListPayslips(req),
-      200,
-      "Get admin list payslips is ResponseDataSuccess",
-    );
-  }
+  // @Get("admin-list-payslips")
+  // async getAdminListPayslips(
+  //   @Req() req: any,
+  // ): Promise<ResponseDataSuccess<object>> {
+  //   return new ResponseDataSuccess(
+  //     await this.payrollService.getAdminListPayslips(req),
+  //     200,
+  //     "Get admin list payslips is ResponseDataSuccess",
+  //   );
+  // }
 }

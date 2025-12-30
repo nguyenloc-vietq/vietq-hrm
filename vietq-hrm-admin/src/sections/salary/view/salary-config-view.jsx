@@ -270,7 +270,7 @@ export function SalaryConfigVew() {
                   onSelectAllRows={(checked) =>
                     table.onSelectAllRows(
                       checked,
-                      dataFiltered.map((row) => row.user)
+                      dataFiltered.map((row) => row.user.userCode)
                     )
                   }
                 />

@@ -231,4 +231,72 @@ export class AttendanceService {
       throw new HttpException("Get time sheet failed", 500);
     }
   }
+
+  async adminListAttendance(req) {
+    const { startDate, endDate } = req.query;
+    if (!startDate || !endDate) {
+      const startMonth = dayjs().startOf("month").toDate();
+      const endMonth = dayjs().endOf("month").toDate();
+      const listAttdent = await this.prisma.attendanceRecord.findMany({
+        select: {
+          id: true,
+          userCode: true,
+          payrollCode: true,
+          workDay: true,
+          timeIn: true,
+          timeOut: true,
+          status: true,
+          lateMinutes: true,
+          earlyMinutes: true,
+          user: {
+            select: {
+              fullName: true,
+              avatar: true,
+              companyCode: true,
+              userCode: true,
+            },
+          },
+        },
+        where: {
+          workDay: {
+            gte: startMonth,
+            lte: endMonth,
+          },
+        },
+      });
+      return listAttdent;
+    }
+    try {
+      const listAttdent = await this.prisma.attendanceRecord.findMany({
+        select: {
+          id: true,
+          userCode: true,
+          payrollCode: true,
+          workDay: true,
+          timeIn: true,
+          timeOut: true,
+          status: true,
+          lateMinutes: true,
+          earlyMinutes: true,
+          user: {
+            select: {
+              fullName: true,
+              avatar: true,
+              companyCode: true,
+              userCode: true,
+            },
+          },
+        },
+        where: {
+          workDay: {
+            gte: dayjs(startDate).startOf("day").toDate(),
+            lte: dayjs(endDate).endOf("day").toDate(),
+          },
+        },
+      });
+      return listAttdent;
+    } catch (error) {
+      throw new HttpException("Get time sheet failed", 500);
+    }
+  }
 }

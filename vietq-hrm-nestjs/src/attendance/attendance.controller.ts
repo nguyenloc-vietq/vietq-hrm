@@ -22,7 +22,7 @@ export class AttendanceController {
   @Post("check-in")
   async checkIn(
     @Body() checkInAttendanceDto: CheckInAttendanceDto,
-    @Req() req,
+    @Req() req: any,
   ): Promise<ResponseDataSuccess<object>> {
     return new ResponseDataSuccess(
       await this.attendanceService.checkIn(checkInAttendanceDto, req),
@@ -33,7 +33,7 @@ export class AttendanceController {
   @Post("check-out")
   async checkOut(
     @Body() checkInAttendanceDto: CheckInAttendanceDto,
-    @Req() req,
+    @Req() req: any,
   ): Promise<ResponseDataSuccess<object>> {
     return new ResponseDataSuccess(
       await this.attendanceService.checkOut(checkInAttendanceDto, req),
@@ -43,11 +43,20 @@ export class AttendanceController {
   }
 
   @Get("time-sheet")
-  async getTimeSheet(@Req() req): Promise<ResponseDataSuccess<object>> {
+  async getTimeSheet(@Req() req: any): Promise<ResponseDataSuccess<object>> {
     return new ResponseDataSuccess(
       await this.attendanceService.getTimeSheet(req),
       200,
       "get time sheet success",
+    );
+  }
+
+  @Get("admin-list-attendance")
+  async listAttendance(@Req() req: any): Promise<ResponseDataSuccess<object>> {
+    return new ResponseDataSuccess(
+      await this.attendanceService.adminListAttendance(req),
+      200,
+      "list attendance success",
     );
   }
 }

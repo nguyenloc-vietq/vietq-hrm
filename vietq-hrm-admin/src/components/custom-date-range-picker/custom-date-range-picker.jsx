@@ -18,6 +18,7 @@ export function CustomDateRangePicker({
   error,
   endDate,
   onClose,
+  onCancel,
   startDate,
   onChangeEndDate,
   variant = 'input',
@@ -78,7 +79,7 @@ export function CustomDateRangePicker({
       </DialogContent>
 
       <DialogActions>
-        <Button variant="outlined" color="inherit" onClick={onClose}>
+        <Button variant="outlined" color="inherit" onClick={onCancel}>
           Cancel
         </Button>
 

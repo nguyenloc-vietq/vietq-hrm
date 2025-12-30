@@ -184,4 +184,16 @@ export const endpoints = {
     createPayroll: '/api/payroll/create',
     getPayrollConfig: '/api/payroll/list-payslips',
   },
+
+  attendance: {
+    adminListAttendance: '/api/attendance/admin-list-attendance',
+    userListAttendance: '/api/attendance/user-list-attendance',
+    createAttendance: '/api/attendance/create',
+    updateAttendance: '/api/attendance/update',
+    deleteAttendance: '/api/attendance/delete',
+  },
+
+  notification: {
+    adminListNotification: '/api/notification/admin/list-notifications',
+  },
 };

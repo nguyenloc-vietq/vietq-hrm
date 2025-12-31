@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ValidationPipe,
+  Req,
 } from "@nestjs/common";
 import { PermissionService } from "./permission.service";
 import { ResponseDataSuccess } from "src/global/globalClass";
@@ -69,6 +70,17 @@ export class PermissionController {
       await this.permissionService.removeRolePermission(addRolePermission),
       200,
       "remove role permission success",
+    );
+  }
+  @Get("my-permissions")
+  async getMyPermissions(
+    @Req() req, // req.user thường chứa thông tin từ JWT Strategy
+  ): Promise<ResponseDataSuccess<object>> {
+    const userId = req.user.id; // Đảm bảo key này khớp với payload token của bạn
+    return new ResponseDataSuccess(
+      await this.permissionService.getCurrentUserPermissions(userId),
+      200,
+      "Get current user permissions success",
     );
   }
 }

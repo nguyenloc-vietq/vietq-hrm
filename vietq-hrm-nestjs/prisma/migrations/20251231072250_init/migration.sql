@@ -193,6 +193,7 @@ CREATE TABLE `tbl_salary_config` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `userCode` VARCHAR(191) NOT NULL,
     `unitCode` VARCHAR(191) NULL,
+    `AnnualLeave` INTEGER NOT NULL DEFAULT 12,
     `baseSalary` DECIMAL(14, 2) NOT NULL,
     `overtimeRate` DECIMAL(6, 3) NOT NULL DEFAULT 1.500,
     `otNightRate` DECIMAL(6, 3) NULL,
@@ -355,7 +356,7 @@ CREATE TABLE `tbl_payroll_config` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `tbl_payslip` (
+CREATE TABLE `tbl_user_payslip` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `userCode` VARCHAR(191) NOT NULL,
     `payrollCode` VARCHAR(191) NOT NULL,
@@ -363,7 +364,39 @@ CREATE TABLE `tbl_payslip` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `tbl_payslip_userCode_payrollCode_key`(`userCode`, `payrollCode`),
+    UNIQUE INDEX `tbl_user_payslip_userCode_payrollCode_key`(`userCode`, `payrollCode`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `tbl_registration_form` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `userCode` VARCHAR(191) NOT NULL,
+    `registrationCode` VARCHAR(191) NOT NULL,
+    `startDate` DATETIME(3) NOT NULL,
+    `endDate` DATETIME(3) NOT NULL,
+    `reason` VARCHAR(191) NOT NULL,
+    `type` ENUM('SICK', 'ANNUAL', 'MEDICAL', 'MATERNITY', 'CHECKIN', 'CHECKOUT', 'LEAVE') NOT NULL,
+    `timeIn` DATETIME(3) NULL,
+    `timeOut` DATETIME(3) NULL,
+    `status` ENUM('PENDING', 'APPROVED', 'REJECTED') NOT NULL DEFAULT 'PENDING',
+    `isActive` BOOLEAN NOT NULL DEFAULT true,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `tbl_registration_form_registrationCode_key`(`registrationCode`),
+    INDEX `tbl_registration_form_userCode_idx`(`userCode`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `tbl_registration_approval` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `registrationCode` VARCHAR(191) NOT NULL,
+    `userApproverCode` VARCHAR(191) NOT NULL,
+    `prevStatus` ENUM('PENDING', 'APPROVED', 'REJECTED') NOT NULL,
+    `newStatus` ENUM('PENDING', 'APPROVED', 'REJECTED') NOT NULL,
+
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -489,6 +522,15 @@ ALTER TABLE `tbl_data_sourceItems` ADD CONSTRAINT `tbl_data_sourceItems_dataSour
 
 -- AddForeignKey
 ALTER TABLE `tbl_payroll_config` ADD CONSTRAINT `tbl_payroll_config_companyCode_fkey` FOREIGN KEY (`companyCode`) REFERENCES `tbl_company_info`(`companyCode`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `tbl_registration_form` ADD CONSTRAINT `tbl_registration_form_userCode_fkey` FOREIGN KEY (`userCode`) REFERENCES `tbl_user`(`userCode`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `tbl_registration_approval` ADD CONSTRAINT `tbl_registration_approval_registrationCode_fkey` FOREIGN KEY (`registrationCode`) REFERENCES `tbl_registration_form`(`registrationCode`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `tbl_registration_approval` ADD CONSTRAINT `tbl_registration_approval_userApproverCode_fkey` FOREIGN KEY (`userApproverCode`) REFERENCES `tbl_user`(`userCode`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `_UserRoles` ADD CONSTRAINT `_UserRoles_A_fkey` FOREIGN KEY (`A`) REFERENCES `tbl_role_entity`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

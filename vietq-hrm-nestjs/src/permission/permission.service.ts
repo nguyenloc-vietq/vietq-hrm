@@ -84,4 +84,41 @@ export class PermissionService {
       throw new HttpException(error.message, 500);
     }
   }
+  async getCurrentUserPermissions(userId: number) {
+    try {
+      const userRoles = await this.prisma.userRole.findMany({
+        where: { userId: userId },
+        include: {
+          role: {
+            include: {
+              rolePermissions: {
+                include: {
+                  permission: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      // Trích xuất danh sách các Role name
+      const roles = userRoles.map((ur) => ur.role.name);
+
+      // Trích xuất danh sách Permission duy nhất (không trùng lặp)
+      const permissions = [
+        ...new Set(
+          userRoles.flatMap((ur) =>
+            ur.role.rolePermissions.map((rp) => rp.permission.nameCode),
+          ),
+        ),
+      ];
+
+      return {
+        roles,
+        permissions,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
 }

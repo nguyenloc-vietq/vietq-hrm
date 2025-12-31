@@ -28,9 +28,11 @@ export class RegistrationController {
   }
 
   @Get("list-approvals")
-  async listApprovals(): Promise<ResponseDataSuccess<object>> {
+  async listApprovals(
+    @Req() req: express.Request,
+  ): Promise<ResponseDataSuccess<object>> {
     return new ResponseDataSuccess(
-      await this.registrationService.listApprovals(),
+      await this.registrationService.listApprovals(req),
       200,
       "Get list approvals successfully",
     );

@@ -15,28 +15,96 @@ export class RegistrationService {
     try {
       const { status } = req.query;
       const { userCode } = req.user;
-      const data = await this.prisma.registrationForm.findMany({
+
+      // 1. Lấy danh sách đơn đăng ký
+      const registrations = await this.prisma.registrationForm.findMany({
         where: {
           userCode: userCode,
           isActive: true,
           status: status || undefined,
         },
+        orderBy: { createdAt: "desc" },
       });
-      return data;
+
+      // 2. Lấy cấu hình lương để xem tổng ngày phép (AnnualLeave)
+      const salaryConfig = await this.prisma.salaryConfig.findFirst({
+        where: { userCode: userCode },
+        select: { AnnualLeave: true },
+      });
+
+      const stats = await this.prisma.registrationForm.groupBy({
+        by: ["status"],
+        where: {
+          userCode: userCode,
+          isActive: true,
+        },
+        _count: {
+          status: true,
+        },
+      });
+
+      const summary = {
+        annualLeave: salaryConfig?.AnnualLeave || 12,
+        approved:
+          stats.find((s) => s.status === "APPROVED")?._count.status || 0,
+        pending: stats.find((s) => s.status === "PENDING")?._count.status || 0,
+        rejected:
+          stats.find((s) => s.status === "REJECTED")?._count.status || 0,
+      };
+
+      return {
+        items: registrations,
+        summary: summary,
+      };
     } catch (error) {
       throw new HttpException(error.message, 500);
     }
   }
 
-  async listApprovals() {
+  async listApprovals(req) {
     try {
+      const { userCode } = req.user;
       const data = await this.prisma.registrationForm.findMany({
         where: {
           isActive: true,
           status: "PENDING",
         },
+        include: {
+          user: {
+            select: {
+              fullName: true,
+              email: true,
+              phone: true,
+            },
+          },
+        },
       });
-      return data;
+      const salaryConfig = await this.prisma.salaryConfig.findFirst({
+        where: { userCode: userCode },
+        select: { AnnualLeave: true },
+      });
+      const stats = await this.prisma.registrationForm.groupBy({
+        by: ["status"],
+        where: {
+          userCode: userCode,
+          isActive: true,
+        },
+        _count: {
+          status: true,
+        },
+      });
+      const summary = {
+        annualLeave: salaryConfig?.AnnualLeave || 12,
+        approved:
+          stats.find((s) => s.status === "APPROVED")?._count.status || 0,
+        pending: stats.find((s) => s.status === "PENDING")?._count.status || 0,
+        rejected:
+          stats.find((s) => s.status === "REJECTED")?._count.status || 0,
+      };
+      return {
+        items: data,
+        summary: summary,
+      };
     } catch (error) {
       throw new HttpException(error.message, 500);
     }
@@ -104,7 +172,7 @@ export class RegistrationService {
         },
       });
       if (approval) {
-        const dataApprove = await this.prisma.registrationApproval.update({
+        const dataApprove = await this.prisma.registrationApproval.updateMany({
           where: {
             registrationCode: registrationCode,
           },
@@ -169,7 +237,7 @@ export class RegistrationService {
         },
       });
       if (rejectData) {
-        const dataReject = await this.prisma.registrationApproval.update({
+        const dataReject = await this.prisma.registrationApproval.updateMany({
           where: {
             registrationCode: registrationCode,
           },

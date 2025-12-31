@@ -1,6 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:vietq_hrm/configs/apiConfig/registration.api.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({super.key});
@@ -19,20 +23,20 @@ class _RegisterFormState extends State<RegisterForm> {
   final _reasonController = TextEditingController();
 
   final List<String> _leaveTypes = [
-    "Sick Leave",
-    "Annual Leave",
-    "Medical Leave",
-    "Maternity Leave",
-    "Check In",
-    "Check Out",
-    "Late",
+    'SICK',
+    'ANNUAL',
+    'MEDICAL',
+    'MATERNITY',
+    'CHECKIN',
+    'CHECKOUT',
   ];
 
-  bool get _isLeaveType => _selectedType != null &&
-      ["Sick Leave", "Annual Leave", "Medical Leave", "Maternity Leave"]
-          .contains(_selectedType);
-  bool get _isCheckInOut => _selectedType == "Check In" || _selectedType == "Check Out";
-  bool get _isLate => _selectedType == "Late";
+  bool get _isLeaveType =>
+      _selectedType != null &&
+      ['SICK', 'ANNUAL', 'MEDICAL', 'MATERNITY'].contains(_selectedType);
+  bool get _isCheckInOut =>
+      _selectedType == "CHECKIN" || _selectedType == "CHECKOUT";
+  bool get _isLate => _selectedType == "LEAVE";
 
   Future<void> _selectDate(bool isStart) async {
     final picked = await showDatePicker(
@@ -86,7 +90,9 @@ class _RegisterFormState extends State<RegisterForm> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? Theme.of(context).appBarTheme.backgroundColor : Colors.white,
+      backgroundColor: isDark
+          ? Theme.of(context).appBarTheme.backgroundColor
+          : Colors.white,
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20.w),
         child: Form(
@@ -109,17 +115,18 @@ class _RegisterFormState extends State<RegisterForm> {
 
               // Start Date & End Date (Leave)
               if (_isLeaveType) ...[
-                _buildDateField("Start Date", _startDate, () => _selectDate(true)),
+                _buildDateField(
+                  "Start Date",
+                  _startDate,
+                  () => _selectDate(true),
+                ),
                 SizedBox(height: 16.h),
                 _buildDateField("End Date", _endDate, () => _selectDate(false)),
                 SizedBox(height: 16.h),
               ],
 
               // Time Picker (Check In / Check Out)
-              if (_isCheckInOut) ...[
-                _buildTimeField(),
-                SizedBox(height: 16.h),
-              ],
+              if (_isCheckInOut) ...[_buildTimeField(), SizedBox(height: 16.h)],
 
               // Late Hours
               if (_isLate)
@@ -147,14 +154,82 @@ class _RegisterFormState extends State<RegisterForm> {
                 height: 56.h,
                 child: ElevatedButton(
                   onPressed: () {
-
                     if (_formKey.currentState!.validate()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: const Text("Leave request submitted!"),
-                          backgroundColor: colorScheme.primaryContainer,
-                        ),
+                      final nowdate = DateTime.now();
+                      String formatTimeOfDayToISO(
+                        DateTime baseDate,
+                        TimeOfDay time,
+                      ) {
+                        final dateTime = DateTime(
+                          baseDate.year,
+                          baseDate.month,
+                          baseDate.day,
+                          time.hour,
+                          time.minute,
+                        );
+                        return dateTime
+                            .toUtc()
+                            .toIso8601String(); // Kết quả: 2025-12-31T08:30:00.000
+                      }
+
+                      print(
+                        _selectedType,
+                        // _startDate.toString(),
+                        // _endDate.toString(),
+                        // _checkTime,
+                        // _lateHoursController,
+                        // _reasonController,
                       );
+                      final dataSubmit = {};
+                      if (_selectedType == "CHECKIN") {
+                        dataSubmit.addAll({
+                          "reason": _reasonController.text,
+                          "type": _selectedType,
+                          "startDate": nowdate
+                              .toUtc()
+                              .toIso8601String(), // Sửa ở đây
+                          "endDate": nowdate
+                              .toUtc()
+                              .toIso8601String(), // Sửa ở đây
+                          "timeIn": formatTimeOfDayToISO(
+                            nowdate,
+                            _checkTime as TimeOfDay,
+                          ),
+                        });
+                      } else if (_selectedType == "CHECKOUT") {
+                        dataSubmit.addAll({
+                          "reason": _reasonController.text,
+                          "type": _selectedType,
+                          "startDate": nowdate
+                              .toUtc()
+                              .toIso8601String(), // Sửa ở đây
+                          "endDate": nowdate
+                              .toUtc()
+                              .toIso8601String(), // Sửa ở đây
+                          "timeOut": formatTimeOfDayToISO(
+                            nowdate,
+                            _isCheckInOut as TimeOfDay,
+                          ),
+                        });
+                      } else {
+                        dataSubmit.addAll({
+                          "reason": _reasonController.text,
+                          "type": _selectedType,
+                          "startDate": _startDate?.toUtc().toIso8601String(),
+                          "endDate": _endDate?.toUtc().toIso8601String(),
+                        });
+                      }
+                      RegistrationApi().createRegistration(dataSubmit).then((
+                        value,
+                      ) {
+                        context.pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text("Registration submitted!"),
+                            backgroundColor: colorScheme.primaryContainer,
+                          ),
+                        );
+                      });
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -167,7 +242,10 @@ class _RegisterFormState extends State<RegisterForm> {
                   ),
                   child: Text(
                     "Apply Leave",
-                    style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -192,25 +270,34 @@ class _RegisterFormState extends State<RegisterForm> {
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(
-                color: Theme.of(context).primaryColor,
-              ),
+              borderSide: BorderSide(color: Theme.of(context).primaryColor),
             ),
             filled: true,
             fillColor: Colors.transparent,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(
-                color: Theme.of(context).primaryColor,
-              ),
+              borderSide: BorderSide(color: Theme.of(context).primaryColor),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 16.w,
+              vertical: 16.h,
+            ),
           ),
 
-          dropdownColor: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).appBarTheme.backgroundColor : Colors.white,
-          icon: Icon(Icons.keyboard_arrow_down, color: Theme.of(context).primaryColor),
+          dropdownColor: Theme.of(context).brightness == Brightness.dark
+              ? Theme.of(context).appBarTheme.backgroundColor
+              : Colors.white,
+          icon: Icon(
+            Icons.keyboard_arrow_down,
+            color: Theme.of(context).primaryColor,
+          ),
           items: _leaveTypes
-              .map((type) => DropdownMenuItem(value: type, child: Text(type, style: textTheme.bodyMedium)))
+              .map(
+                (type) => DropdownMenuItem(
+                  value: type,
+                  child: Text(type, style: textTheme.bodyMedium),
+                ),
+              )
               .toList(),
           onChanged: (value) {
             setState(() {
@@ -250,23 +337,20 @@ class _RegisterFormState extends State<RegisterForm> {
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(
-                color: Theme.of(context).primaryColor,
-              ),
+              borderSide: BorderSide(color: Theme.of(context).primaryColor),
             ),
             hintText: hint,
-            hintStyle: TextStyle(
-              color: Colors.grey,
-            ),
+            hintStyle: TextStyle(color: Colors.grey),
             filled: true,
             fillColor: Colors.transparent,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(
-                color: Theme.of(context).primaryColor,
-              ),
+              borderSide: BorderSide(color: Theme.of(context).primaryColor),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 16.w,
+              vertical: 16.h,
+            ),
           ),
           validator: (v) => v!.isEmpty ? "This field is required" : null,
         ),
@@ -302,7 +386,11 @@ class _RegisterFormState extends State<RegisterForm> {
                   style: textTheme.bodyMedium,
                 ),
                 const Spacer(),
-                Icon(Icons.calendar_today, size: 20.sp, color: Theme.of(context).primaryColor),
+                Icon(
+                  Icons.calendar_today,
+                  size: 20.sp,
+                  color: Theme.of(context).primaryColor,
+                ),
               ],
             ),
           ),
@@ -333,11 +421,17 @@ class _RegisterFormState extends State<RegisterForm> {
             child: Row(
               children: [
                 Text(
-                  _checkTime == null ? "Select time" : _checkTime!.format(context),
-                  style: textTheme.bodyMedium
+                  _checkTime == null
+                      ? "Select time"
+                      : _checkTime!.format(context),
+                  style: textTheme.bodyMedium,
                 ),
                 const Spacer(),
-                Icon(Icons.access_time, size: 20.sp, color: Theme.of(context).primaryColor),
+                Icon(
+                  Icons.access_time,
+                  size: 20.sp,
+                  color: Theme.of(context).primaryColor,
+                ),
               ],
             ),
           ),

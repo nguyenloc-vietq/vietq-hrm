@@ -71,7 +71,7 @@ class UserModels {
 }
 
 class Company {
-  Null? address;
+  String? address;
   String? companyName;
 
   Company({this.address, this.companyName});

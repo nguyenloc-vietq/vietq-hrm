@@ -233,6 +233,7 @@ model SalaryConfig {
   /// cấu hình theo nhân viên
   userCode      String
   unitCode      String?   @unique
+  AnnualLeave   Int       @default(12)
   baseSalary    Decimal   @db.Decimal(14, 2)
   overtimeRate  Decimal   @default(1.500) @db.Decimal(6, 3)
   otNightRate   Decimal?  @db.Decimal(6, 3)
@@ -403,7 +404,7 @@ model Payslip {
 
 model RegistrationForm {
   id Int @id @default(autoincrement())
-  userCode String @unique
+  userCode String        // Bỏ @unique để 1 user có nhiều form
   registrationCode String @unique
   startDate DateTime
   endDate DateTime
@@ -415,19 +416,22 @@ model RegistrationForm {
   isActive Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user User @relation(fields: [userCode], references: [userCode])
+
+  user User @relation(fields: [userCode], references: [userCode], onDelete: Cascade)
   registrationApprovals RegistrationApproval[]
+
   @@map("tbl_registration_form")
+  @@index([userCode])   // tạo index để query theo userCode nhanh
 }
 
 model RegistrationApproval {
-  id Int @id @default(autoincrement())
-  registrationCode String @unique
-  userApproverCode String @unique
-  prevStatus RegistrationStatus
-  newStatus RegistrationStatus
-  registrationForm RegistrationForm @relation(fields: [registrationCode], references: [registrationCode])
-  userApprover User @relation(fields: [userApproverCode], references: [userCode])
+  id               Int                @id @default(autoincrement())
+  registrationCode String
+  userApproverCode String
+  prevStatus       RegistrationStatus
+  newStatus        RegistrationStatus
+  registrationForm RegistrationForm   @relation(fields: [registrationCode], references: [registrationCode])
+  userApprover     User               @relation(fields: [userApproverCode], references: [userCode])
   @@map("tbl_registration_approval")
 }
 enum RegistrationType{

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vietq_hrm/blocs/register/register_bloc.dart';
 import 'package:vietq_hrm/configs/apiConfig/permission.api.dart';
 import 'package:vietq_hrm/configs/apiConfig/registration.api.dart';
 import 'package:vietq_hrm/widgets/CustomAppbar/CustomAppBar.widget.dart';
@@ -8,59 +10,42 @@ import 'package:vietq_hrm/widgets/components/CardLeave.widget.dart';
 import 'package:vietq_hrm/widgets/components/RegistCardLeave.widget.dart';
 import 'package:vietq_hrm/widgets/components/TeamLeaveCard.widget.dart';
 
-class RegisterPage extends StatefulWidget {
+class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => RegisterBloc(RegistrationApi(), PremissionApi())
+        ..add(RegisterInitialFetch()),
+      child: const RegisterView(),
+    );
+  }
 }
 
-class _RegisterPageState extends State<RegisterPage>
-    with TickerProviderStateMixin {
-  TabController? _tabController; // Chuyển thành nullable để khởi tạo động
-  late ScrollController _scrollController;
-  final RegistrationApi _registrationApi = RegistrationApi();
-  final PremissionApi _permissionApi = PremissionApi();
+class RegisterView extends StatefulWidget {
+  const RegisterView({super.key});
 
-  List<dynamic> _items = [];
-  Map<String, dynamic> _summary = {};
-  bool _isLoading = false;
-  bool _isAdmin = false;
+  @override
+  State<RegisterView> createState() => _RegisterViewState();
+}
+
+class _RegisterViewState extends State<RegisterView>
+    with TickerProviderStateMixin {
+  TabController? _tabController;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
-    // Khởi tạo mặc định 3 tab cho User
+    // Initialize with a default length. It will be rebuilt by BlocListener.
     _tabController = TabController(length: 3, vsync: this);
     _tabController!.addListener(_handleTabSelection);
-    _initData();
   }
 
-  Future<void> _initData() async {
-    await _checkPermission();
-    await _fetchData();
-  }
-
-  Future<void> _checkPermission() async {
-    try {
-      final res = await _permissionApi.getPermissions();
-      final roles = res['data']?['roles'] as List<dynamic>? ?? [];
-
-      if (roles.contains('ADMIN')) {
-        if (mounted) {
-          setState(() {
-            _isAdmin = true;
-            // Giải phóng controller cũ và tạo mới với 4 tab cho Admin
-            _tabController?.removeListener(_handleTabSelection);
-            _tabController?.dispose();
-            _tabController = TabController(length: 4, vsync: this);
-            _tabController!.addListener(_handleTabSelection);
-          });
-        }
-      }
-    } catch (e) {
-      debugPrint("Permission error: $e");
+  void _handleTabSelection() {
+    if (_tabController!.indexIsChanging) {
+      context.read<RegisterBloc>().add(RegisterTabChanged(_tabController!.index));
     }
   }
 
@@ -72,185 +57,178 @@ class _RegisterPageState extends State<RegisterPage>
     super.dispose();
   }
 
-  void _handleTabSelection() {
-    if (_tabController != null && _tabController!.indexIsChanging) {
-      _fetchData();
-    }
+  void _rebuildTabController(int length) {
+    _tabController?.removeListener(_handleTabSelection);
+    // Keep the old index to set it in the new controller
+    final oldIndex = context.read<RegisterBloc>().state.tabIndex;
+    _tabController?.dispose();
+    setState(() {
+      _tabController = TabController(
+          length: length,
+          vsync: this,
+          initialIndex: (oldIndex < length) ? oldIndex : 0);
+      _tabController!.addListener(_handleTabSelection);
+    });
   }
 
-  Future<void> _fetchData() async {
-    if (!mounted || _tabController == null) return;
-    setState(() => _isLoading = true);
-
-    try {
-      if (_tabController!.index == 3 && _isAdmin) {
-        // API list-approvals trả về: { "data": [...] }
-        final res = await _registrationApi.listApprovals();
-
-        setState(() {
-          // Lấy trực tiếp từ res['data'] vì nó là một List
-          _items = res['data']['items'] is List ? res['data']['items'] : [];
-          _summary = res['data']['summary'] ?? {}; // Team leave thường không hiển thị card thống kê cá nhân
-          print(_summary);
-        });
-      } else {
-        // API listRegistrations trả về: { "data": { "items": [...], "summary": {...} } }
-        String? status;
-        if (_tabController!.index == 1) status = "APPROVED";
-        if (_tabController!.index == 2) status = "REJECTED";
-
-        final res = await _registrationApi.listRegistrations(status: status);
-        final responseData = res['data'];
-
-        setState(() {
-          _items = responseData['items'] ?? [];
-          _summary = responseData['summary'] ?? {};
-        });
-      }
-    } catch (e) {
-      debugPrint("Fetch error: $e");
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-  // Hàm xử lý chung cho Approve và Reject
-  Future<void> _handleApprove(String code) async {
-    setState(() => _isLoading = true);
-    try {
-      // Giả sử API của bạn có method updateStatus(id, action)
-      // action có thể là 'APPROVED' hoặc 'REJECTED'
-      final response = await _registrationApi.approveRegistration({
-        "registrationCode": code,
-        "status": "APPROVED"
-      });
-
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: $e")),
-      );
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-  Future<void> _handleReject(String code) async {
-    setState(() => _isLoading = true);
-    try {
-      // Giả sử API của bạn có method updateStatus(id, action)
-      // action có thể là 'APPROVED' hoặc 'REJECTED'
-      final response = await _registrationApi.rejectRegistration({
-        "registrationCode": code,
-        "status": "REJECTED"
-      });
-
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: $e")),
-      );
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: "Register Leaves",
-        actions: [
-          AppBarAction(
-            icon: "assets/icons/add-square.svg",
-            action: () => context.push("/register/register-form"),
-          ),
-        ],
-      ),
-      backgroundColor: isDarkMode
-          ? Theme.of(context).appBarTheme.backgroundColor
-          : Colors.white,
-      body: RefreshIndicator(
-        onRefresh: _fetchData,
-        child: NestedScrollView(
-          controller: _scrollController,
-          headerSliverBuilder: (context, innerBoxIsScrolled) {
-            return [
-              SliverToBoxAdapter(
-                child: RegistCardLeaveWidget(summary: _summary),
-              ),
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: _SliverAppBarDelegate(
-                  Container(
-                    color: isDarkMode
-                        ? Theme.of(context).appBarTheme.backgroundColor
-                        : Colors.white,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: 8.h,
+    return BlocListener<RegisterBloc, RegisterState>(
+      listener: (context, state) {
+        final requiredTabs = state.isAdmin ? 4 : 3;
+        if (_tabController?.length != requiredTabs) {
+          _rebuildTabController(requiredTabs);
+        }
+
+        if (state.status == RegisterStatus.actionFailure) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(content: Text("Error: ${state.errorMessage}")),
+            );
+        }
+        if (state.status == RegisterStatus.actionSuccess) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              const SnackBar(content: Text("Action successful!")),
+            );
+        }
+      },
+      child: Scaffold(
+        appBar: CustomAppBar(
+          title: "Register Leaves",
+          actions: [
+            AppBarAction(
+              icon: "assets/icons/add-square.svg",
+              action: () {
+                context.push("/register/register-form").then((_) {
+                  // After returning from the form, refresh the list to show any new entries.
+                  context.read<RegisterBloc>().add(RegisterRefreshed());
+                });
+              },
+            ),
+          ],
+        ),
+        backgroundColor: isDarkMode
+            ? Theme.of(context).appBarTheme.backgroundColor
+            : Colors.white,
+        body: BlocBuilder<RegisterBloc, RegisterState>(
+          builder: (context, state) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                context.read<RegisterBloc>().add(RegisterRefreshed());
+              },
+              child: NestedScrollView(
+                controller: _scrollController,
+                headerSliverBuilder: (context, innerBoxIsScrolled) {
+                  return [
+                    SliverToBoxAdapter(
+                      child: RegistCardLeaveWidget(summary: state.summary),
                     ),
-                    child: Container(
-                      height: 48.h,
-                      decoration: BoxDecoration(
-                        color: isDarkMode
-                            ? Colors.white10
-                            : const Color(0xFFF4F5F9),
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      child: TabBar(
-                        controller: _tabController,
-                        indicatorSize: TabBarIndicatorSize.tab,
-                        isScrollable: false, // Để các Tab tự động giãn đều
-                        indicator: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
-                          borderRadius: BorderRadius.circular(10.r),
+                    SliverPersistentHeader(
+                      pinned: true,
+                      delegate: _SliverAppBarDelegate(
+                        Container(
+                          color: isDarkMode
+                              ? Theme.of(context).appBarTheme.backgroundColor
+                              : Colors.white,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20.w,
+                            vertical: 8.h,
+                          ),
+                          child: Container(
+                            height: 48.h,
+                            decoration: BoxDecoration(
+                              color: isDarkMode
+                                  ? Colors.white10
+                                  : const Color(0xFFF4F5F9),
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            child: TabBar(
+                              controller: _tabController,
+                              indicatorSize: TabBarIndicatorSize.tab,
+                              isScrollable: false,
+                              indicator: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary,
+                                borderRadius: BorderRadius.circular(10.r),
+                              ),
+                              dividerColor: Colors.transparent,
+                              labelColor: Colors.white,
+                              unselectedLabelColor: isDarkMode
+                                  ? Colors.white70
+                                  : Colors.black,
+                              tabs: [
+                                const Tab(text: "All"),
+                                const Tab(text: "Approved"),
+                                const Tab(text: "Rejected"),
+                                if (state.isAdmin) const Tab(text: "Team"),
+                              ],
+                            ),
+                          ),
                         ),
-                        dividerColor: Colors.transparent,
-                        labelColor: Colors.white,
-                        unselectedLabelColor: isDarkMode
-                            ? Colors.white70
-                            : Colors.black,
-                        tabs: [
-                          const Tab(text: "All"),
-                          const Tab(text: "Approved"),
-                          const Tab(text: "Rejected"),
-                          if (_isAdmin) const Tab(text: "Team"),
-                        ],
                       ),
                     ),
-                  ),
+                  ];
+                },
+                body: TabBarView(
+                  controller: _tabController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: List.generate(state.isAdmin ? 4 : 3, (index) {
+                     return _buildListTab(context, state,
+                        isTeamLeave: state.isAdmin && index == 3);
+                  })
                 ),
               ),
-            ];
+            );
           },
-          body: TabBarView(
-            controller: _tabController,
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              _buildListTab(false), // All
-              _buildListTab(false), // Approved
-              _buildListTab(false), // Rejected
-              if (_isAdmin) _buildListTab(true), // Team Leave
-            ],
-          ),
         ),
       ),
     );
   }
 
-  Widget _buildListTab(bool isTeamLeave) {
-    if (_isLoading) return const Center(child: CircularProgressIndicator());
-    if (_items.isEmpty) return const Center(child: Text("No records found"));
+  Widget _buildListTab(BuildContext context, RegisterState state,
+      {required bool isTeamLeave}) {
+    final isLoading = state.status == RegisterStatus.loading ||
+        state.status == RegisterStatus.actionInProgress;
 
-    return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-      physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: _items.length,
-      itemBuilder: (ctx, i) {
-        final item = _items[i];
-        return isTeamLeave
-            ? TeamLeaveWidget(data: item, onApprove: (code) => _handleApprove(code),
-                      onReject: (code) => _handleReject(code),)
-            : CardLeaveWidget(data: item);
-      },
+    if (isLoading && state.items.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (state.status == RegisterStatus.failure && state.items.isEmpty) {
+      return Center(child: Text("Error: ${state.errorMessage}"));
+    }
+    if (state.items.isEmpty) {
+      return const Center(child: Text("No records found"));
+    }
+
+    return Stack(
+      children: [
+        ListView.builder(
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+          physics: const AlwaysScrollableScrollPhysics(),
+          itemCount: state.items.length,
+          itemBuilder: (ctx, i) {
+            final item = state.items[i];
+            return isTeamLeave
+                ? TeamLeaveWidget(
+                    data: item,
+                    onApprove: (code) =>
+                        context.read<RegisterBloc>().add(RegisterApproved(code)),
+                    onReject: (code) =>
+                        context.read<RegisterBloc>().add(RegisterRejected(code)),
+                  )
+                : CardLeaveWidget(data: item);
+          },
+        ),
+        if (isLoading)
+          Container(
+            color: Colors.black.withOpacity(0.1),
+            child: const Center(child: CircularProgressIndicator()),
+          ),
+      ],
     );
   }
 }
@@ -265,5 +243,5 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(context, offset, overlaps) => _tabBar;
   @override
-  bool shouldRebuild(oldDelegate) => true; // Cho phép rebuild khi đổi Controller
+  bool shouldRebuild(oldDelegate) => true;
 }

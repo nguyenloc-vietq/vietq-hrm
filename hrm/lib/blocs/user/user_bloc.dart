@@ -47,8 +47,14 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   Future<void> _updateAvatarEvent(UpdateAvatarEvent event, Emitter<UserState> emit) async {
     emit(UserLoading());
     try {
-      final data = await _userApi.updateAvatar(event.data);
-      _user?.avatar = data['fileName'];
+      // First, await the avatar upload process.
+      await _userApi.updateAvatar(event.data);
+
+      // After a successful upload, reload the entire user profile from the server.
+      // This is the most reliable way to get the correct new avatar URL and ensure
+      // the UI is consistent with the backend state.
+      final userDataProfile = await _userApi.getProfile();
+      _user = userDataProfile;
       emit(UserLoaded(user: _user as UserModels));
     } catch (e) {
       print(e);

@@ -60,4 +60,23 @@ export class ShiftService {
       throw new HttpException(error.message, 500);
     }
   }
+
+  async getShiftByCode(shiftCode: string) {
+    try {
+      const shift = await this.prisma.shift.findUnique({
+        where: {
+          shiftCode,
+          isActive: "Y",
+        },
+      });
+
+      if (!shift) {
+        throw new HttpException("Shift not found", 404);
+      }
+
+      return shift;
+    } catch (error) {
+      throw new HttpException(error.message, error.status || 500);
+    }
+  }
 }

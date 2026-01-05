@@ -39,6 +39,17 @@ export class ShiftController {
       "get list shift success",
     );
   }
+
+  @Get(":shiftCode")
+  async getShiftByCode(
+    @Param("shiftCode") shiftCode: string,
+  ): Promise<ResponseDataSuccess<object>> {
+    return new ResponseDataSuccess(
+      await this.shiftService.getShiftByCode(shiftCode),
+      200,
+      "get shift success",
+    );
+  }
   //edit shift
   @Put("update")
   @PermissionRequired("UPDATE_SHIFT")

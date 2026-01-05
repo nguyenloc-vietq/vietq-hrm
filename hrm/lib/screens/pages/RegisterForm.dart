@@ -208,7 +208,7 @@ class _RegisterFormState extends State<RegisterForm> {
                               .toIso8601String(), // Sửa ở đây
                           "timeOut": formatTimeOfDayToISO(
                             nowdate,
-                            _isCheckInOut as TimeOfDay,
+                            _checkTime as TimeOfDay,
                           ),
                         });
                       } else {

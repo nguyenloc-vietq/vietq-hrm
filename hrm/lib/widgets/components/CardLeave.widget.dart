@@ -109,11 +109,7 @@ class CardLeaveWidget extends StatelessWidget {
                 "Reason",
                 data['reason'] ?? "No reason",
               ),
-              _buildInfoColumn(
-                context,
-                "Days",
-                "${data['totalDays'] ?? '0'} Days",
-              ),
+
               _buildInfoColumn(
                 context,
                 "Type",

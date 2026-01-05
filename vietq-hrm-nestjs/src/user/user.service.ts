@@ -267,9 +267,6 @@ export class UserService {
   async listUser(@Req() req: any) {
     try {
       const listUser = await this.prisma.user.findMany({
-        where: {
-          NOT: { userCode: req.user.userCode },
-        },
         include: {
           userProfessionals: {
             select: {

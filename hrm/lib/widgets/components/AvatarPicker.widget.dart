@@ -37,6 +37,49 @@ class _AvatarPickerState extends State<AvatarPicker> {
   Widget build(BuildContext context) {
     final avatarUrl = widget.avatarUrl ?? '';
 
+    Widget avatarChild;
+    if (_imageFile != null) {
+      avatarChild = Image.file(
+        _imageFile!,
+        fit: BoxFit.cover,
+        width: 100.w,
+        height: 100.h,
+      );
+    } else if (avatarUrl.isNotEmpty) {
+      avatarChild = Image.network(
+        '${dotenv.env['IMAGE_ENDPOINT']}$avatarUrl',
+        fit: BoxFit.cover,
+        width: 100.w,
+        height: 100.h,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Center(
+            child: CircularProgressIndicator(
+              value: loadingProgress.expectedTotalBytes != null
+                  ? loadingProgress.cumulativeBytesLoaded /
+                      loadingProgress.expectedTotalBytes!
+                  : null,
+            ),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return Image.asset(
+            'assets/default_avatar.png', // Fallback image
+            fit: BoxFit.cover,
+            width: 100.w,
+            height: 100.h,
+          );
+        },
+      );
+    } else {
+      avatarChild = Image.asset(
+        'assets/default_avatar.png', // Default image
+        fit: BoxFit.cover,
+        width: 100.w,
+        height: 100.h,
+      );
+    }
+
     return Stack(
       alignment: Alignment.bottomRight,
       clipBehavior: Clip.none,
@@ -44,18 +87,18 @@ class _AvatarPickerState extends State<AvatarPicker> {
         Container(
           width: 100,
           height: 100,
-          padding: const EdgeInsets.all(5).r,
+          padding: EdgeInsets.all(5.r),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: Theme.of(context).colorScheme.primary, width: 5.r),
+            border: Border.all(
+                color: Theme.of(context).colorScheme.primary, width: 5.r),
           ),
           child: CircleAvatar(
             radius: 50.r,
-            backgroundImage: _imageFile != null
-                ? FileImage(_imageFile!)
-                : (avatarUrl.isNotEmpty
-                ? NetworkImage('${dotenv.env['IMAGE_ENDPOINT']}$avatarUrl') as ImageProvider
-                : const AssetImage('assets/default_avatar.png')),
+            backgroundColor: Colors.transparent,
+            child: ClipOval(
+              child: avatarChild,
+            ),
           ),
         ),
         Positioned(
@@ -64,11 +107,11 @@ class _AvatarPickerState extends State<AvatarPicker> {
           child: GestureDetector(
             onTap: _pickImage,
             child: Container(
-              padding: const EdgeInsets.all(6).r,
+              padding: EdgeInsets.all(6.r),
               decoration: BoxDecoration(
                 color: Colors.blue,
                 shape: BoxShape.rectangle,
-                borderRadius: const BorderRadius.all(Radius.circular(10)).r,
+                borderRadius: BorderRadius.all(Radius.circular(10.r)),
                 border: Border.all(color: Colors.white, width: 2.r),
               ),
               child: Icon(

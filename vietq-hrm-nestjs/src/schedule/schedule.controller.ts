@@ -30,11 +30,12 @@ export class ScheduleController {
       }),
     )
     dataSchedule: CreateScheduleDto,
+    @Req() req: Request,
   ): Promise<ResponseDataSuccess<object>> {
     return new ResponseDataSuccess(
-      await this.scheduleService.create(dataSchedule),
+      await this.scheduleService.create(dataSchedule, req),
       200,
-      "",
+      "create schedule success",
     );
   }
 
@@ -106,6 +107,18 @@ export class ScheduleController {
       await this.scheduleService.getPercentSchedules(req),
       200,
       "get percent schedules success",
+    );
+  }
+
+  @Get("admin/list-schedules")
+  // @PermissionRequired("READ_SCHEDULE")
+  async getSchedulesForAdmin(
+    @Req() req: Request,
+  ): Promise<ResponseDataSuccess<any>> {
+    return new ResponseDataSuccess(
+      await this.scheduleService.getSchedulesForAdmin(req),
+      200,
+      "get schedules for admin success",
     );
   }
 }

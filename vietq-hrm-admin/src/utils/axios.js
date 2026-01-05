@@ -196,4 +196,16 @@ export const endpoints = {
   notification: {
     adminListNotification: '/api/notification/admin/list-notifications',
   },
+  registration: {
+    listRegistrations: '/api/registration/list-registrations',
+    approveRegistration: '/api/registration/approve',
+    rejectRegistration: '/api/registration/reject',
+  },
+  schedule: {
+    adminListSchedules: '/api/schedule/admin/list-schedules',
+    create: '/api/schedule/create',
+  },
+  shift: {
+    getListShift: '/api/shift/get-list-shift',
+  },
 };

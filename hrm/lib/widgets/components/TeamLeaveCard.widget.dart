@@ -45,7 +45,8 @@ class TeamLeaveWidget extends StatelessWidget {
 
     // Đảm bảo lấy đúng các key từ response JSON của bạn
     final status = data['status'] ?? 'PENDING';
-    final userCode = data['user']['fullName'] ?? "Unknown";
+    final user = data['user'] as Map<String, dynamic>?;
+    final userCode = user?['fullName'] as String? ?? "Unknown";
     final registrationCode = data['registrationCode'] ?? "N/A";
     final statusColor = _getStatusColor(status);
 

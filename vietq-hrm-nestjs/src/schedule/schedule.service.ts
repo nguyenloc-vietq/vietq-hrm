@@ -14,9 +14,30 @@ export class ScheduleService {
     private codeGen: CodeGeneratorService,
   ) {}
 
-  async create(dataSchedule: CreateScheduleDto) {
+  async create(dataSchedule: CreateScheduleDto, req?: any) {
     try {
-      const { userCode } = dataSchedule;
+      const { userCode, action } = dataSchedule;
+
+      // Nếu action = "all", lấy tất cả user active trong company
+      let userCodes: string[] = [];
+      if (action === "all") {
+        if (!req || !req.user || !req.user.companyCode) {
+          throw new HttpException("Company code is required", 400);
+        }
+        const users = await this.prisma.user.findMany({
+          where: {
+            companyCode: req.user.companyCode,
+            isActive: "Y",
+          },
+          select: { userCode: true },
+        });
+        userCodes = users.map((user) => user.userCode);
+      } else {
+        if (!userCode) {
+          throw new HttpException("User code is required", 400);
+        }
+        userCodes = [userCode];
+      }
 
       const lastRecord = await this.prisma.employeeSchedule.findFirst({
         orderBy: { scheduleCode: "desc" },
@@ -27,11 +48,6 @@ export class ScheduleService {
         ? parseInt(lastRecord.scheduleCode.replace("SDC", ""), 10)
         : 0;
 
-      //Tạo mảng code mới theo số lượng workOn
-      const scheduleCodes = dataSchedule.workOn.map(
-        (_, idx) => `SDC${String(lastNumber + idx + 1).padStart(6, "0")}`,
-      );
-
       const payrollCode = await this.prisma.payroll.findFirst({
         where: {
           startDate: { lte: dataSchedule.workOn[0] },
@@ -40,21 +56,44 @@ export class ScheduleService {
         },
         select: { payrollCode: true },
       });
-      //huẩn bị dữ liệu insert
-      const newSchedule = dataSchedule.workOn.map((workOnDate, idx) => ({
-        ...dataSchedule,
-        scheduleCode: scheduleCodes[idx],
-        userCode,
-        payrollCode: payrollCode?.payrollCode,
-        workOn: new Date(workOnDate),
-      }));
 
-      const result = await this.prisma.employeeSchedule.createMany({
-        data: newSchedule,
+      // Tạo schedule cho tất cả user
+      let codeCounter = lastNumber;
+      const allSchedules: Array<{
+        scheduleCode: string;
+        userCode: string;
+        shiftCode: string;
+        payrollCode: string | undefined;
+        workOn: Date;
+      }> = [];
+
+      for (const userCodeItem of userCodes) {
+        for (const workOnDate of dataSchedule.workOn) {
+          codeCounter++;
+          allSchedules.push({
+            scheduleCode: `SDC${String(codeCounter).padStart(6, "0")}`,
+            userCode: userCodeItem,
+            shiftCode: dataSchedule.shiftCode,
+            payrollCode: payrollCode?.payrollCode,
+            workOn: new Date(workOnDate),
+          });
+        }
+      }
+
+      await this.prisma.employeeSchedule.createMany({
+        data: allSchedules,
       });
-      return { dataSchedule: [...newSchedule] };
+
+      return {
+        totalUsers: userCodes.length,
+        totalSchedules: allSchedules.length,
+        dataSchedule: allSchedules,
+      };
     } catch (e) {
-      throw new HttpException("Create schedule failed", 500);
+      throw new HttpException(
+        e.message || "Create schedule failed",
+        e.status || 500,
+      );
     }
   }
   async getSchedulesInMonth(@Req() req) {
@@ -253,6 +292,117 @@ export class ScheduleService {
             : 0,
         totalDays: listSchedulesInMonth.length,
         totalAttden: ListAttdenRecordInSchedule.length,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
+  async getSchedulesForAdmin(req: any) {
+    try {
+      const { startDate, endDate } = req.query;
+
+      let startOfWeek: Date;
+      let endOfWeek: Date;
+
+      // Nếu có startDate và endDate
+      if (startDate && endDate) {
+        const start = dayjs(startDate);
+        const end = dayjs(endDate);
+
+        // Nếu startDate và endDate là cùng một ngày
+        if (start.isSame(end, "day")) {
+          startOfWeek = start.startOf("day").toDate();
+          endOfWeek = start.endOf("day").toDate();
+        } else {
+          // Nếu khác ngày thì lấy khoảng từ startDate đến endDate
+          startOfWeek = start.startOf("day").toDate();
+          endOfWeek = end.endOf("day").toDate();
+        }
+      } else {
+        // Nếu không có startDate và endDate, lấy tuần hiện tại (từ thứ 2 đến chủ nhật)
+        const today = dayjs();
+        const dayOfWeek = today.day(); // 0 = Chủ nhật, 1 = Thứ 2, ..., 6 = Thứ 7
+
+        // Tính số ngày cần lùi về thứ 2
+        const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+
+        // Thứ 2 của tuần hiện tại
+        startOfWeek = today
+          .subtract(daysToMonday, "day")
+          .startOf("day")
+          .toDate();
+
+        // Chủ nhật của tuần hiện tại
+        endOfWeek = today
+          .add(7 - dayOfWeek, "day")
+          .endOf("day")
+          .toDate();
+      }
+
+      const schedules = await this.prisma.employeeSchedule.findMany({
+        where: {
+          isActive: "Y",
+          workOn: {
+            gte: startOfWeek,
+            lte: endOfWeek,
+          },
+        },
+        include: {
+          shift: {
+            select: {
+              shiftCode: true,
+              name: true,
+              startTime: true,
+              endTime: true,
+            },
+          },
+          user: {
+            select: {
+              userCode: true,
+              fullName: true,
+              email: true,
+              avatar: true,
+            },
+          },
+        },
+        orderBy: [
+          {
+            workOn: "asc",
+          },
+          {
+            userCode: "asc",
+          },
+        ],
+      });
+
+      // Group schedules by user
+      const groupedByUser = schedules.reduce((acc, schedule) => {
+        const userCode = schedule.userCode;
+        if (!acc[userCode]) {
+          acc[userCode] = {
+            user: schedule.user,
+            schedules: [],
+          };
+        }
+        acc[userCode].schedules.push({
+          scheduleCode: schedule.scheduleCode,
+          workOn: schedule.workOn,
+          status: schedule.status,
+          shiftCode: schedule.shiftCode,
+          shift: schedule.shift,
+          payrollCode: schedule.payrollCode,
+        });
+        return acc;
+      }, {});
+
+      const result = Object.values(groupedByUser);
+
+      return {
+        startDate: startOfWeek,
+        endDate: endOfWeek,
+        total: result.length,
+        data: result,
       };
     } catch (error) {
       throw new HttpException(error.message, 500);

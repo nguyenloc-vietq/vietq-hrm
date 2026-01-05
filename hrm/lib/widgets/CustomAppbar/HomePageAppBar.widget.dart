@@ -31,52 +31,91 @@ class HomePageAppBar extends StatelessWidget implements PreferredSizeWidget {
         color: isDarkMode ? Theme.of(context).appBarTheme.backgroundColor : Colors.white,
         padding: const EdgeInsets.only(top: 60, left: 16, right: 16).r,
         child: Row(
-          spacing: 10.w,
           crossAxisAlignment: CrossAxisAlignment.center,
-
           children: [
             Container(
               width: 70.w,
               height: 70.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Theme.of(context).colorScheme.primary, width: 3.r),
+                border: Border.all(
+                    color: Theme.of(context).colorScheme.primary, width: 3.r),
               ),
               child: CircleAvatar(
                 radius: 50.r,
-                backgroundImage: NetworkImage(avatar),
+                backgroundColor: Colors.transparent,
+                child: ClipOval(
+                  child: Image.network(
+                    avatar,
+                    fit: BoxFit.cover,
+                    width: 100.r,
+                    height: 100.r,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.1),
+                        child: Center(
+                          child: Text(
+                            name.isNotEmpty ? name[0].toUpperCase() : 'U',
+                            style: TextStyle(
+                                fontSize: 40.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.primary),
+                          ),
+                        ),
+                      );
+                    },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
+            SizedBox(width: 10.w),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(name, style: textTheme.headlineMedium),
-                Text(position, style: textTheme.headlineSmall?.copyWith(color: Colors.grey)),
+                Text(position,
+                    style: textTheme.headlineSmall?.copyWith(color: Colors.grey)),
               ],
             ),
-            Spacer(),
+            const Spacer(),
             Container(
-              width: 50.w,
-              height: 50.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.grey, width: 1.r),
-              ),
-              child: SizedBox(
-                width: 30.w,
-                height: 30.h,
-                child: IconButton(onPressed: () {
-                  context.go("/notification");
-                }, icon: SvgPicture.asset(
-                  'assets/icons/notifications.svg',
-                  colorFilter: ColorFilter.mode(
-                    isDarkMode ? Colors.white : Colors.black,
-                    BlendMode.srcIn,
+                width: 50.w,
+                height: 50.h,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.grey, width: 1.r),
+                ),
+                child: SizedBox(
+                  width: 30.w,
+                  height: 30.h,
+                  child: IconButton(
+                    onPressed: () {
+                      context.go("/notification");
+                    },
+                    icon: SvgPicture.asset(
+                      'assets/icons/notifications.svg',
+                      colorFilter: ColorFilter.mode(
+                        isDarkMode ? Colors.white : Colors.black,
+                        BlendMode.srcIn,
+                      ),
+                    ),
                   ),
-                ),),
-              )
-            ),
+                )),
           ],
         ),
       ),

@@ -25,6 +25,7 @@ class _PayrollpageState extends State<Payrollpage> {
         context.read<PayslipBloc>().add(const FetchPayslipEvent());
       },
       child: Scaffold(
+        backgroundColor: isDarkMode ? Theme.of(context).appBarTheme.backgroundColor : Colors.white,
         body: BlocBuilder<PayslipBloc, PayslipState>(
           builder: (context, state) {
             if (state is PayslipLoading) {

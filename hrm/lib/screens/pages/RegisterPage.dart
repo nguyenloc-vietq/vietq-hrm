@@ -104,7 +104,7 @@ class _RegisterViewState extends State<RegisterView>
             AppBarAction(
               icon: "assets/icons/add-square.svg",
               action: () {
-                context.push("/register/register-form").then((_) {
+                context.push("/register/register-form", extra: "Register Form").then((_) {
                   // After returning from the form, refresh the list to show any new entries.
                   context.read<RegisterBloc>().add(RegisterRefreshed());
                 });

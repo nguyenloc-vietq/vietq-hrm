@@ -163,6 +163,7 @@ export const endpoints = {
   salary: {
     getListSalary: '/api/salary/salary-list-user',
     createSalary: '/api/salary/create',
+    getPayslipList: '/api/salary/payslip-list',
   },
   user: {
     profile: '/api/user/profile',
@@ -182,7 +183,7 @@ export const endpoints = {
   payroll: {
     getListPayroll: 'api/payroll/list-payroll',
     createPayroll: '/api/payroll/create',
-    getPayrollConfig: '/api/payroll/list-payslips',
+    getPayrollConfig: '/api/payroll/get-config',
   },
 
   attendance: {
@@ -207,5 +208,6 @@ export const endpoints = {
   },
   shift: {
     getListShift: '/api/shift/get-list-shift',
+    createShift: '/api/shift/create',
   },
 };

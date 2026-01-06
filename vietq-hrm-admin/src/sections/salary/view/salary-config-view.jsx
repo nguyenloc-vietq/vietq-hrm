@@ -17,6 +17,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { useSetState } from 'src/hooks/use-set-state';
 
 import { varAlpha } from 'src/theme/styles';
+import UserApi from 'src/services/api/user.api';
 import SalaryApi from 'src/services/api/salary.api';
 import { _roles, ACTIVE_STATUS_OPTION } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
@@ -71,11 +72,22 @@ export function SalaryConfigVew() {
   const isCreate = useBoolean();
   const confirm = useBoolean();
   const isLoading = useBoolean();
-  const [listUser, setListUser] = useState([]);
+  const [listAllUsers, setListAllUsers] = useState([]);
   const [tableData, setTableData] = useState([]);
   useEffect(() => {
-    fetchListSalaryUser(); // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchListSalaryUser();
+    fetchListAllUsers(); // Thêm dòng này
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const fetchListAllUsers = async () => {
+    try {
+      const users = await UserApi.getListUser();
+      setListAllUsers(users);
+    } catch (error) {
+      console.error('Failed to fetch all users:', error);
+    }
+  };
 
   const fetchListSalaryUser = async () => {
     try {
@@ -320,7 +332,7 @@ export function SalaryConfigVew() {
       </DashboardContent>
 
       <SalaryCreateForm
-        currentUser={dataFiltered}
+        userOptions={listAllUsers}
         open={isCreate.value}
         onClose={isCreate.onFalse}
         onUpdateRow={onUpdateRow}

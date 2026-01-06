@@ -10,6 +10,16 @@ class ShiftApi {
       throw error;
     }
   }
+
+  static async createShift(body) {
+    try {
+      const res = await axiosInstance.post(endpoints.shift.createShift, body);
+      return res.data;
+    } catch (error) {
+      console.log('Create Shift Error | ', error);
+      throw error;
+    }
+  }
 }
 
 export default ShiftApi;

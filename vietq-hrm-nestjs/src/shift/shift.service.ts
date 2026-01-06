@@ -2,15 +2,30 @@ import { HttpException, Injectable } from "@nestjs/common";
 import { CreateShiftDto } from "./dto/create-shift.dto";
 import { UpdateShiftDto } from "./dto/update-shift.dto";
 import { DatabaseService } from "../database/database.service";
+import { CodeGeneratorService } from "src/code-generator/code-generator.service";
 
 @Injectable()
 export class ShiftService {
-  constructor(private readonly prisma: DatabaseService) {}
+  constructor(
+    private readonly prisma: DatabaseService,
+    private codeGen: CodeGeneratorService,
+  ) {}
 
   async create(shift: CreateShiftDto) {
     try {
+      const shiftCode = await this.codeGen.generateCode(
+        this.prisma.shift,
+        "SC",
+        {
+          field: "shiftCode",
+        },
+      );
+      console.log("[==================>", shiftCode);
       const newDataShift = await this.prisma.shift.create({
-        data: shift,
+        data: {
+          ...shift,
+          shiftCode,
+        },
       });
       return { ...newDataShift };
     } catch (error) {

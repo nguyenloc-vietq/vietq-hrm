@@ -320,24 +320,17 @@ export class ScheduleService {
           endOfWeek = end.endOf("day").toDate();
         }
       } else {
-        // Nếu không có startDate và endDate, lấy tuần hiện tại (từ thứ 2 đến chủ nhật)
         const today = dayjs();
-        const dayOfWeek = today.day(); // 0 = Chủ nhật, 1 = Thứ 2, ..., 6 = Thứ 7
 
-        // Tính số ngày cần lùi về thứ 2
-        const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+        const dayOfWeek = today.day();
 
-        // Thứ 2 của tuần hiện tại
-        startOfWeek = today
-          .subtract(daysToMonday, "day")
-          .startOf("day")
-          .toDate();
+        const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
 
-        // Chủ nhật của tuần hiện tại
-        endOfWeek = today
-          .add(7 - dayOfWeek, "day")
-          .endOf("day")
-          .toDate();
+        startOfWeek = today.add(diffToMonday, "day").startOf("day").toDate();
+
+        endOfWeek = dayjs(startOfWeek).add(6, "day").endOf("day").toDate();
+
+        console.log("[==================>", startOfWeek, endOfWeek);
       }
 
       const schedules = await this.prisma.employeeSchedule.findMany({

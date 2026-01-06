@@ -1,3 +1,4 @@
+import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
@@ -19,13 +20,21 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow, onUpdateRow }) {
+export function PayrollReportTableRow({ row, selected, onSelectRow, onDeleteRow }) {
   const confirm = useBoolean();
-
   const popover = usePopover();
 
-  const quickEdit = useBoolean();
-  console.log(`[===============> ROW | `, row);
+  // Format dates
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleDateString('vi-VN');
+  };
+
+  // Get avatar URL with fallback
+  const avatarUrl = row.user?.avatar
+    ? CONFIG.site.imageUrl + row.user.avatar
+    : '/assets/images/avatars/avatar_default.jpg';
+
   return (
     <>
       <TableRow hover selected={selected} aria-checked={selected} tabIndex={-1}>
@@ -33,35 +42,68 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
           <Checkbox id={row.id} checked={selected} onClick={onSelectRow} />
         </TableCell>
 
-        <TableCell>
-          <Stack spacing={2} direction="row" alignItems="center">
-            <Avatar alt={row.user.fullName} src={CONFIG.site.imageUrl + row.user.avatar} />
-          </Stack>
+        {/* Avatar */}
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>
+          <Avatar alt={row.user?.fullName} src={avatarUrl} sx={{ width: 48, height: 48 }} />
         </TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.user.fullName}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.user.userCode}</TableCell>
+        {/* Full Name */}
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.user?.fullName || '-'}</TableCell>
+
+        {/* User Code */}
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.user?.userCode || '-'}</TableCell>
+
+        {/* Payroll Code */}
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.payroll?.payrollCode || '-'}</TableCell>
+
+        {/* Payroll Name */}
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.payroll?.payrollName || '-'}</TableCell>
+
+        {/* Payslip File */}
         <TableCell sx={{ whiteSpace: 'nowrap' }}>
-          {Number(row.baseSalary).toLocaleString()} VND
-        </TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.overtimeRate}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.otNightRate}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.nightRate}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.lateRate}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.earlyRate}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.effectiveDate}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>
-          {row.expireDate === '' || row.expireDate === null ? '-' : row.expireDate}
+          {row.payslipFile ? (
+            <Link
+              href={`${CONFIG.site.imageUrl}${row.payslipFile}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 0.5 }}
+            >
+              <Iconify icon="eva:download-fill" />
+              Download
+            </Link>
+          ) : (
+            '-'
+          )}
         </TableCell>
 
+        {/* Start Date */}
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{formatDate(row.payroll?.startDate)}</TableCell>
+
+        {/* End Date */}
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{formatDate(row.payroll?.endDate)}</TableCell>
+
+        {/* Payment Date */}
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{formatDate(row.payroll?.paymentDate)}</TableCell>
+
+        {/* Actions */}
         <TableCell>
           <Stack direction="row" alignItems="center">
-            <Tooltip title="Quick Edit" placement="top" arrow>
+            <Tooltip title="Download" placement="top" arrow>
               <IconButton
-                color={quickEdit.value ? 'inherit' : 'default'}
-                onClick={quickEdit.onTrue}
+                color="default"
+                onClick={() => {
+                  if (row.payslipFile) {
+                    window.open(`${CONFIG.site.imageUrl}${row.payslipFile}`, '_blank');
+                  }
+                }}
               >
-                <Iconify icon="solar:pen-bold" />
+                <Iconify icon="eva:download-fill" />
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title="Delete" placement="top" arrow>
+              <IconButton color="primary" onClick={confirm.onTrue}>
+                <Iconify icon="solar:trash-bin-trash-bold" />
               </IconButton>
             </Tooltip>
 
@@ -71,8 +113,6 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
           </Stack>
         </TableCell>
       </TableRow>
-
-      {/* <SalaryCreateForm currentUser={row} open={quickEdit.value} onClose={quickEdit.onFalse} onUpdateRow={onUpdateRow} /> */}
 
       <CustomPopover
         open={popover.open}
@@ -91,16 +131,6 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
           </MenuItem>
-
-          {/* <MenuItem
-            onClick={() => {
-              onEditRow();
-              popover.onClose();
-            }}
-          >
-            <Iconify icon="solar:pen-bold" />
-            Edit
-          </MenuItem> */}
         </MenuList>
       </CustomPopover>
 
@@ -108,7 +138,7 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
         open={confirm.value}
         onClose={confirm.onFalse}
         title="Delete"
-        content="Are you sure want to delete?"
+        content="Are you sure want to delete this payslip?"
         action={
           <Button variant="contained" color="error" onClick={onDeleteRow}>
             Delete

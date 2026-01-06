@@ -66,7 +66,8 @@ export function PayrollConfigForm({ currentUser }) {
   const fetchDatapayrollConfig = useCallback(async () => {
     try {
       const response = await PayrollApi.getPayrollConfig();
-      setPayrollConfig(response.data);
+      console.log('[==================> response', response);
+      setPayrollConfig(response);
       reset({
         companyName: response?.companyCode || '',
         cycleType: response?.cycleType || '',

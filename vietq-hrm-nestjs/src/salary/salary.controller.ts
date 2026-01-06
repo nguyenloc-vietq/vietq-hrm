@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Res,
   ValidationPipe,
 } from "@nestjs/common";
@@ -37,6 +38,17 @@ export class SalaryController {
       await this.salaryService.getSalaryListUser(),
       200,
       "get list user is successfully",
+    );
+  }
+
+  @Get("payslip-list")
+  async getPayslipList(
+    @Query("month") month?: string,
+  ): Promise<ResponseDataSuccess<object>> {
+    return new ResponseDataSuccess(
+      await this.salaryService.getPayslipList(month),
+      200,
+      "get payslip list is successfully",
     );
   }
 

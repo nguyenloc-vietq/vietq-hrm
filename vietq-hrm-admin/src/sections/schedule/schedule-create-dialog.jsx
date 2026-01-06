@@ -32,6 +32,7 @@ export function ScheduleCreateDialog({ open, onClose, onSuccess }) {
   const [isDateError, setIsDateError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formKey, setFormKey] = useState(0);
 
   useEffect(() => {
     if (open) {
@@ -130,13 +131,14 @@ export function ScheduleCreateDialog({ open, onClose, onSuccess }) {
     setStartDate(dayjs());
     setEndDate(dayjs().add(7, 'day'));
     setIsDateError(false);
+    setFormKey((prev) => prev + 1);
     onClose();
   };
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle>Create Schedule</DialogTitle>
-      <DialogContent>
+      <DialogContent key={formKey}>
         <Stack spacing={3} sx={{ pt: 2 }}>
           <Autocomplete
             options={users}

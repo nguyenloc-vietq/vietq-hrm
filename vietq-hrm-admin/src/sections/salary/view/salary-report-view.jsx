@@ -1,6 +1,16 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
-import { Box, Card, Table, Button, Tooltip, TableBody, IconButton } from '@mui/material';
+import {
+  Box,
+  Card,
+  Table,
+  Button,
+  Tooltip,
+  MenuItem,
+  TableBody,
+  TextField,
+  IconButton,
+} from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
@@ -9,6 +19,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { useSetState } from 'src/hooks/use-set-state';
 
 import { _roles } from 'src/_mock';
+import SalaryApi from 'src/services/api/salary.api';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { toast } from 'src/components/snackbar';
@@ -30,22 +41,33 @@ import {
 import { UserTableToolbar } from 'src/sections/user/user-table-toolbar';
 import { UserTableFiltersResult } from 'src/sections/user/user-table-filters-result';
 
-import { PayrollTableRow } from '../payroll-table-row';
 import CreateReportForm from '../payroll-create-report';
+import { TableSkeleton, PayrollReportTableRow } from '../payroll-report-table-row';
 
 const TABLE_HEAD = [
-  { id: 'payrollCode', label: 'Payroll Code', width: 200 },
-  { id: 'payrollName', label: 'Payroll Name', width: 200 },
-  { id: 'companyCode', label: 'Company Code', width: 200 },
-  { id: 'startDate', label: 'Start Date', width: 100 },
-  { id: 'endDate', label: 'End Date', width: 100 },
-  { id: 'paymentDate', label: 'Payment Date', width: 100 },
-  { id: 'isLocked', label: 'Is Locked', width: 100 },
-  { id: 'isActive', label: 'Is Active', width: 100 },
-  { id: 'createdAt', label: 'Created At', width: 100 },
-  { id: 'updatedAt', label: 'Updated At', width: 100 },
+  { id: 'avatar', label: 'Avatar', width: 100 },
+  { id: 'fullName', label: 'Full Name', width: 150 },
+  { id: 'userCode', label: 'User Code', width: 120 },
+  { id: 'payrollCode', label: 'Payroll Code', width: 150 },
+  { id: 'payrollName', label: 'Payroll Name', width: 150 },
+  { id: 'payslipFile', label: 'Payslip File', width: 200 },
+  { id: 'startDate', label: 'Start Date', width: 120 },
+  { id: 'endDate', label: 'End Date', width: 120 },
+  { id: 'paymentDate', label: 'Payment Date', width: 120 },
   { id: 'actions', label: 'Actions', width: 100 },
 ];
+
+// Tạo danh sách tháng
+const MONTH_OPTIONS = Array.from({ length: 12 }, (_, i) => ({
+  value: String(i + 1).padStart(2, '0'),
+  label: `Tháng ${i + 1}`,
+}));
+
+// Tạo danh sách năm
+const YEAR_OPTIONS = Array.from({ length: 5 }, (_, i) => ({
+  value: new Date().getFullYear() - 2 + i,
+  label: `${new Date().getFullYear() - 2 + i}`,
+}));
 
 export function SalaryReportView() {
   const router = useRouter();
@@ -55,7 +77,49 @@ export function SalaryReportView() {
   const table = useTable({ defaultRowsPerPage: 5 });
 
   const [tableData, setTableData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState(
+    String(new Date().getMonth() + 1).padStart(2, '0')
+  );
+  const [selectedYear, setSelectedYear] = useState(String(new Date().getFullYear()));
   const filters = useSetState({ name: '', role: [], status: 'all' });
+
+  // Fetch payslip list khi component mount
+  useEffect(() => {
+    fetchPayslipList(`${selectedYear}-${selectedMonth}-01`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const fetchPayslipList = async (month = '') => {
+    try {
+      setIsLoading(true);
+      // Chỉ gửi month nếu có, nếu không gửi year để lọc theo năm
+      const response = await SalaryApi.getPayslipList(month || '');
+      console.log('Payslip list:', response);
+      setTableData(response || []);
+    } catch (error) {
+      console.error('Failed to fetch payslip list:', error);
+      toast.error('Failed to load payslip data');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleMonthChange = (e) => {
+    const month = e.target.value;
+    setSelectedMonth(month);
+    table.onResetPage();
+    // Khi chọn tháng, gửi cả month và year
+    fetchPayslipList(`${selectedYear}-${month}-01`);
+  };
+
+  const handleYearChange = (e) => {
+    const year = e.target.value;
+    setSelectedYear(year);
+    table.onResetPage();
+    // Khi chọn năm, gửi selectedMonth (nếu có) và year mới
+    fetchPayslipList(`${year}-${selectedMonth}-01`);
+  };
 
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -123,6 +187,36 @@ export function SalaryReportView() {
       />
 
       <Card>
+        <Box sx={{ p: 2.5, display: 'flex', gap: 2, alignItems: 'flex-end' }}>
+          <TextField
+            select
+            label="Chọn tháng"
+            value={selectedMonth}
+            onChange={handleMonthChange}
+            sx={{ minWidth: 150 }}
+          >
+            {MONTH_OPTIONS.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <TextField
+            select
+            label="Chọn năm"
+            value={selectedYear}
+            onChange={handleYearChange}
+            sx={{ minWidth: 150 }}
+          >
+            {YEAR_OPTIONS.map((option) => (
+              <MenuItem key={option.value} value={String(option.value)}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Box>
+
         <UserTableToolbar
           filters={filters}
           isShowRole={false}
@@ -176,25 +270,29 @@ export function SalaryReportView() {
                 }
               />
 
-              <TableBody>
-                {dataInPage.map((row) => (
-                  <PayrollTableRow
-                    key={row.payrollCode}
-                    row={row}
-                    selected={table.selected.includes(row.payrollCode)}
-                    onSelectRow={() => table.onSelectRow(row.payrollCode)}
-                    onDeleteRow={() => handleDeleteRow(row.payrollCode)}
-                    onEditRow={() => handleEditRow(row.payrollCode)}
+              {isLoading ? (
+                <TableSkeleton length={TABLE_HEAD.length + 1} />
+              ) : (
+                <TableBody>
+                  {dataInPage.map((row) => (
+                    <PayrollReportTableRow
+                      key={row.payrollCode}
+                      row={row}
+                      selected={table.selected.includes(row.payrollCode)}
+                      onSelectRow={() => table.onSelectRow(row.payrollCode)}
+                      onDeleteRow={() => handleDeleteRow(row.payrollCode)}
+                      onEditRow={() => handleEditRow(row.payrollCode)}
+                    />
+                  ))}
+
+                  <TableEmptyRows
+                    height={table.dense ? 56 : 76}
+                    emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
                   />
-                ))}
 
-                <TableEmptyRows
-                  height={table.dense ? 56 : 76}
-                  emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
-                />
-
-                <TableNoData notFound={notFound} />
-              </TableBody>
+                  <TableNoData notFound={notFound} />
+                </TableBody>
+              )}
             </Table>
           </Scrollbar>
         </Box>
@@ -214,8 +312,9 @@ export function SalaryReportView() {
     </DashboardContent>
   );
 }
+
 function applyFilter({ inputData, comparator, filters }) {
-  const { fullName, status, role } = filters;
+  const { name, status, role } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -227,18 +326,20 @@ function applyFilter({ inputData, comparator, filters }) {
 
   inputData = stabilizedThis.map((el) => el[0]);
 
-  if (fullName) {
+  if (name) {
     inputData = inputData.filter(
-      (user) => user.user.fullName.toLowerCase().indexOf(fullName.toLowerCase()) !== -1
+      (record) =>
+        record.payroll?.payrollName?.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        record.payroll?.payrollCode?.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
   if (status !== 'all') {
-    inputData = inputData.filter((user) => user.isActive === status);
+    inputData = inputData.filter((record) => record.isActive === status);
   }
 
   if (role.length) {
-    inputData = inputData.filter((user) => role.includes(user.role));
+    inputData = inputData.filter((record) => role.includes(record.role));
   }
 
   return inputData;

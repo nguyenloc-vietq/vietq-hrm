@@ -50,19 +50,19 @@ export const SalaryCreateScheme = zod.object({
 
 // ----------------------------------------------------------------------
 
-export function SalaryCreateForm({ currentUser, open, onClose, onUpdateRow }) {
+export function SalaryCreateForm({ userOptions, open, onClose, onUpdateRow }) {
   const defaultValues = useMemo(
     () => ({
       user: {},
-      baseSalary: currentUser?.baseSalary || 1000,
-      overtimeRate: currentUser?.overtimeRate || 0,
-      otNightRate: currentUser?.otNightRate || 0,
-      nightRate: currentUser?.nightRate || 0,
-      lateRate: currentUser?.lateRate || 0,
-      earlyRate: currentUser?.earlyRate || 0,
-      effectiveDate: currentUser?.expireDate || dayjs().format(),
+      baseSalary: 1000,
+      overtimeRate: 0,
+      otNightRate: 0,
+      nightRate: 0,
+      lateRate: 0,
+      earlyRate: 0,
+      effectiveDate: dayjs().format(),
     }),
-    [currentUser]
+    []
   );
 
   const methods = useForm({
@@ -75,11 +75,7 @@ export function SalaryCreateForm({ currentUser, open, onClose, onUpdateRow }) {
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
-  // const options = currentUser.map((item) => ({
-  //     value: item.userCode,
-  //     label: item.fullName,
-  console.log('[==================> current user', currentUser);
-  //   }))
+
   const onSubmit = handleSubmit(async (data) => {
     toast.loading('crate user...');
     try {
@@ -133,7 +129,7 @@ export function SalaryCreateForm({ currentUser, open, onClose, onUpdateRow }) {
               name="user"
               label="Select user"
               autoHighlight
-              options={currentUser.map((item) => item.user)}
+              options={userOptions}
               getOptionLabel={(option) => option.fullName ?? ''}
               isOptionEqualToValue={(option, value) => option.userCode === value.userCode}
               renderOption={(props, option) => (

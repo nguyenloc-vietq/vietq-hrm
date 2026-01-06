@@ -203,7 +203,7 @@ class NotificationService {
     Map<String, dynamic> data = message.data;
     //navigate to link notification
     print("this data +++++++++++++++++, $data");
-    NavigationService.push('/notification/${data['notificationid']}');
+    NavigationService.push('/notification/${data['notificationId']}');
   }
 
   Future iosForgroundMessage() async {
@@ -215,4 +215,3 @@ class NotificationService {
     );
   }
 }
-

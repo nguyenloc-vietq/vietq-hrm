@@ -1,7 +1,6 @@
 import Stack from '@mui/material/Stack';
 import { Skeleton } from '@mui/material';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
 import Checkbox from '@mui/material/Checkbox';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
@@ -31,6 +30,16 @@ export function PayrollTableRow({
 
   const quickEdit = useBoolean();
   console.log(`[===============> ROW | `, row);
+
+  // Format dates
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleDateString('vi-VN');
+  };
+
+  // Get avatar URL with fallback
+  const avatarUrl = row.user?.avatar || '/assets/images/avatars/avatar_default.jpg';
+
   return (
     <>
       <TableRow hover selected={selected} aria-checked={selected} tabIndex={-1}>
@@ -38,30 +47,26 @@ export function PayrollTableRow({
           <Checkbox id={row.id} checked={selected} onClick={onSelectRow} />
         </TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.payrollCode}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.payrollName}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.companyCode}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.startDate}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.endDate}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>
-          {row.paymentDate == null ? '-' : row.paymentDate}
-        </TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.isLocked}</TableCell>
+        {/* Full Name */}
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.payrollCode || '-'}</TableCell>
+
+        {/* User Code */}
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.payrollName || '-'}</TableCell>
+
+        {/* Payroll Code */}
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.companyCode || '-'}</TableCell>
+
+        {/* Payroll Name */}
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.startDate || '-'}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.endDate || '-'}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.paymentDate || '-'}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.isLocked || '-'}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.isActive ? 'Active' : 'Inactive'}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.createdAt}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.updatedAt}</TableCell>
 
         <TableCell>
           <Stack direction="row" alignItems="center">
-            <Tooltip title="Quick Edit" placement="top" arrow>
-              <IconButton
-                color={quickEdit.value ? 'inherit' : 'default'}
-                onClick={quickEdit.onTrue}
-              >
-                <Iconify icon="solar:pen-bold" />
-              </IconButton>
-            </Tooltip>
-
             <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
               <Iconify icon="eva:more-vertical-fill" />
             </IconButton>

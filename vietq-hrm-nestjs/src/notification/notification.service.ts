@@ -281,7 +281,7 @@ export class NotificationService {
               title: createNotification.title,
               body: createNotification.body,
               data: {
-                notificationid: notificationCode,
+                notificationId: notificationCode,
               },
             });
           });
@@ -293,7 +293,7 @@ export class NotificationService {
           title: createNotification.title,
           body: createNotification.body,
           data: {
-            notificationid: notificationCode,
+            notificationId: notificationCode,
           },
         });
       }

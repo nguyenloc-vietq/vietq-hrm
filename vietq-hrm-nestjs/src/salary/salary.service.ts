@@ -63,6 +63,71 @@ export class SalaryService {
     }
   }
 
+  async getPayslipList(month?: string) {
+    try {
+      // Use current month if not provided
+      const targetMonth = month ? dayjs(month) : dayjs();
+      const startOfMonth = targetMonth.startOf("month").toDate();
+      const endOfMonth = targetMonth.endOf("month").toDate();
+
+      const payslips = await this.prisma.payslip.findMany({
+        where: {
+          createdAt: {
+            gte: startOfMonth,
+            lte: endOfMonth,
+          },
+        },
+        select: {
+          id: true,
+          userCode: true,
+          payrollCode: true,
+          payslipFile: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+      // Enrich with user and payroll information
+      const enrichedPayslips = await Promise.all(
+        payslips.map(async (payslip) => {
+          const user = await this.prisma.user.findFirst({
+            where: { userCode: payslip.userCode },
+            select: {
+              userCode: true,
+              fullName: true,
+              email: true,
+              avatar: true,
+            },
+          });
+
+          const payroll = await this.prisma.payroll.findFirst({
+            where: { payrollCode: payslip.payrollCode },
+            select: {
+              payrollCode: true,
+              payrollName: true,
+              startDate: true,
+              endDate: true,
+              paymentDate: true,
+            },
+          });
+
+          return {
+            ...payslip,
+            user,
+            payroll,
+          };
+        }),
+      );
+
+      return enrichedPayslips;
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
   async reportPayroll(reportPayroll: ReportPayrollDto) {
     try {
       const endMonth = dayjs(reportPayroll.month).endOf("month");

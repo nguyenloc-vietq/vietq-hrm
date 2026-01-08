@@ -128,6 +128,8 @@ export const paths = {
     notification: {
       root: `${ROOTS.DASHBOARD}/notification`,
       list: `${ROOTS.DASHBOARD}/notification/list`,
+      create: `${ROOTS.DASHBOARD}/notification/create`,
+      test: `${ROOTS.DASHBOARD}/notification/test`,
     },
     schedule: {
       root: `${ROOTS.DASHBOARD}/schedule`,

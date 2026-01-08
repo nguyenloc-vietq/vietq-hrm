@@ -133,6 +133,11 @@ export class PayrollService {
           };
         }),
       );
+      result.sort((a, b) => {
+        const aTime = a.payroll?.startDate?.getTime() ?? Infinity;
+        const bTime = b.payroll?.startDate?.getTime() ?? Infinity;
+        return bTime - aTime;
+      });
 
       return result;
     } catch (error) {

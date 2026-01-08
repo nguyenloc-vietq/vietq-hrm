@@ -196,6 +196,7 @@ export const endpoints = {
 
   notification: {
     adminListNotification: '/api/notification/admin/list-notifications',
+    create: '/api/notification/admin/create-notifications',
   },
   registration: {
     listRegistrations: '/api/registration/list-registrations',

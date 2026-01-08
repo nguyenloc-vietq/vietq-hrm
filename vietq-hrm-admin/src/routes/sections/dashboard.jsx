@@ -83,6 +83,10 @@ const RegistrationMain = lazy(() => import('src/pages/dashboard/registration/reg
 
 // notification
 const NotificationList = lazy(() => import('src/pages/dashboard/notification/notification-list'));
+const NotificationCreate = lazy(
+  () => import('src/pages/dashboard/notification/notification-create')
+);
+const NotificationTest = lazy(() => import('src/pages/dashboard/notification/notification-test'));
 // ----------------------------------------------------------------------
 
 // schedule
@@ -142,7 +146,11 @@ export const dashboardRoutes = [
       },
       {
         path: 'notification',
-        children: [{ path: 'list', element: <NotificationList /> }],
+        children: [
+          { path: 'list', element: <NotificationList /> },
+          { path: 'test', element: <NotificationTest /> },
+          { path: 'create', element: <NotificationCreate /> },
+        ],
       },
       {
         path: 'schedule',

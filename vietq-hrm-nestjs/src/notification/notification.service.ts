@@ -245,6 +245,7 @@ export class NotificationService {
       const notification = await this.prisma.notification.create({
         data: {
           notificationCode: notificationCode,
+          targetValue: listUserCode ? listUserCode.toString() : "[]",
           ...dataNoti,
         },
       });
@@ -287,6 +288,7 @@ export class NotificationService {
           });
         }
       }
+
       if (createNotification.targetType === "ALL") {
         await this.firebaseService.sendNotificationToTopic({
           topic: "user-topic",

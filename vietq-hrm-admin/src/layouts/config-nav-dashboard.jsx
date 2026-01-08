@@ -101,7 +101,11 @@ export const navData = [
         title: 'Notification',
         path: paths.dashboard.notification.root,
         icon: ICONS.notification,
-        children: [{ title: 'Notification List', path: paths.dashboard.notification.list }],
+        children: [
+          { title: 'Notification List', path: paths.dashboard.notification.list },
+          { title: 'Create Notification', path: paths.dashboard.notification.create },
+          { title: 'Test Notification', path: paths.dashboard.notification.test },
+        ],
       },
 
       {

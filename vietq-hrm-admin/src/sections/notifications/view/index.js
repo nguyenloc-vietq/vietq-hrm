@@ -1,2 +1,3 @@
-export * from "./notification-list";
-export { default as NotificationCreateView } from "./notification-create";
+export * from './notification-list';
+export * from './notification-test';
+export * from './notification-create';

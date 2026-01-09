@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+
 import { NotificationCreateView } from 'src/sections/notifications/view';
 
 // ----------------------------------------------------------------------

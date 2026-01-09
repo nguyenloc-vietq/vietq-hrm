@@ -7,6 +7,7 @@ import { DatabaseService } from "../database/database.service";
 import { DevicesRegisterNotificationDto } from "./dto/devicesRegister-notification.dto";
 import { FirebaseService } from "../firebase/firebase.service";
 import { UpdateNotificationDto } from "./dto/update-notification.dto";
+import { TestNotificationDto } from "./dto/test-notification.dto";
 import dayjs from "dayjs";
 
 @Injectable()
@@ -372,6 +373,52 @@ export class NotificationService {
         body.data,
       );
       return { response };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
+  async testNotification(testNotification: TestNotificationDto) {
+    try {
+      if (testNotification.targetType === "ALL") {
+        await this.firebaseService.sendNotificationToTopic({
+          topic: "user-topic",
+          title: testNotification.title,
+          body: testNotification.body,
+          data: {
+            notificationId: "/",
+          },
+        });
+      } else if (
+        testNotification.targetType === "SINGLE" &&
+        testNotification.userCodeList!.length > 0
+      ) {
+        const listToken = await this.prisma.userDevice.findMany({
+          where: {
+            userCode: {
+              in: testNotification.userCodeList,
+            },
+            isActive: true,
+          },
+          select: {
+            fcmToken: true,
+          },
+        });
+
+        if (listToken.length > 0) {
+          listToken.map(async (item) => {
+            await this.sendNotification({
+              token: item.fcmToken,
+              title: testNotification.title,
+              body: testNotification.body,
+              data: {
+                type: "TEST",
+              },
+            });
+          });
+        }
+      }
+      return {};
     } catch (error) {
       throw new HttpException(error.message, 500);
     }

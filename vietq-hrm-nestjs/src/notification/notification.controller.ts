@@ -20,6 +20,7 @@ import { ResponseDataSuccess } from "../global/globalClass";
 import { DevicesRegisterNotificationDto } from "./dto/devicesRegister-notification.dto";
 import { CreateNotificationDto } from "./dto/create-notification.dto";
 import { UpdateNotificationDto } from "./dto/update-notification.dto";
+import { TestNotificationDto } from "./dto/test-notification.dto";
 import { PermitAll } from "src/common/custom-decorator";
 
 @Controller("notification")
@@ -174,16 +175,15 @@ export class NotificationController {
     );
   }
 
-  @Get("test")
+  @Post("admin/test-noti")
   @PermitAll()
-  async test(): Promise<ResponseDataSuccess<object>> {
+  async testNotification(
+    @Body(ValidationPipe) testNotification: TestNotificationDto,
+  ): Promise<ResponseDataSuccess<object>> {
     return new ResponseDataSuccess(
-      {
-        name: "Jane Doe",
-        email: "jane@example.com",
-      },
+      await this.notificationService.testNotification(testNotification),
       200,
-      "Send notification is successfully!",
+      "Test notification sent successfully!",
     );
   }
 }

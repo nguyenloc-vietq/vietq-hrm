@@ -1,17 +1,16 @@
 import { Helmet } from 'react-helmet-async';
 
-import { CONFIG } from 'src/config-global';
+import { NotificationTestView } from 'src/sections/notifications/view';
 
-import NotificationTestView from 'src/sections/notifications/view/notification-test';
+// ----------------------------------------------------------------------
 
-const metadata = { title: `Notification | Dashboard - ${CONFIG.site.name}` };
-
-export default function Page() {
+export default function NotificationTestPage() {
   return (
     <>
       <Helmet>
-        <title> {metadata.title}</title>
+        <title> Dashboard: Test Notification</title>
       </Helmet>
+
       <NotificationTestView />
     </>
   );

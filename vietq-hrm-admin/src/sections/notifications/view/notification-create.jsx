@@ -1,17 +1,19 @@
-import PropTypes from 'prop-types';
 import * as Yup from 'yup';
-import { useMemo, useCallback, useState, useEffect } from 'react';
+import { toast } from 'sonner';
+import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import React, { useMemo, useState, useEffect } from 'react';
 
-import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import Switch from '@mui/material/Switch';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Unstable_Grid2';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
+import Autocomplete from '@mui/material/Autocomplete';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 import { paths } from 'src/routes/paths';
@@ -19,29 +21,27 @@ import { useRouter } from 'src/routes/hooks';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
+import UserApi from 'src/services/api/user.api';
+import NotificationApi from 'src/services/api/notification.api';
+
 import {
-  FormProvider,
+  Form,
   RHFSelect,
   RHFEditor,
-  RHFTextField,
-  RHFUpload,
   RHFSwitch,
-  RHFAutocomplete,
+  RHFTextField,
+  RHFMobileDateTimePicker,
 } from 'src/components/hook-form';
-import { useSnackbar } from 'src/components/snackbar';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { notificationApi } from 'src/services/api/notification.api';
-import UserApi from 'src/services/api/user.api';
 
 // ----------------------------------------------------------------------
 
-export default function NotificationCreateView({ currentPost }) {
+export const NotificationCreateView = ({ currentPost }) => {
   const router = useRouter();
-  const { enqueueSnackbar } = useSnackbar();
 
   const mdUp = useResponsive('up', 'md');
 
   const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const NewBlogSchema = Yup.object().shape({
     title: Yup.string().required('Title is required'),
@@ -49,8 +49,10 @@ export default function NotificationCreateView({ currentPost }) {
     targetType: Yup.string().required('Target type is required'),
     listUserCode: Yup.array().when('targetType', {
       is: 'SINGLE',
-      then: Yup.array().min(1, 'At least one user is required'),
+      then: (schema) => schema.min(1, 'At least one user is required'),
+      otherwise: (schema) => schema,
     }),
+    scheduleTime: Yup.string().nullable(),
   });
 
   const defaultValues = useMemo(
@@ -60,7 +62,7 @@ export default function NotificationCreateView({ currentPost }) {
       notificationType: currentPost?.notificationType || 'NORMAIL',
       targetType: currentPost?.targetType || 'ALL',
       listUserCode: currentPost?.listUserCode || [],
-      openSent: currentPost?.openSent || true,
+      isSent: currentPost?.isSent || true,
       scheduleTime: currentPost?.scheduleTime || null,
     }),
     [currentPost]
@@ -79,38 +81,47 @@ export default function NotificationCreateView({ currentPost }) {
     formState: { isSubmitting, isValid },
   } = methods;
 
-  const { data: userData } = useQuery({
-    queryKey: ['users'],
-    queryFn: UserApi.getListUser,
-  });
-
   useEffect(() => {
-    if (userData) {
-      setUsers(userData.map((user) => ({ code: user.code, name: user.fullName })));
-    }
-  }, [userData]);
-
-  const { mutate, isPending } = useMutation({
-    mutationFn: (data) => notificationApi.create(data),
-    onSuccess: () => {
-      reset();
-      enqueueSnackbar(currentPost ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.notification.list);
-    },
-    onError: (error) => {
-      enqueueSnackbar(`Error: ${error.message}`, { variant: 'error' });
-    },
-  });
+    const fetchUsers = async () => {
+      try {
+        const userData = await UserApi.getListUser();
+        setUsers(userData.map((user) => ({ code: user.userCode, name: user.fullName })));
+      } catch (error) {
+        toast.error('Failed to load users');
+      }
+    };
+    fetchUsers();
+  }, []);
 
   const handleCreate = handleSubmit(async (data) => {
-    const payload = {
-      ...data,
-      listUserCode: data.listUserCode.map((user) => user.code),
-    };
-    if (payload.targetType === 'ALL') {
-      delete payload.listUserCode;
+    setIsLoading(true);
+    try {
+      const payload = {
+        notificationType: data.notificationType,
+        title: data.title,
+        body: data.body,
+        targetType: data.targetType,
+        openSent: 1,
+        isSent: !!data.isSent,
+      };
+
+      if (!data.isSent && data.scheduleTime) {
+        payload.scheduleTime = data.scheduleTime;
+      }
+
+      if (data.targetType === 'SINGLE') {
+        payload.listUserCode = data.listUserCode.map((user) => user.code || user);
+      }
+      console.log('[==================> payload', payload);
+      await NotificationApi.create(payload);
+      reset();
+      toast.success(currentPost ? 'Update success!' : 'Create success!');
+      router.push(paths.dashboard.notification.list);
+    } catch (error) {
+      toast.error(`Error: ${error.message}`);
+    } finally {
+      setIsLoading(false);
     }
-    mutate(payload);
   });
 
   const renderDetails = (
@@ -126,44 +137,57 @@ export default function NotificationCreateView({ currentPost }) {
             label="Notification Type"
             InputLabelProps={{ shrink: true }}
           >
-            {[
-              { value: 'NORMAIL', label: 'Normal' },
-              { value: 'IMPORTANT', label: 'Important' },
-            ].map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
+            <MenuItem value="NORMAIL">Normal</MenuItem>
+            <MenuItem value="IMPORTANT">Important</MenuItem>
           </RHFSelect>
 
           <RHFSelect name="targetType" label="Target Type" InputLabelProps={{ shrink: true }}>
-            {[
-              { value: 'ALL', label: 'All' },
-              { value: 'SINGLE', label: 'Single' },
-            ].map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
+            <MenuItem value="ALL">All</MenuItem>
+            <MenuItem value="SINGLE">Single</MenuItem>
           </RHFSelect>
 
           {watch('targetType') === 'SINGLE' && (
-            <RHFAutocomplete
-              name="listUserCode"
-              label="Users"
-              placeholder="+ Users"
+            <Autocomplete
               multiple
-              freeSolo
               options={users}
               getOptionLabel={(option) => option.name || ''}
+              value={watch('listUserCode') || []}
+              onChange={(event, newValue) => {
+                setValue('listUserCode', newValue, { shouldValidate: true });
+              }}
               renderOption={(props, option) => (
                 <li {...props} key={option.code}>
                   {option.name}
                 </li>
               )}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Users"
+                  placeholder="Select users"
+                  error={!!methods.formState.errors.listUserCode}
+                  helperText={methods.formState.errors.listUserCode?.message}
+                />
+              )}
             />
           )}
 
+          {!watch('isSent') && (
+            <RHFMobileDateTimePicker
+              name="scheduleTime"
+              label="Schedule Time"
+              slotProps={{
+                textField: {
+                  helperText: 'Set schedule time for delayed sending',
+                },
+              }}
+            />
+          )}
+          <FormControlLabel
+            control={<RHFSwitch name="isSent" />}
+            label="Open Sent"
+            sx={{ flexGrow: 1, pl: 3 }}
+          />
           <Stack spacing={1.5}>
             <Typography variant="subtitle2">Content</Typography>
             <RHFEditor simple name="body" />
@@ -174,18 +198,12 @@ export default function NotificationCreateView({ currentPost }) {
   );
 
   const renderActions = (
-    <Grid xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
-      <FormControlLabel
-        control={<RHFSwitch name="openSent" />}
-        label="Open Sent"
-        sx={{ flexGrow: 1, pl: 3 }}
-      />
-
+    <Grid xs={12} md={8} ml={3} sx={{ display: 'flex', alignItems: 'center' }}>
       <LoadingButton
         type="submit"
         variant="contained"
         size="large"
-        loading={isPending}
+        loading={isLoading}
         disabled={!isValid}
       >
         {!currentPost ? 'Create Notification' : 'Save Changes'}
@@ -194,15 +212,23 @@ export default function NotificationCreateView({ currentPost }) {
   );
 
   return (
-    <FormProvider methods={methods} onSubmit={handleCreate}>
+    <Form methods={methods} onSubmit={handleCreate}>
       <Grid container spacing={3}>
         {renderDetails}
         {renderActions}
       </Grid>
-    </FormProvider>
+    </Form>
   );
-}
+};
 
 NotificationCreateView.propTypes = {
-  currentPost: PropTypes.object,
+  currentPost: PropTypes.shape({
+    title: PropTypes.string,
+    body: PropTypes.string,
+    notificationType: PropTypes.string,
+    targetType: PropTypes.string,
+    listUserCode: PropTypes.arrayOf(PropTypes.string),
+    openSent: PropTypes.bool,
+    scheduleTime: PropTypes.string,
+  }),
 };

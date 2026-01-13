@@ -26,7 +26,16 @@ export class RegistrationController {
       "Get list registrations successfully",
     );
   }
-
+  @Get("admin-list-registrations")
+  async adminListApplications(
+    @Req() req: express.Request,
+  ): Promise<ResponseDataSuccess<object>> {
+    return new ResponseDataSuccess(
+      await this.registrationService.adminListApplications(req),
+      200,
+      "Get list registrations successfully",
+    );
+  }
   @Get("list-approvals")
   async listApprovals(
     @Req() req: express.Request,

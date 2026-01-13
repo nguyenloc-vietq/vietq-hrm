@@ -122,15 +122,18 @@ export function RegistrationMain() {
 
   const handleApproveRow = useCallback(
     async (row) => {
+      toast.loading('Loading...!');
+
       try {
         await RegistrationApi.approve({
           registrationCode: row,
           status: 'APPROVED',
         });
-
+        toast.dismiss();
         toast.success('APPROVED successfully!');
         fetchRegistrations(); // refetch to get updated summary
       } catch (error) {
+        toast.dismiss();
         toast.error('Failed to APPROVED registration');
       }
     },
@@ -139,14 +142,17 @@ export function RegistrationMain() {
 
   const handleRejectRow = useCallback(
     async (row) => {
+      toast.loading('Loading...!');
       try {
         await RegistrationApi.reject({
           registrationCode: row,
           status: 'REJECTED',
         });
+        toast.dismiss();
         toast.success('Rejected successfully!');
         fetchRegistrations(); // refetch to get updated summary
       } catch (error) {
+        toast.dismiss();
         toast.error('Failed to reject registration');
       }
     },

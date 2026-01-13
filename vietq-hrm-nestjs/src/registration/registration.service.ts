@@ -60,7 +60,51 @@ export class RegistrationService {
       throw new HttpException(error.message, 500);
     }
   }
+  async adminListApplications(req) {
+    try {
+      const { status } = req.query;
 
+      // 1. Lấy danh sách đơn đăng ký
+      const registrations = await this.prisma.registrationForm.findMany({
+        where: {
+          isActive: true,
+          status: status || undefined,
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      // 2. Lấy cấu hình lương để xem tổng ngày phép (AnnualLeave)
+      const salaryConfig = await this.prisma.salaryConfig.findFirst({
+        select: { AnnualLeave: true },
+      });
+
+      const stats = await this.prisma.registrationForm.groupBy({
+        by: ["status"],
+        where: {
+          isActive: true,
+        },
+        _count: {
+          status: true,
+        },
+      });
+
+      const summary = {
+        annualLeave: salaryConfig?.AnnualLeave || 12,
+        approved:
+          stats.find((s) => s.status === "APPROVED")?._count.status || 0,
+        pending: stats.find((s) => s.status === "PENDING")?._count.status || 0,
+        rejected:
+          stats.find((s) => s.status === "REJECTED")?._count.status || 0,
+      };
+
+      return {
+        items: registrations,
+        summary: summary,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
   async listApprovals(req) {
     try {
       const { userCode } = req.user;

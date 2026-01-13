@@ -199,7 +199,7 @@ export const endpoints = {
     create: '/api/notification/admin/create-notifications',
   },
   registration: {
-    listRegistrations: '/api/registration/list-registrations',
+    listRegistrations: '/api/registration/admin-list-registrations',
     approveRegistration: '/api/registration/approve',
     rejectRegistration: '/api/registration/reject',
   },
